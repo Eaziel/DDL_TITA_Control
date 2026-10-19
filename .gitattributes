@@ -1,0 +1,8 @@
+# Keep the small USD assets in regular Git, without requiring Git LFS.
+*.usd binary -filter
+*.usdc binary -filter
+*.usdz binary -filter
+*.usda text -filter
+
+*.bat text eol=crlf
+*.sh text eol=lf

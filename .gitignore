@@ -1,0 +1,48 @@
+# Local project memory and assistant state
+/PROJECT_MEMORY.md
+/docs/PROJECT_HISTORY.md
+/docs/新对话续接提示词.md
+/AGENTS.md
+/.agents/
+/.codex/
+/.local_git_backups/
+# The unified repository uses the root attributes instead of the standalone LFS template.
+/TITA_Lab/.gitattributes
+
+# Local credentials and machine settings
+.aws/
+.ssh/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.vscode/
+.idea/
+
+# Python environments, build products, and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.cache/
+build/
+dist/
+
+# Simulation and training output
+logs/
+outputs/
+videos/
+wandb/
+runs/
+checkpoints/
+*.log
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+desktop.ini
