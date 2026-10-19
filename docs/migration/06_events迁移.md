@@ -1,6 +1,6 @@
 # 06 Events：回合初值、机身参数与定时推扰
 
-更新：2026-10-19。**当前两个reset项和两个startup项均已保存并静态核对；第6节定时推扰为待写方案。** 第1—4节解释每回合的关节/机身初值，第5节解释创建时的质量与质心随机化，第6节给出每15 s改变实际水平速度的推扰。摩擦、恢复系数和控制随机化仍待迁移；未运行真实环境。
+更新：2026-10-19。**当前两个reset项和两个startup项均已保存并静态核对；第6节推扰函数已保存，导出/配置接线待核对。** 第1—4节解释每回合的关节/机身初值，第5节解释创建时的质量与质心随机化，第6节给出每15 s改变实际水平速度的推扰。摩擦、恢复系数和控制随机化仍待迁移；未运行真实环境。
 
 ## 1. Gym 原来怎么做
 
@@ -312,7 +312,7 @@ vel_w += math_utils.sample_uniform(
 
 ### 6.3 Lab 中怎样写：函数、导出、配置
 
-以下均为待用户写入的方案。
+以下给出三处完整接线参考。本轮为解释_w查读了events.py，确认函数已保存；第二、三处实际保存状态尚未在本轮核对。
 
 **第一处：** 新建`TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py`：
 
@@ -379,7 +379,7 @@ from .events import push_by_setting_xy_velocity
 
 ### 6.4 函数里每个张量是什么
 
-`asset.data.root_vel_w`是当前根刚体质心的世界系速度，`.torch`得到`(N,6)`张量，每行为`[vx,vy,vz,wx,wy,wz]`。前3列单位m/s，后3列单位rad/s。
+`asset.data.root_vel_w`是当前根刚体质心的世界系速度，`.torch`得到`(N,6)`张量，每行为`[vx,vy,vz,ωx,ωy,ωz]`。前3列单位m/s，后3列单位rad/s。
 
 全局interval调用会传`env_ids=None`，所以selection取slice(None)，选择全部行。若以后对部分环境调用，selection就是其索引张量；取出的velocity_w为`(M,6)`。clone创建独立副本，暂存修改，随后通过写入API正式提交物理状态。
 
@@ -411,5 +411,13 @@ from .events import push_by_setting_xy_velocity
 | 实际根速度读写 | root_states[:,7:13] | [root_vel_w](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/assets/articulation/base_articulation_data.py:1376)、[PhysX根质心速度写入](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation.py:697) |
 
 官方在线参考：[startup/reset教程](https://isaac-sim.github.io/IsaacLab/release/3.0.0/source/how-to/create_manager_base_env.html)、[质量随机化API](https://isaac-sim.github.io/IsaacLab/release/3.0.0/source/api/lab/isaaclab.envs.mdp.html#isaaclab.envs.mdp.events.randomize_rigid_body_mass)、[COM随机化API](https://isaac-sim.github.io/IsaacLab/release/3.0.0/source/api/lab/isaaclab.envs.mdp.html#isaaclab.envs.mdp.events.randomize_rigid_body_com)。具体参数及计算以本地已核对源码为准。
+
+## 补充问答
+
+**Q：** 我想问了，“w”到底表示啥？？接触力有个w，这里还有w！
+
+**A：** 末尾_w表示world，世界坐标系。root_vel_w的线速度/角速度与net_normal_forces_w的力都沿世界坐标轴分解；机身相关接口的_b表示沿body坐标轴表达。世界轴不跟随机器人旋转，机身轴会跟随机器人旋转。
+
+例如假设世界+x向东、+y向北、机身+x为前方；机器人朝北前进1 m/s，同一速度在世界系为(0,1,0)，机身系为(1,0,0)。此前列出的wx/wy/wz是代写角速度ωx/ωy/ωz，和后缀_w的world不同。原生接口定义与变量命名解释见[events.py问答](../../code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py.md#补充问答)。
 
 [返回迁移入口](README.md) · [查看来源与覆盖表](00_迁移映射索引.md)

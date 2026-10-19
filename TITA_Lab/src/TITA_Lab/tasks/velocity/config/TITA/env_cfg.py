@@ -311,6 +311,17 @@ class EventCfg:
         },
     )
 
+    push_robot = EventTerm(
+        func=mdp.push_by_setting_xy_velocity,
+        mode="interval",
+        interval_range_s=(15.0, 15.0),
+        is_global_time=True,
+        params={
+            "asset_cfg": SceneEntityCfg("robot"),
+            "velocity_range": (-1.0, 1.0),
+        },
+    )
+
     reset_base = EventTerm(
         func=mdp.reset_root_state_uniform,
         mode="reset",

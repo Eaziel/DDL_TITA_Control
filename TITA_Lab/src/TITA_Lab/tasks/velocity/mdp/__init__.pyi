@@ -11,11 +11,13 @@ __all__ = [
     "undesired_contacts_current",
     "joint_power_signed",
     "JointAccelerationPenalty",
+    "push_by_setting_xy_velocity",
 ]
 
 # Forward stable MDP terms lazily, then override with environment-specific terms below.
 from isaaclab.envs.mdp import *  # noqa: F401, F403
 
+from .events import push_by_setting_xy_velocity
 from .observations import joint_pos_rel_zero_wheels, proprio_history
 from .rewards import JointAccelerationPenalty, joint_pos_target_l2, joint_power_signed, undesired_contacts_current
 from .terminations import illegal_contact_current
