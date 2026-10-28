@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-28",
+  "root": "/home/eaziel/miniconda3",
+  "root_exists": true,
+  "root_is_symlink": false,
+  "root_resolved": "/home/eaziel/miniconda3",
+  "new_venv_exists": true,
+  "new_python_resolved": "/home/eaziel/PythonRuntimes/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+  "conda_executable_processes": [],
+  "environments": [
+    {
+      "name": "base",
+      "prefix": "/home/eaziel/miniconda3",
+      "conda_package_count": 157,
+      "python_distribution_count": 0
+    },
+    {
+      "name": "DL_study",
+      "prefix": "/home/eaziel/miniconda3/envs/DL_study",
+      "conda_package_count": 31,
+      "python_distribution_count": 135
+    },
+    {
+      "name": "env_isaacSL-6.1.0",
+      "prefix": "/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0",
+      "conda_package_count": 29,
+      "python_distribution_count": 319
+    }
+  ],
+  "uninstall_script_exists": true
+}

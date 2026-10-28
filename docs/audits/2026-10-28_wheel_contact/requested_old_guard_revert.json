@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-28",
+  "authorization": "User explicitly requested rollback to much earlier supplied code; no further fixes.",
+  "changed_file": "TITA_Lab_old/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py",
+  "restored_from": "2026-10-19T11:21:20.007Z assistant message, original_guard_history.json",
+  "before_sha256": "32ab7d04b37b21725450e252f4fffe0d5c657a1d421af4ca437f4c575455107c",
+  "after_sha256": "b0504dc330ad68ca998e47d822092a2f81d2745a31878c812b18104040cadc97",
+  "syntax_parse_passed": true,
+  "current_main_events_unchanged": true,
+  "simulation_run": false,
+  "git_operations": false,
+  "scope": "Only the old project material backend guard and now-unused imports; all other computations retained."
+}

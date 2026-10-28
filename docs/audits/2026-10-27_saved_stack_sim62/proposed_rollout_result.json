@@ -1,0 +1,17 @@
+{
+  "boundary": "CPU fixtures; actual wrapper, actor and proposed rollout; native Kit/main not executed.",
+  "proposal_sha256": "d4fe74b04bee00ce4ba2cbf089b18ba07878029a0b19c5772d21b17872ce453c",
+  "complete": {
+    "steps": 5,
+    "requested": 5,
+    "resets": 3,
+    "timeouts": 2
+  },
+  "early_exit": {
+    "steps": 3,
+    "requested": 5,
+    "resets": 3,
+    "timeouts": 2
+  },
+  "last_step_nan_caught": true
+}

@@ -1,0 +1,466 @@
+{
+  "date": "2026-10-27",
+  "old_project": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab_old/TITA_Lab",
+  "new_project": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab",
+  "new_package": "Tita_Lab",
+  "new_config_package": "Tita",
+  "excluded_directories": [
+    ".git",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "logs"
+  ],
+  "source_and_configuration_files": {
+    "old": 45,
+    "new": 45,
+    "identical_after_directory_mapping": 41,
+    "missing": [],
+    "changed": [
+      "pyproject.toml",
+      "README.md",
+      "src/Tita_Lab/__init__.py",
+      "src/Tita_Lab/tasks/velocity/config/Tita/__init__.py"
+    ],
+    "old_files_matching_saved_hashes": 38
+  },
+  "assets": {
+    "old_files": [
+      "src/TITA_Lab/assets/data/.gitkeep",
+      "src/TITA_Lab/assets/data/robots/tita/usd/tita.usd"
+    ],
+    "new_files": [
+      "src/Tita_Lab/assets/data/.gitkeep",
+      "src/Tita_Lab/assets/data/robots/tita/usd/tita.usd"
+    ],
+    "identical": true
+  },
+  "new_uv_overrides_match_current_main": true,
+  "all_new_uv_source_paths_exist": true,
+  "stale_name_occurrences": [
+    {
+      "file": "scripts/import_assets.py",
+      "line": 35,
+      "text": "from TITA_Lab.assets.tita import TITA_CFG"
+    },
+    {
+      "file": "src/Tita_Lab/assets/tita.py",
+      "line": 19,
+      "text": "from . import TITA_LAB_ASSETS_DIR  # . 表示当前的 TITA_Lab.assets 包。这个路径常量已在它的 __init__.py 中定义"
+    },
+    {
+      "file": "src/Tita_Lab/learning/np3o/env_wrapper.py",
+      "line": 10,
+      "text": "from TITA_Lab.tasks.velocity.observation_layout import pack_tita_observations"
+    },
+    {
+      "file": "src/Tita_Lab/learning/np3o/env_wrapper.py",
+      "line": 13,
+      "text": "from TITA_Lab.tasks.velocity.tita_velocity_env import TitaVelocityEnv"
+    },
+    {
+      "file": "src/Tita_Lab/tasks/velocity/tita_velocity_env.py",
+      "line": 20,
+      "text": "from .config.TITA.env_cfg import VelocityEnvCfg"
+    },
+    {
+      "file": "src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py",
+      "line": 40,
+      "text": "from TITA_Lab.assets.tita import TITA_CFG  # isort:skip"
+    },
+    {
+      "file": "src/Tita_Lab/tasks/velocity/mdp/actions.py",
+      "line": 17,
+      "text": "from TITA_Lab.tasks.velocity.tita_velocity_env import TitaVelocityEnv"
+    },
+    {
+      "file": "tests/test_registration.py",
+      "line": 10,
+      "text": "import TITA_Lab.tasks  # noqa: F401"
+    },
+    {
+      "file": "tests/test_registration.py",
+      "line": 17,
+      "text": "\"entry_point\": \"TITA_Lab.tasks.velocity.tita_velocity_env:TitaVelocityEnv\","
+    },
+    {
+      "file": "tests/test_registration.py",
+      "line": 18,
+      "text": "\"env_cfg_entry_point\": \"TITA_Lab.tasks.velocity.config.TITA.env_cfg:VelocityEnvCfg\","
+    }
+  ],
+  "current_task_entry": "isaaclab.envs:ManagerBasedRLEnv",
+  "required_task_entry": "Tita_Lab.tasks.velocity.tita_velocity_env:TitaVelocityEnv",
+  "installed_editable": "Still points at removed TITA_Lab path; TITA_Lab and Tita_Lab both unresolved in isolated Python.",
+  "dry_run": "One old tita-lab uninstall and one new editable install; no dependencies; not executed.",
+  "candidate_in_memory": "Two case-sensitive replacements and custom entry restore; env/agent validate, imports, and registration test passed. No source written, no Kit launched.",
+  "old_manifest": {
+    ".gitattributes": {
+      "size": 335,
+      "sha256": "c455cb930a88f746cbab1f53b4dc9e3a546b3f1a1bfb71aec23560c565135696"
+    },
+    ".gitignore": {
+      "size": 182,
+      "sha256": "63ffbe89f3e5519305a00b3b95ba58e72c37d9695281d7843c551d893645b22e"
+    },
+    ".pre-commit-config.yaml": {
+      "size": 753,
+      "sha256": "e2a39048caf6236d467dad8daea755e3c555fbf70c6c362162239adc30698134"
+    },
+    "LICENSE": {
+      "size": 1533,
+      "sha256": "a6d40bf320c8452d37c123614b6e25003bcf1e3291f51a5beb9b43c9c03640d7"
+    },
+    "pyproject.toml": {
+      "size": 5763,
+      "sha256": "1a7c2cdb05ffd8c1d3e19d89010f98193509ce01cb9bbd03d2a60596444b725e"
+    },
+    "README.md": {
+      "size": 5464,
+      "sha256": "c941ea233f0bbcdc77e268be3a452007feda82ac3ed102fd5ba99e8acf8c5ab9"
+    },
+    ".vscode/.gitignore": {
+      "size": 192,
+      "sha256": "573ba81bcb07f644e0a9abafab0c0ddda905092226d46ebb80a253708cc4be8f"
+    },
+    ".vscode/extensions.json": {
+      "size": 218,
+      "sha256": "60351cf33559e3171a82cae261fd6b1a1a6f1c4a63f64b3185dd5efac908421b"
+    },
+    ".vscode/tasks.json": {
+      "size": 223,
+      "sha256": "8ec7a8f0ce14639f126bb89bba12df6daa5f85a175ae3aaba795e6800d991a84"
+    },
+    ".vscode/tools/launch.template.json": {
+      "size": 1418,
+      "sha256": "28824203d7a88fafe860d082c37bd28a87e89f819d94f8dd40ad6f001c27eee9"
+    },
+    ".vscode/tools/settings.template.json": {
+      "size": 1017,
+      "sha256": "5e75b314ded598a22e1dec4ce0c15582a9d4f55fd0a42448dc26924153476d92"
+    },
+    "scripts/import_assets.py": {
+      "size": 5370,
+      "sha256": "e8d799bc0177498e09de3990804ee5933efc62bd04d8b6b5cb62a43c008eb903"
+    },
+    "scripts/list_envs.py": {
+      "size": 388,
+      "sha256": "e9a8719bd60470a570e912aba15a26f01f2ce80514edccccb5b0db1d0717e08b"
+    },
+    "src/TITA_Lab/__init__.py": {
+      "size": 248,
+      "sha256": "bb8fab68b29c8c6781519a07c9b9a8903b905ff4feca58b4e6f13ac62482e7c3"
+    },
+    "src/TITA_Lab/assets/tita.py": {
+      "size": 2475,
+      "sha256": "6e87cd2a5d13d6dc510a3c08f93b8d1c0d4c040caa72be1041fb5f90707b131b"
+    },
+    "src/TITA_Lab/assets/__init__.py": {
+      "size": 380,
+      "sha256": "3db55f806083e6093319e9af6560cea437b93ffb5dc2ffd3b99366761eec26d5"
+    },
+    "src/TITA_Lab/assets/data/.gitkeep": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "src/TITA_Lab/assets/data/robots/tita/usd/tita.usd": {
+      "size": 2039149,
+      "sha256": "aab0d9a5053d52fd211805070f3e92bacd1b213ab3a36cc02be91fda379d1887"
+    },
+    "src/TITA_Lab/learning/__init__.py": {
+      "size": 43,
+      "sha256": "f236e14c411ba378111214d5570b5554aaf54f2737f48018f755f1c9ebd62caf"
+    },
+    "src/TITA_Lab/learning/np3o/actor.py": {
+      "size": 5103,
+      "sha256": "d588889ef80a29dac89f00f095e6bac18ffccb6b835b311e681029be18347264"
+    },
+    "src/TITA_Lab/learning/np3o/env_wrapper.py": {
+      "size": 3676,
+      "sha256": "406231b08ab1735ffd62c9aee698952e6018a67afc31379b56ede58662aed5f0"
+    },
+    "src/TITA_Lab/learning/np3o/__init__.py": {
+      "size": 40,
+      "sha256": "19003e9c5495d2d92369abcec2c91640da59f982964aeacfa53499396d89be1a"
+    },
+    "src/TITA_Lab/tasks/__init__.py": {
+      "size": 331,
+      "sha256": "eb57bcd7c76de4096ffbf5bbca2e6ceb4f74085b83c9e2ec1e8d47610227ccef"
+    },
+    "src/TITA_Lab/tasks/velocity/actuators.py": {
+      "size": 2361,
+      "sha256": "1f400c8518eb11c7db1c90abf4aa49b9fa068c8766c21162b0a82449f91347d6"
+    },
+    "src/TITA_Lab/tasks/velocity/cost_manager.py": {
+      "size": 4111,
+      "sha256": "5805d2851f56cf66eab5364ea88717edff9c91f5f8956afe3e4334f5daa48021"
+    },
+    "src/TITA_Lab/tasks/velocity/observation_layout.py": {
+      "size": 965,
+      "sha256": "86a3c46541b306fe4ed3ed6dc02c3d682a38588689fac3a6322fe9307077503b"
+    },
+    "src/TITA_Lab/tasks/velocity/terrain_cfg.py": {
+      "size": 1622,
+      "sha256": "7ef10f1ebba3c0b677edd7d646cb27848fa8859e0d4b128bcf40c41d7a4a557a"
+    },
+    "src/TITA_Lab/tasks/velocity/tita_velocity_env.py": {
+      "size": 3629,
+      "sha256": "5f4602d923774c7e8776ae428de25f6d54ffbf1c4303840b6f884575c6bc5625"
+    },
+    "src/TITA_Lab/tasks/velocity/__init__.py": {
+      "size": 213,
+      "sha256": "a00c89834a48051555345ed0156a7d56dd6095884387faa6b5c2407ad247c38e"
+    },
+    "src/TITA_Lab/tasks/velocity/config/__init__.py": {
+      "size": 213,
+      "sha256": "a00c89834a48051555345ed0156a7d56dd6095884387faa6b5c2407ad247c38e"
+    },
+    "src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py": {
+      "size": 22499,
+      "sha256": "d4d67b8e803d5958c06d0b4d66f1ddbd401a63671a44a6b33871aae768ba3cad"
+    },
+    "src/TITA_Lab/tasks/velocity/config/TITA/__init__.py": {
+      "size": 640,
+      "sha256": "e4449e9117967a5e11113c978b5be080866072df16b7e18e7cd41b55ab74073e"
+    },
+    "src/TITA_Lab/tasks/velocity/config/TITA/agents/rsl_rl_ppo_cfg.py": {
+      "size": 1264,
+      "sha256": "e743ee612b3dddb1d9c8415cd55321fd08ee859a2f84dda764e7d6b82bf6c658"
+    },
+    "src/TITA_Lab/tasks/velocity/config/TITA/agents/__init__.py": {
+      "size": 234,
+      "sha256": "2a6a1d3878783524ac8f3760d39041b403eb55d712929a42524d052d129b1e31"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/actions.py": {
+      "size": 4916,
+      "sha256": "c2558ee39e727b714dc713f084317b22fa7b2338101c91b70b73417d66a8e906"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/commands.py": {
+      "size": 1653,
+      "sha256": "578da9839af394d81f7c2ad12c644df74754c35a8a9635e283178f7fdbd817ae"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/costs.py": {
+      "size": 5599,
+      "sha256": "a9f175e05c91fcb00f6381dc1e35a5a9245a28d82956d8ae5f85c49ac39a1da8"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/events.py": {
+      "size": 6077,
+      "sha256": "f3458efa61134d84c09fb627130ee4b3bbb1700798ecdb74fa51ee611aba5309"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/observations.py": {
+      "size": 7123,
+      "sha256": "fca07095125fbe28420dcde784582b9e438dd633d1c0f96432700fde47e32c87"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/observation_history.py": {
+      "size": 2785,
+      "sha256": "25efe85307b7b7d0ff7f84b92ea3e528e54fe35dc1d070860fa6c257a6b860e7"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/rewards.py": {
+      "size": 3977,
+      "sha256": "e903f0c4479ff44b24308f006a1449f436f751773c1817fe9aca417143aea58a"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/terminations.py": {
+      "size": 1446,
+      "sha256": "894ed4ed405cc27a9b26f68fba1a6819451fe8ae976e31722bc84c9063601266"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/__init__.py": {
+      "size": 338,
+      "sha256": "382e3603f88e6111d595e976d6024c881a353d3fac7067741c2d335b4d8013b0"
+    },
+    "src/TITA_Lab/tasks/velocity/mdp/__init__.pyi": {
+      "size": 1875,
+      "sha256": "45db86e4c660a6c82df99b5620453dbfba61ba7cd4005bcad898b1ce221cb2f9"
+    },
+    "tests/test_registration.py": {
+      "size": 1090,
+      "sha256": "f39286c623010a8f68507e3b2f4e8bd873a70ebd6e5a409a8cd6d455b517bfd2"
+    }
+  },
+  "new_manifest": {
+    ".gitattributes": {
+      "size": 335,
+      "sha256": "c455cb930a88f746cbab1f53b4dc9e3a546b3f1a1bfb71aec23560c565135696"
+    },
+    ".gitignore": {
+      "size": 182,
+      "sha256": "63ffbe89f3e5519305a00b3b95ba58e72c37d9695281d7843c551d893645b22e"
+    },
+    ".pre-commit-config.yaml": {
+      "size": 753,
+      "sha256": "e2a39048caf6236d467dad8daea755e3c555fbf70c6c362162239adc30698134"
+    },
+    "LICENSE": {
+      "size": 1533,
+      "sha256": "a6d40bf320c8452d37c123614b6e25003bcf1e3291f51a5beb9b43c9c03640d7"
+    },
+    "pyproject.toml": {
+      "size": 6018,
+      "sha256": "97f1194747315ae188538a116f0312fc0046c0957518acb301713f4b10eb8fa2"
+    },
+    "README.md": {
+      "size": 5465,
+      "sha256": "698fbbe79a59509ff9f9f39e8511e884f3585aaf1a123da5694ee355fd88afcf"
+    },
+    ".vscode/.gitignore": {
+      "size": 192,
+      "sha256": "573ba81bcb07f644e0a9abafab0c0ddda905092226d46ebb80a253708cc4be8f"
+    },
+    ".vscode/extensions.json": {
+      "size": 218,
+      "sha256": "60351cf33559e3171a82cae261fd6b1a1a6f1c4a63f64b3185dd5efac908421b"
+    },
+    ".vscode/tasks.json": {
+      "size": 223,
+      "sha256": "8ec7a8f0ce14639f126bb89bba12df6daa5f85a175ae3aaba795e6800d991a84"
+    },
+    ".vscode/tools/launch.template.json": {
+      "size": 1418,
+      "sha256": "28824203d7a88fafe860d082c37bd28a87e89f819d94f8dd40ad6f001c27eee9"
+    },
+    ".vscode/tools/settings.template.json": {
+      "size": 1017,
+      "sha256": "5e75b314ded598a22e1dec4ce0c15582a9d4f55fd0a42448dc26924153476d92"
+    },
+    "scripts/import_assets.py": {
+      "size": 5370,
+      "sha256": "e8d799bc0177498e09de3990804ee5933efc62bd04d8b6b5cb62a43c008eb903"
+    },
+    "scripts/list_envs.py": {
+      "size": 388,
+      "sha256": "e9a8719bd60470a570e912aba15a26f01f2ce80514edccccb5b0db1d0717e08b"
+    },
+    "src/Tita_Lab/__init__.py": {
+      "size": 248,
+      "sha256": "19174234759a517b639b82bad500a1cc6c97208dcc4549d42baea6a4310b8355"
+    },
+    "src/Tita_Lab/assets/tita.py": {
+      "size": 2475,
+      "sha256": "6e87cd2a5d13d6dc510a3c08f93b8d1c0d4c040caa72be1041fb5f90707b131b"
+    },
+    "src/Tita_Lab/assets/__init__.py": {
+      "size": 380,
+      "sha256": "3db55f806083e6093319e9af6560cea437b93ffb5dc2ffd3b99366761eec26d5"
+    },
+    "src/Tita_Lab/assets/data/.gitkeep": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "src/Tita_Lab/assets/data/robots/tita/usd/tita.usd": {
+      "size": 2039149,
+      "sha256": "aab0d9a5053d52fd211805070f3e92bacd1b213ab3a36cc02be91fda379d1887"
+    },
+    "src/Tita_Lab/learning/__init__.py": {
+      "size": 43,
+      "sha256": "f236e14c411ba378111214d5570b5554aaf54f2737f48018f755f1c9ebd62caf"
+    },
+    "src/Tita_Lab/learning/np3o/actor.py": {
+      "size": 5103,
+      "sha256": "d588889ef80a29dac89f00f095e6bac18ffccb6b835b311e681029be18347264"
+    },
+    "src/Tita_Lab/learning/np3o/env_wrapper.py": {
+      "size": 3676,
+      "sha256": "406231b08ab1735ffd62c9aee698952e6018a67afc31379b56ede58662aed5f0"
+    },
+    "src/Tita_Lab/learning/np3o/__init__.py": {
+      "size": 40,
+      "sha256": "19003e9c5495d2d92369abcec2c91640da59f982964aeacfa53499396d89be1a"
+    },
+    "src/Tita_Lab/tasks/__init__.py": {
+      "size": 331,
+      "sha256": "eb57bcd7c76de4096ffbf5bbca2e6ceb4f74085b83c9e2ec1e8d47610227ccef"
+    },
+    "src/Tita_Lab/tasks/velocity/actuators.py": {
+      "size": 2361,
+      "sha256": "1f400c8518eb11c7db1c90abf4aa49b9fa068c8766c21162b0a82449f91347d6"
+    },
+    "src/Tita_Lab/tasks/velocity/cost_manager.py": {
+      "size": 4111,
+      "sha256": "5805d2851f56cf66eab5364ea88717edff9c91f5f8956afe3e4334f5daa48021"
+    },
+    "src/Tita_Lab/tasks/velocity/observation_layout.py": {
+      "size": 965,
+      "sha256": "86a3c46541b306fe4ed3ed6dc02c3d682a38588689fac3a6322fe9307077503b"
+    },
+    "src/Tita_Lab/tasks/velocity/terrain_cfg.py": {
+      "size": 1622,
+      "sha256": "7ef10f1ebba3c0b677edd7d646cb27848fa8859e0d4b128bcf40c41d7a4a557a"
+    },
+    "src/Tita_Lab/tasks/velocity/tita_velocity_env.py": {
+      "size": 3629,
+      "sha256": "5f4602d923774c7e8776ae428de25f6d54ffbf1c4303840b6f884575c6bc5625"
+    },
+    "src/Tita_Lab/tasks/velocity/__init__.py": {
+      "size": 213,
+      "sha256": "a00c89834a48051555345ed0156a7d56dd6095884387faa6b5c2407ad247c38e"
+    },
+    "src/Tita_Lab/tasks/velocity/config/__init__.py": {
+      "size": 213,
+      "sha256": "a00c89834a48051555345ed0156a7d56dd6095884387faa6b5c2407ad247c38e"
+    },
+    "src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py": {
+      "size": 22499,
+      "sha256": "d4d67b8e803d5958c06d0b4d66f1ddbd401a63671a44a6b33871aae768ba3cad"
+    },
+    "src/Tita_Lab/tasks/velocity/config/Tita/__init__.py": {
+      "size": 614,
+      "sha256": "38e8428f3ca1257997219eed454773fbdcb3523cda3b32803e74e089ba73b90e"
+    },
+    "src/Tita_Lab/tasks/velocity/config/Tita/agents/rsl_rl_ppo_cfg.py": {
+      "size": 1264,
+      "sha256": "e743ee612b3dddb1d9c8415cd55321fd08ee859a2f84dda764e7d6b82bf6c658"
+    },
+    "src/Tita_Lab/tasks/velocity/config/Tita/agents/__init__.py": {
+      "size": 234,
+      "sha256": "2a6a1d3878783524ac8f3760d39041b403eb55d712929a42524d052d129b1e31"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/actions.py": {
+      "size": 4916,
+      "sha256": "c2558ee39e727b714dc713f084317b22fa7b2338101c91b70b73417d66a8e906"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/commands.py": {
+      "size": 1653,
+      "sha256": "578da9839af394d81f7c2ad12c644df74754c35a8a9635e283178f7fdbd817ae"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/costs.py": {
+      "size": 5599,
+      "sha256": "a9f175e05c91fcb00f6381dc1e35a5a9245a28d82956d8ae5f85c49ac39a1da8"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/events.py": {
+      "size": 6077,
+      "sha256": "f3458efa61134d84c09fb627130ee4b3bbb1700798ecdb74fa51ee611aba5309"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/observations.py": {
+      "size": 7123,
+      "sha256": "fca07095125fbe28420dcde784582b9e438dd633d1c0f96432700fde47e32c87"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/observation_history.py": {
+      "size": 2785,
+      "sha256": "25efe85307b7b7d0ff7f84b92ea3e528e54fe35dc1d070860fa6c257a6b860e7"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/rewards.py": {
+      "size": 3977,
+      "sha256": "e903f0c4479ff44b24308f006a1449f436f751773c1817fe9aca417143aea58a"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/terminations.py": {
+      "size": 1446,
+      "sha256": "894ed4ed405cc27a9b26f68fba1a6819451fe8ae976e31722bc84c9063601266"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/__init__.py": {
+      "size": 338,
+      "sha256": "382e3603f88e6111d595e976d6024c881a353d3fac7067741c2d335b4d8013b0"
+    },
+    "src/Tita_Lab/tasks/velocity/mdp/__init__.pyi": {
+      "size": 1875,
+      "sha256": "45db86e4c660a6c82df99b5620453dbfba61ba7cd4005bcad898b1ce221cb2f9"
+    },
+    "tests/test_registration.py": {
+      "size": 1090,
+      "sha256": "f39286c623010a8f68507e3b2f4e8bd873a70ebd6e5a409a8cd6d455b517bfd2"
+    }
+  },
+  "documentation_gate": "Not satisfied: source naming/registration/installation still require fixes. General documentation rewrite not started.",
+  "scope": "Existing project only; previously proposed actor interface script withdrawn; no new learning feature or script required; git metadata not inspected."
+}

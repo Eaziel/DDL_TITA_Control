@@ -1,73 +1,56 @@
-# TITA：Isaac Gym → Isaac Lab 3 迁移说明
+# TITA：Isaac Gym → Isaac Lab 3
 
-**内容纯 AI 生成，由人类要求生成，未经人类修改。**
+内容纯AI生成，由人类要求生成，未经人类修改。整理：2026-10-28。
 
-更新：2026-10-19。本文档记录旧任务的计算方法、Lab对应代码和迁移理由。当前仍沿用用户生成的 manager-based 外部工程。
+**目标：** 理解原任务计算，再把对应功能放进Lab合适的配置、MDP、环境扩展或训练模块。每章说明目标、Gym原行为、Lab落点和迁移理由。00表是来源/覆盖索引，不是强制教学顺序。
 
-## 从哪里读
+当前工程为Tita_Lab，使用IsaacLab-main＋IsaacSim6.2。环境、wrapper和actor按下面各章解释；完整NP3O尚未接通。本次只把已有actor与环境联调，随后暂停新增内容、阅读文档。安装和运行见[25](25_Lab_main与Sim62_入口和配置.md)，当前进度见[项目记忆](../../PROJECT_MEMORY.md)。
 
-| 文档 | 解决什么问题 |
+## 功能目录
+
+01—08是环境主体；12—21补控制/观测/cost/课程；22—24进入训练接口和动作网络。09、10、18、19含历史故障与修正，按需查证，不要求按编号通读。
+
+| 文档 | 内容 |
 | --- | --- |
-| [00 来源与覆盖索引](00_迁移映射索引.md) | 写一个Lab模块时，到Gym哪里找参数、计算和遗漏项 |
-| [01 Physics](01_physics.md) | 物理步长、decimation、substeps及PhysX参数如何对应 |
-| [02 Scene](02_scene迁移.md) | 地形、高度扫描、接触力是什么，怎样配置和读取 |
-| [03 Actions](03_actions迁移.md) | 八维动作如何经过缩放、腿PD与轮子前馈，成为力矩 |
-| [04 Commands](04_commands迁移.md) | 目标如何采样，航向误差如何变成目标转速 |
-| [05 Observations](05_observations迁移.md) | 当前33维如何取数、加噪、拼接，以及过去十帧如何保存和输出 |
-| [06 Events](06_events迁移.md) | 两项reset、两项质量/质心startup已保存；全局15 s推扰的函数/导出/配置方案待写 |
-| [07 Terminations](07_terminations迁移.md) | 机身接触与20 s超时怎样结束回合；已写入，静态/局部CPU检查通过 |
-| [08 Rewards](08_rewards迁移.md) | 10项及None功率接口/最终合成已写入；附普通项、时间缩放和裁剪动机问答，附类项生命周期与物理功率问答 |
+| [00 来源与覆盖](00_迁移映射索引.md) | 参数在哪里、行为在哪里、还有哪些缺口 |
+| [01 Physics](01_physics.md) | 物理步长、decimation、substeps与求解参数 |
+| [02 Scene](02_scene迁移.md) | 地形、187点高度扫描、接触力及各自用途 |
+| [03 Actions](03_actions迁移.md) | 八维动作、裁剪/FIR、PD/轮前馈、电机随机因子 |
+| [04 Commands](04_commands迁移.md) | 速度目标、航向反馈、重采样 |
+| [05 Observations](05_observations迁移.md) | 33维当前帧、噪声、过去十帧 |
+| [06 Events](06_events迁移.md) | 回合初值、启动时随机化、定时推扰 |
+| [07 Terminations](07_terminations迁移.md) | 机身接触失败与超时 |
+| [08 Rewards](08_rewards迁移.md) | 十项公式、跨步状态、最终分数 |
+| [09 阶段审查](09_阶段审查.md) | 历史：截止Kp/Kd因子的检查、错误与修正 |
+| [10 首次环境运行](10_首次环境运行.md) | 历史：父接口/执行器路径修正与首次真实运行 |
+| [11 剩余范围与训练接入](11_剩余范围与训练接入.md) | 环境剩余功能、进度估算、网络/NP3O/runner边界与路线 |
+| [12 动作延迟](12_动作延迟迁移.md) | 已写入并修正两处笔误；用具体数值解释配置、随机编号与目标保存 |
+| [13 训练观测](13_训练观测迁移.md) | 187维地形变换、30维动力学参数已写，当前代码CPU通过 |
+| [14 六维观测与训练布局](14_特权状态与观测布局.md) | 六维观测、reset/push前采样、586维拼接与裁剪已写，当前代码CPU通过 |
+| [15 Cost](15_cost迁移.md) | 三个关节判断已写；含cost/CMDP与软边界来源问答 |
+| [16 接触cost](16_接触cost迁移.md) | 两个轮接触判断及导出已写，当前五函数CPU对照通过 |
+| [17 六列cost输出](17_cost收集与加速度.md) | 六项函数、收集器及接线已写；编程结构与语法问答 |
+| [18 接线修正与真实运行](18_cost接线检查与首次运行.md) | 四处笔误已修；4环境200步真实输出通过，后续2200步检查 |
+| [19 碰撞对齐与诊断清理](19_碰撞模型对齐与诊断清理.md) | 四处额外碰撞已关闭；诊断打印/临时传感器已清理；cost断言保留，box替换跳过，保留可选步骤 |
+| [20 地形课程](20_地形课程迁移.md) | 已选GYM、课程已接线；用户确认课程项可见，长运行预算未附日志 |
+| [21 命令死区](21_命令死区迁移.md) | 实现、导出与cfg已保存，当前配置导入及class_type身份检查通过；原候选CPU数值对照通过，尚无新仿真日志 |
+| [22 训练环境接口](22_训练环境接口.md) | 当前wrapper的586列拼接、cost/done/timeout及日志传递；CPU接口检查通过 |
+| [23 动作网络前向](23_动作网络前向迁移.md) | 已写；当前文件CPU前向与旧分支差0，prediction_dim拼写已修正 |
+| [24 辅助学习损失](24_actor辅助学习损失.md) | 十状态预测与相关性辅助损失，源码方法名auxilary_loss，CPU数值/梯度对照通过 |
+| [25 项目入口与运行](25_Lab_main与Sim62_入口和配置.md) | 当前目录、包名、注册、editable安装及现有任务命令 |
+| [26 actor与环境联调](26_actor与环境联调.md) | 当前参考脚本、586列取数、前向交互与完成标准；由用户写入和运行 |
 
-**当前状态：基础观测/历史、TITA重置、结束条件、10项奖励及最终合成step均已写入。** 功率None接口、显式func=和slice注解已保存；step AST与此前CPU替身方案对应。当前文件核对与历史CPU/Ruff检查分别记录，尚未运行真实RL环境。
+PyTorch知识点阅读：[actor.py逐项解释](../../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/actor.py.md)。需要理解每个类、语法、API与数学过程时读这份；23/24章保留迁移操作主线。
 
-**当前下一步：每隔15 s扰动实际水平速度。** 基座质量/质心已保存并核对；新增任务函数将世界系vx/vy设为U(-1,1) m/s，通过全局interval Event调用。完整函数、.pyi导出、EventCfg配置及理由见[06第6节](06_events迁移.md#6-运动过程中每15秒扰动一次水平速度)。当前方案已有CPU替身/临时配置检查，尚未写入任务源码或运行真实环境。
+## 配置、框架、具体计算各负责什么
 
-00是查证与覆盖清单，不是固定教学顺序。每轮以一个完整功能为单位，按当前依赖推进。
-
-## Gym 与 Lab 的组织有什么不同
-
-旧 `envs/legged_robot.py` 同时负责创建仿真、创建机器人、推进物理、算力矩、更新命令、处理重置、计算观测/奖励/成本。参数则分散在继承配置与工具文件中。
-
-Lab 把通用执行过程放入环境类和manager，任务选择具体功能并填写参数：
-
-| 层次 | 本项目例子 | 负责什么 |
+| 层次 | 本项目例子 | 职责 |
 | --- | --- | --- |
-| 配置 | `VelocityEnvCfg`、各个Cfg、`TITA_CFG` | 选择对象、函数/类实现和参数，把任务组合起来 |
-| 执行 | `ManagerBasedRLEnv`、各manager、`InteractiveScene` | 创建对象，组织step/reset，调用具体计算 |
-| 具体计算与状态 | 官方/自定义MDP、ActionTerm、执行器、`ProprioHistory` | 取数或算数；需要跨步数据时保存状态 |
+| 配置 | env_cfg.py、TITA_CFG | 选择实现、对象、参数与触发时机 |
+| 框架 | ManagerBasedRLEnv、Manager、InteractiveScene | 建立实例，在step/reset中组织调用 |
+| 任务计算/状态 | MDP函数、TitaPDActuator、ProprioHistory | 计算具体数值，保存需要跨步使用的数据 |
+| 训练 | wrapper、actor及后续NP3O/runner | 整理交互数据、计算模型输出和损失、组织参数更新 |
 
-例如 `ObsTerm(func=mdp.base_ang_vel, scale=0.25)` 声明怎样得到一项观测；ObservationManager 运行时调用函数并缩放。cfg因此既有数值，也有实现入口，但不会替尚未实现的功能自动生成算法。
+例如ObsTerm选择取数函数和缩放参数；ObservationManager调用并拼接。十帧历史还需要真正的缓存与更新时机，不能只写一个cfg字段。代码量变少可能来自框架复用，是否覆盖完整仍按来源表和运行证据判断。
 
-TITA特有规则才补自定义代码。例如轮角屏蔽用一个MDP函数；当前历史方案用缓存类保存十帧，由 `TitaVelocityEnv` 控制更新与重置。这些文件共同完成观测的存储、更新与输出。
-
-## 每章怎样写和维护
-
-每项功能按同一条主线讲完：
-
-1. **Gym原来怎样做：** 给有效配置、关键原代码，解释输入、计算和输出。
-2. **Lab中怎样写：** 给具体代码与放置位置，标明已写入或待写方案。
-3. **为什么这样迁移：** 把两边公式、数据顺序和执行时机对应起来，说明现成API覆盖什么、自定义部分补什么。
-4. **还有什么差异：** 集中列未完成项及验证边界，最后附对照源码。
-
-正文按功能连续讲完：旧计算、Lab代码、对应理由、差异与验证。链接用于查证源码和深入实现。
-
-用户追问产生的补充放在主线与源码索引之后，以`Q：`、`A：`保存，Q保留用户原句。只有用户表示不知如何提问时，才整理问题并注明。正文保留理解当前功能必需的定义和计算；对话中途的澄清、编辑器提示、索引细节等进入问答，修改经过进入项目历史。要求保留的旧解释原文单独折叠，当前实现放在前面。
-
-当前状态与完整覆盖缺口放在[00](00_迁移映射索引.md#2-覆盖状态与已知差异)，检查范围和证据按功能记在各章。[按源码解释](../../code_explaination/README.md)用于查Python对象、索引和具体文件，并保留要求归档的历史原文。本地项目记忆与协作历史不纳入Git提交。
-
-用户负责写代码，助手在回复中直接给当前功能所需的代码、位置和连贯解释，并维护文档；不把先读文档作为继续学习的条件。助手不修改 `TITA_Lab/`。
-
-用户2026-10-18补充：适当将关联条目合并推进，让每轮有更多新内容；回复侧重必要代码和关键解释，文档继续按完整主线归档。
-
-## 版本与路径
-
-| 对象 | 当前记录 |
-| --- | --- |
-| Gym参考副本 | `/home/eaziel/Downloads/tita_rl-master`，无`.git`，不能确定上游提交 |
-| Isaac Lab | `/home/eaziel/IsaacLab`，`release/3.0.0`，`9ef05c8972634889968b332bfc4b80860789c3ff`；API按本地文件核对 |
-| 目标配置 | [TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py) |
-| 机器人配置 | [TITA_Lab/src/TITA_Lab/assets/tita.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/assets/tita.py) |
-| 当前任务名 | `TitaLab-Velocity-Tita` |
-
-用户报告 `scripts/import_assets.py` 已能运行、关节正常；助手未复跑。静态检查、独立CPU计算、仿真运行、训练复现分别记录，资产导入成功不代表RL任务已经通过。
-
+本地Gym为`/home/eaziel/Downloads/tita_rl-master`，Lab源码为`/home/eaziel/IsaacLab-main`。任务TitaLab-Velocity-Tita默认PhysX，2.5ms物理步、10ms策略步。API以本地实际源码为准，不读取Git来核实版本。协作规则见[AGENTS](../../AGENTS.md)，检查边界见[证据索引](../audits/README.md)。

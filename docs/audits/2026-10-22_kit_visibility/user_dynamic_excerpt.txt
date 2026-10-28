@@ -1,0 +1,8 @@
+用户2026-10-22提供的日志片段（不是完整运行日志）：
+
+2026-10-22T11:47:57Z [6,488ms] [Error] [omni.physx.tensors.plugin] CUDA driver shim call failed at /builds/omniverse/physics/omni/ovruntime/source/omni.physx.tensors/plugins/gpu/GpuArticulationView.cpp:623
+2026-10-22T11:47:57Z [6,488ms] [Error] [omni.physx.tensors.plugin] CUDA error: operation would make the legacy stream depend on a capturing blocking stream: /builds/omniverse/physics/omni/ovruntime/source/omni.physx.tensors/plugins/gpu/CudaKernels.cu: 534
+2026-10-22T11:47:57Z [6,488ms] [Error] [omni.physx.tensors.plugin] Failed to fetch DOF position attribute
+2026-10-22T11:47:57Z [6,489ms] [Warning] [isaaclab_physx.assets.articulation.actuator_control] Host Newton-actuator CUDA graph capture failed; using eager execution: Failed to get DOF positions from backend
+
+用户原话：有几个报错，不知道啥原因。这次也正常。

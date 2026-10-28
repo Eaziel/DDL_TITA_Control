@@ -1,0 +1,54 @@
+2026-10-28T04:05:19Z [8,124ms] [Warning] [rtx.neuraylib.plugin] [EntityResolver] FAILED  ::Z73file_3A::home::eaziel::isaacsim_assets::Assets::Isaac::ZCF_36_2E1::Isaac::IsaacLab::Materials::TilesMarbleSpiderWhiteBrickBondHoned::TilesMarbleSpiderWhiteBrickBondHoned  <--->  ::Z73file_3A::home::eaziel::isaacsim_assets::Assets::Isaac::ZCF_36_2E1::Isaac::IsaacLab::Materials::TilesMarbleSpiderWhiteBrickBondHoned::TilesMarbleSpiderWhiteBrickBondHoned  (NULL)
+2026-10-28T04:05:19Z [8,124ms] [Error] [rtx.neuraylib.plugin] [MDLC:COMPILER]   1.0   MDLC   comp error: C120 could not find module '::Z73file_3A::home::eaziel::isaacsim_assets::Assets::Isaac::ZCF_36_2E1::Isaac::IsaacLab::Materials::TilesMarbleSpiderWhiteBrickBondHoned::TilesMarbleSpiderWhiteBrickBondHoned' in module path
+2026-10-28T04:05:19Z [8,124ms] [Warning] [rtx.neuraylib.plugin] Loading MdlModule to DB (rtx_scope0) failed: ::Z73file_3A::home::eaziel::isaacsim_assets::Assets::Isaac::ZCF_36_2E1::Isaac::IsaacLab::Materials::TilesMarbleSpiderWhiteBrickBondHoned::TilesMarbleSpiderWhiteBrickBondHoned
+2026-10-28T04:05:19Z [8,125ms] [Warning] [rtx.neuraylib.plugin] Loading transaction committed (this thread). MdlModule is NOT in the DB (rtx_scope0): ::Z73file_3A::home::eaziel::isaacsim_assets::Assets::Isaac::ZCF_36_2E1::Isaac::IsaacLab::Materials::TilesMarbleSpiderWhiteBrickBondHoned::TilesMarbleSpiderWhiteBrickBondHoned
+2026-10-28T04:05:19Z [8,125ms] [Error] [omni.usd] USD_MDL: in LoadModule at line 349 of ../../source/plugins/omni.usdMdl/neuray.cpp -- 'rtx::neuraylib::MdlModuleId' for '/home/eaziel/isaacsim_assets/Assets/Isaac/6.1/Isaac/IsaacLab/Materials/TilesMarbleSpiderWhiteBrickBondHoned/TilesMarbleSpiderWhiteBrickBondHoned.mdl' is Invalid
+
+2026-10-28T04:05:19Z [8,125ms] [Warning] [omni.usdMdl] Neuray::LoadModule(/home/eaziel/isaacsim_assets/Assets/Isaac/6.1/Isaac/IsaacLab/Materials/TilesMarbleSpiderWhiteBrickBondHoned/TilesMarbleSpiderWhiteBrickBondHoned.mdl, file:/home/eaziel/isaacsim_assets/Assets/Isaac/6.1/Isaac/IsaacLab/Materials/TilesMarbleSpiderWhiteBrickBondHoned/TilesMarbleSpiderWhiteBrickBondHoned.mdl, 0) Done, success: 0
+2026-10-28T04:05:19Z [8,125ms] [Error] [omni.rtx.materials] Unable to find SdrShaderNode for prim: '/World/ground/terrain/visualMaterial/Shader' with identifier: '8103320433278817710<TilesMarbleSpiderWhiteBrickBondHoned><mdl>'.
+2026-10-28T04:05:20Z [8,273ms] [Error] [omni.rtx] Failed to request UJITSO build result for: /home/eaziel/isaacsim_assets/Assets/Isaac/6.1/Isaac/Materials/Textures/Skies/PolyHaven/kloofendal_43d_clear_puresky_4k.hdr:5
+2026-10-28T04:05:20Z [8,273ms] [Error] [rtx.scenedb] Failed to upload DomeLight texture /home/eaziel/isaacsim_assets/Assets/Isaac/6.1/Isaac/Materials/Textures/Skies/PolyHaven/kloofendal_43d_clear_puresky_4k.hdr
+2026-10-28T04:05:20Z [8,302ms] [Warning] [omni.usd] Unexpected reference count of 2 for UsdStage 'anon:0x62f0709838a0:World0.usd' while being closed in UsdContext (this may indicate it is still resident in memory).
+[INFO]: SimulationContext cleared
+Traceback (most recent call last):
+  File "/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/lib/python3.12/site-packages/gymnasium/envs/registration.py", line 735, in make
+    env = env_creator(**env_spec_kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab_old/TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py", line 44, in __init__
+    super().__init__(cfg=cfg, render_mode=render_mode, **kwargs)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_rl_env.py", line 79, in __init__
+    super().__init__(cfg=cfg)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py", line 125, in __init__
+    self._init_sim()
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py", line 197, in _init_sim
+    self.sim.reset()
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sim/simulation_context.py", line 759, in reset
+    self.physics_manager.reset(soft)
+  File "/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py", line 502, in reset
+    cls.raise_callback_exception_if_any()
+  File "/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py", line 654, in raise_callback_exception_if_any
+    raise exc
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/physics/physics_manager.py", line 604, in safe_callback_invoke
+    fn(*args)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/managers/manager_base.py", line 289, in _resolve_terms_callback
+    self._process_term_cfg_at_play(term_name, term_cfg)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/managers/manager_base.py", line 401, in _process_term_cfg_at_play
+    term_cfg.func = term_cfg.func(cfg=term_cfg, env=self._env)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab_old/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py", line 110, in __init__
+    if not issubclass(env.sim.physics_manager, PhysxManager):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen abc>", line 123, in __subclasscheck__
+TypeError: issubclass() arg 1 must be a class
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/app/sim_launcher.py", line 582, in launch_simulation
+    yield physics_cfg
+  File "/home/eaziel/IsaacLab/source/isaaclab_rl/isaaclab_rl/entrypoints/simple_agents.py", line 86, in run
+    with contextlib.closing(gym.make(args_cli.task, cfg=env_cfg)) as env:
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/lib/python3.12/site-packages/gymnasium/envs/registration.py", line 747, in make
+    raise type(e)(
+TypeError: issubclass() arg 1 must be a class was raised from the environment creator for TitaLab-Velocity-Tita with kwargs ({'env_cfg_entry_point': 'TITA_Lab.tasks.velocity.config.TITA.env_cfg:VelocityEnvCfg', 

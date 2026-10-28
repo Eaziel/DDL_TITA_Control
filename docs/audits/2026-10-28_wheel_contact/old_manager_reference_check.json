@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-28",
+  "interpreter": "/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/bin/python",
+  "actual_PhysxCfg_class_type_python_type": "isaaclab.utils.string.ResolvableString",
+  "actual_PhysxCfg_class_type_value": "isaaclab_physx.physics.physx_manager:PhysxManager",
+  "is_python_class": false,
+  "is_string": true,
+  "public_resolver_class_example_passed": true,
+  "scope": "Actual PhysxCfg and string_to_callable on collections:Counter only; no Kit or physics. Corrected source not run in physical environment."
+}

@@ -1,0 +1,14 @@
+{
+  "boundary": "Native authoring gate and control-selection methods with CPU stand-ins only; no simulation",
+  "saved_use_newton_actuators": true,
+  "physics_config": "PhysxCfg",
+  "True": {
+    "authoring": "Newton-native actuator execution does not support 'legs' (TitaPDActuatorCfg), 'wheels' (TitaPDActuatorCfg). Disable 'use_newton_actuators' or use a supported actuator config.",
+    "control_selection": "Newton-native actuator execution does not support 'legs' (TitaPDActuatorCfg), 'wheels' (TitaPDActuatorCfg). Disable 'use_newton_actuators' or use a supported actuator config."
+  },
+  "False": {
+    "authoring": "returned normally",
+    "control_native_groups": []
+  },
+  "candidate_validate_passed": true
+}

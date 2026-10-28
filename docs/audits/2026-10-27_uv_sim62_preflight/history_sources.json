@@ -1,0 +1,100 @@
+[
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T18-28-01-01a1778f-b13c-7113-8741-dffb59e03c9f_01a177c0-b869-7bc3-80c7-2538e28582e1.jsonl",
+    "line": 124,
+    "role": "user",
+    "time": "2026-10-26T10:40:53.041Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T18-28-01-01a1778f-b13c-7113-8741-dffb59e03c9f_01a177c0-b869-7bc3-80c7-2538e28582e1.jsonl",
+    "line": 143,
+    "role": "user",
+    "time": "2026-10-26T10:44:33.272Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T18-28-01-01a1778f-b13c-7113-8741-dffb59e03c9f_01a177c0-b869-7bc3-80c7-2538e28582e1.jsonl",
+    "line": 164,
+    "role": "user",
+    "time": "2026-10-26T10:46:47.224Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T18-28-01-01a1778f-b13c-7113-8741-dffb59e03c9f_01a177c0-b869-7bc3-80c7-2538e28582e1.jsonl",
+    "line": 238,
+    "role": "user",
+    "time": "2026-10-26T13:34:29.327Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T22-29-21-01a1778f-b13c-7113-8741-dffb59e03c9f_01a1789d-ac7f-7a23-b397-9192893c01ab.jsonl",
+    "line": 8,
+    "role": "user",
+    "time": "2026-10-26T14:29:24.006Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T22-29-21-01a1778f-b13c-7113-8741-dffb59e03c9f_01a1789d-ac7f-7a23-b397-9192893c01ab.jsonl",
+    "line": 66,
+    "role": "user",
+    "time": "2026-10-26T14:36:51.574Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T22-29-21-01a1778f-b13c-7113-8741-dffb59e03c9f_01a1789d-ac7f-7a23-b397-9192893c01ab.jsonl",
+    "line": 133,
+    "role": "user",
+    "time": "2026-10-26T14:41:28.372Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T22-29-21-01a1778f-b13c-7113-8741-dffb59e03c9f_01a1789d-ac7f-7a23-b397-9192893c01ab.jsonl",
+    "line": 172,
+    "role": "user",
+    "time": "2026-10-27T01:34:36.314Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/26/rollout-2026-10-26T22-29-21-01a1778f-b13c-7113-8741-dffb59e03c9f_01a1789d-ac7f-7a23-b397-9192893c01ab.jsonl",
+    "line": 199,
+    "role": "assistant",
+    "time": "2026-10-27T01:36:01.510Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/27/rollout-2026-10-27T09-41-10-01a1778f-b13c-7113-8741-dffb59e03c9f_01a17b04-bebb-7bd0-a7cd-daa6e1322da6.jsonl",
+    "line": 8,
+    "role": "user",
+    "time": "2026-10-27T01:41:13.584Z"
+  },
+  {
+    "os": "Windows11",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Windows11/sessions/2026/10/27/rollout-2026-10-27T09-41-10-01a1778f-b13c-7113-8741-dffb59e03c9f_01a17b04-bebb-7bd0-a7cd-daa6e1322da6.jsonl",
+    "line": 52,
+    "role": "assistant",
+    "time": "2026-10-27T01:43:01.546Z"
+  },
+  {
+    "os": "Ubuntu_2404",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Ubuntu_2404/sessions/2026/10/19/rollout-2026-10-19T17-27-51-01a13e75-e3a2-7c42-9406-ebd0ba8050d4_01a1537d-20ac-78c1-bb09-7707ee4f55db.jsonl",
+    "line": 620,
+    "role": "user",
+    "time": "2026-10-19T11:32:01.370Z"
+  },
+  {
+    "os": "Ubuntu_2404",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Ubuntu_2404/sessions/2026/10/26/rollout-2026-10-26T16-29-57-01a17754-9fb2-77b1-9a87-73e7b9ccce21.jsonl",
+    "line": 16,
+    "role": "user",
+    "time": "2026-10-26T08:29:59.075Z"
+  },
+  {
+    "os": "Ubuntu_2404",
+    "file": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/CodexData/Ubuntu_2404/sessions/2026/10/26/rollout-2026-10-26T16-36-57-01a17754-9fb2-77b1-9a87-73e7b9ccce21_01a1775b-0af6-7141-9948-0590d5399d74.jsonl",
+    "line": 39,
+    "role": "assistant",
+    "time": "2026-10-26T08:39:19.353Z"
+  }
+]

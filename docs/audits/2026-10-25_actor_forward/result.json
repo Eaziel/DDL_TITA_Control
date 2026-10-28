@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-25",
+  "torch": "2.12.0+cu130",
+  "device": "cpu",
+  "scope": "actor forward subset and one backward comparison; no optimizer, simulator, or training",
+  "source_sha256": {
+    "/home/eaziel/Downloads/tita_rl-master/modules/common_modules.py": "ac28e02852fe720287735acfbc10e31704f1de21eab3fa7ba5640bba675c8d79",
+    "/home/eaziel/Downloads/tita_rl-master/modules/actor_critic.py": "9c832e74fd5c51d8ad209e4d40aa7d4f770a42381307418c4cf3dcf699f85309",
+    "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/docs/audits/2026-10-25_actor_forward/proposal_actor.py": "e8242635a27f41947e0ffc5ae8be8fc60775da0d4550c61f250a5fd3228ac157"
+  },
+  "forward_max_abs_error_by_batch": {
+    "1": 0.0,
+    "4": 0.0,
+    "64": 0.0
+  },
+  "parameter_gradient_max_abs_error": 0.0,
+  "input_gradients_equal": true,
+  "input_tensors_unchanged": true,
+  "history_window": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    99
+  ],
+  "parameter_count": 533794,
+  "pending": [
+    "auxiliary prediction and Barlow loss",
+    "reward/cost critics",
+    "Gaussian sampling",
+    "NP3O and runner integration"
+  ]
+}

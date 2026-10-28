@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-25",
+  "evidence": "CPU tensors and a synthetic environment; no simulator or optimizer",
+  "proposal_sha256": "869683b57cacb87e325c21e9224a9e5204042f7244db804860216977ec45ba25",
+  "current_pack_sha256": "86a3c46541b306fe4ed3ed6dc02c3d682a38588689fac3a6322fe9307077503b",
+  "passed": [
+    "five actual observation groups packed at correct offsets and clipped without source mutation",
+    "constructor does not reset; reset and get_observations do not add a simulation step",
+    "six-result step; rewards and pre-collected costs pass through without rescaling",
+    "actions pass through without clipping or reordering",
+    "failure, timeout, and simultaneous flags merged; infinite-horizon timeout retained",
+    "finite-horizon timeout key omitted",
+    "episode log alias only on done; native extras keys unchanged",
+    "episode-length forwarding and close"
+  ],
+  "not_tested": [
+    "native simulation and automatic-reset physics",
+    "entire old runner compatibility or NP3O gradient update",
+    "old checkpoint feature/joint order compatibility"
+  ]
+}

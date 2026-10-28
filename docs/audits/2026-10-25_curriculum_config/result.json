@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-25",
+  "scope": "Read-only current-source AST and wiring inspection; no simulator or training",
+  "files": [
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py",
+      "sha256": "be40147d379ad3e69f08ef699d121d49fbdf7292c0421a01b36d4e3518e6a67c",
+      "ast_passed": true
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/__init__.pyi",
+      "sha256": "4ba843bb0e11957851db4ed33a4d2b1b4ca3d1bd80320fc4b699e17587035574",
+      "ast_passed": true
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/terrain_cfg.py",
+      "sha256": "7ef10f1ebba3c0b677edd7d646cb27848fa8859e0d4b128bcf40c41d7a4a557a",
+      "ast_passed": true
+    }
+  ],
+  "current_status": {
+    "gym_terrain_selected": true,
+    "native_curriculum_in_pyi_all_and_import": true,
+    "curriculum_cfg_term_present": true,
+    "env_curriculum_cfg_field_present": true,
+    "generator_flag_sync_present": true
+  },
+  "explanation": {
+    "self_in_post_init": "VelocityEnvCfg configuration instance, not a running TitaVelocityEnv",
+    "rhs_type": "Python bool from is not None; current configured term yields True",
+    "generator_flag_role": "Choose difficulty-ordered generation before runtime scene construction",
+    "curriculum_manager_compute_role": "Call registered curriculum functions and update stored curriculum state; implicit return None"
+  },
+  "next_user_run": {
+    "task": "TitaLab-Velocity-Tita",
+    "num_envs": 4,
+    "max_steps": 2200,
+    "device": "cuda:0",
+    "visualizer": "kit",
+    "physics": "isaacsim_physx",
+    "provided_not_executed": true
+  },
+  "limits": [
+    "No full task config instantiation or real lazy export invocation in this turn.",
+    "No new runtime log, no verified 20-second episode timeout or training success."
+  ]
+}

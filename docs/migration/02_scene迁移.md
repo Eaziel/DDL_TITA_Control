@@ -1,8 +1,8 @@
 # 02 Scene：地形、高度扫描和接触力
 
-更新：2026-10-18。下文的 Scene 配置已写入项目；几何路径和部分张量逻辑做过静态/CPU 检查，传感器尚未在 RL 环境中运行验证。
+**目标与结果：** 建立机器人附近的地面与传感器，使后续函数能读取187个地面高度和各刚体接触力。
 
-Scene 负责创建机器人、地面和传感器。**传感器提供数据；观测、奖励和终止函数决定怎样使用数据。** 本章先讲这些数据在旧任务中是什么，再说明 Lab 的对应实现。
+整理：2026-10-26。机器人、地形、射线与接触传感器已配置。当前Scene选择GYM_TITA_ROUGH_TERRAINS_CFG，课程已接线（见20）；LAB混合地形保留作对照。旧候选和“仍选LAB”的状态已过期。真实传感器口径与旧Gym仍有差异。 当前证据与整体状态以[项目记忆](../../PROJECT_MEMORY.md)为准。
 
 ## 1. Gym 原来怎么做
 
@@ -42,22 +42,25 @@ terrain_utils.pyramid_stairs_terrain(
 
 旧任务另创建轮子六维 force sensor，但当前 LeggedRobot 观测/奖励主要使用 `contact_forces`。不能把六维关节/力传感器与刚体接触力数组视为同一个接口。
 
-## 2. Lab 中怎样写
+## 2. Lab中怎样写
 
-当前 [env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py) 的 Scene 如下，省略原注释：
+[env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py)中的场景配置：
 
 ```python
 @configclass
 class VelocitySceneCfg(InteractiveSceneCfg):
+    """Configuration for a tita scene."""
+
+    # ground terrain
     terrain = TerrainImporterCfg(
         prim_path="/World/ground",
         terrain_type="generator",
-        terrain_generator=ROUGH_TERRAINS_CFG,
+        terrain_generator=terrain_cfg.GYM_TITA_ROUGH_TERRAINS_CFG,
         max_init_terrain_level=5,
         collision_group=-1,
         physics_material=PhysxRigidBodyMaterialCfg(
-            friction_combine_mode="multiply",
-            restitution_combine_mode="multiply",
+            friction_combine_mode="average",
+            restitution_combine_mode="average",
             static_friction=1.0,
             dynamic_friction=1.0,
             restitution=0.0,
@@ -70,11 +73,36 @@ class VelocitySceneCfg(InteractiveSceneCfg):
         debug_vis=False,
     )
 
+    # robot
     robot: ArticulationCfg = TITA_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
-    robot.spawn.activate_contact_sensors = True
 
+    robot.spawn = cast(sim_utils.UsdFileCfg, robot.spawn)
+
+    robot.spawn.activate_contact_sensors = True
+    robot.spawn.physics_material = terrain.physics_material.copy()
+
+    robot.actuators = {
+        "legs": TitaPDActuatorCfg(
+            joint_names_expr=["joint_.*_leg_[123]"],
+            stiffness=40.0,
+            damping=1.0,
+            actuator_effort_limit=60.0,
+            joint_effort_limit=60.0,
+        ),
+        "wheels": TitaPDActuatorCfg(
+            joint_names_expr=["joint_.*_leg_4"],
+            stiffness=0.0,
+            damping=0.5,
+            actuator_effort_limit=15.0,
+            joint_effort_limit=15.0,
+            scale_effort_with_kp=True,
+        ),
+    }
+
+    # sensors: the concrete implementation is selected automatically from the active physics backend;
+    # backend-specific fields such as ``global_world_only`` are ignored by the backends that do not use them
     height_scanner = RayCasterCfg(
-        prim_path="{ENV_REGEX_NS}/Robot/Geometry/base_link/height_scanner",
+        prim_path="{ENV_REGEX_NS}/Robot/Geometry/base_link",
         update_period=0.01,
         offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
         ray_alignment="yaw",
@@ -87,13 +115,10 @@ class VelocitySceneCfg(InteractiveSceneCfg):
         mesh_prim_paths=["/World/ground"],
         global_world_only=True,
     )
+    # 接触力
+    contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/[^/]*", history_length=3, track_air_time=True)
 
-    contact_forces = ContactSensorCfg(
-        prim_path="{ENV_REGEX_NS}/Robot/[^/]*",
-        history_length=3,
-        track_air_time=True,
-    )
-
+    # lights
     sky_light = AssetBaseCfg(
         prim_path="/World/skyLight",
         spawn=sim_utils.DomeLightCfg(
@@ -103,19 +128,67 @@ class VelocitySceneCfg(InteractiveSceneCfg):
     )
 ```
 
-这段代码使用当前文件已有的导入。`VelocityEnvCfg` 再通过 `scene: VelocitySceneCfg = VelocitySceneCfg(num_envs=4096, env_spacing=4.0)` 把它交给环境。
+`VelocityEnvCfg.scene`把这份配置交给InteractiveScene；字段名是运行时取对象的键。`cast`只提供类型信息，仍指向同一个spawn对象。
 
-`InteractiveScene` 根据配置创建并登记对象，因此无需再写 Gym 的环境/actor 创建循环。`{ENV_REGEX_NS}` 展开到各个环境的路径；`/World/ground` 则是共享地形。Python 字段 `robot`、`height_scanner`、`contact_forces` 是运行时取对象的键。
+### 2.1 ROUGH_TERRAINS_CFG具体生成了什么
+
+2026-10-22用户看到Kit地形后追问来源。当前入口是env_cfg.py第21行导入、第80行引用；它启用了Lab提供的整套通用地形，而非本项目已经迁完的TITA专用地形。
+
+```python
+from isaaclab.terrains.config.rough import ROUGH_TERRAINS_CFG
+# VelocitySceneCfg.terrain中：
+terrain_generator=ROUGH_TERRAINS_CFG
+```
+
+真实配置位于/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/terrains/config/rough.py。sub_terrains包含：
+
+| key | 生成形状 | 当前随机抽样权重 |
+| --- | --- | --- |
+| pyramid_stairs | 向中心升高的金字塔台阶 | 0.2 |
+| pyramid_stairs_inv | 向中心降低的倒金字塔台阶 | 0.2 |
+| boxes | 方块格栅地形 | 0.2 |
+| random_rough | 随机凹凸高度场 | 0.2 |
+| hf_pyramid_slope | 正金字塔坡面 | 0.1 |
+| hf_pyramid_slope_inv | 倒金字塔坡面 | 0.1 |
+
+size=(8,8)表示每块8×8米，num_rows=10、num_cols=20让生成器建立200块并拼成一张大网格，主体约80×160米，外面还有border_width=20米的边界。num_envs只改机器人环境数量，不改这200块地形。platform_width给台阶/坡面中央留出平区，例如台阶3米、坡面2米；用户看到的平顶凸起可能来自这类中央平台，具体哪一块尚无画面证据。
+
+当前TerrainGeneratorCfg.curriculum默认False，日志也打印Generating terrains randomly；每块按权重选类型并抽难度，不是当前已有地形课程。max_init_terrain_level=5控制出生时可选择的地形行索引0至5，不能据此认定启用了课程。physics_material决定接触材质，visual_material决定外观；形状来自生成器和sub_terrains。
+
+地形在环境创建阶段生成，此后zero_agent或random_agent提供动作，两项配置分别决定地面和控制输入。旧TITA utils/terrain.py第118—121行当前实际只调用正/负金字塔台阶，其他分支已注释，所以本项目通用ROUGH与旧任务并未对齐；后续应建立项目自己的地形配置，不能将引用通用预设视为地形迁移完成。
+
+### 2.2 已采用的TITA正/负台阶配置
+
+两套配置已经放在`tasks/velocity/terrain_cfg.py`：`LAB_TITA_ROUGH_TERRAINS_CFG`保留官方混合地形，`GYM_TITA_ROUGH_TERRAINS_CFG`采用旧任务实际的正/负台阶。当前Scene选择后者。
+
+TITA方案包含10行×20列，每块8×8m；前十列向下，后十列向上。阶宽0.61m、平台参数3m、阶高幅值范围(0.025,0.115)m。名义难度 $d\in[0,1]$ 对应：
+
+$$
+h_{step}(d)=\pm(0.025+0.09d)\ \mathrm{m}.
+$$
+
+完整配置、离散化和目录理由见[terrain_cfg.py解释](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/terrain_cfg.py.md)，本章不再重复整份定义。当前导入与选择为：
+
+```python
+from ... import terrain_cfg
+
+# 位于VelocitySceneCfg的TerrainImporterCfg中。
+terrain_generator=terrain_cfg.GYM_TITA_ROUGH_TERRAINS_CFG,
+```
+
+Hf生成器先算高度数组，再转网格；当前terrain_type仍为generator。生成器curriculum控制地图难度按行排列，CurriculumCfg另负责每回合升降级；两部分均已接入，见[20](20_地形课程迁移.md)。CPU配置/小地图证据不等于完整地形课程的真实长运行。
 
 ## 3. 为什么地形这样迁移
 
-`TerrainImporterCfg` 负责将地形放入场景并提供出生原点，`terrain_generator` 决定具体生成什么形状。当前 `ROUGH_TERRAINS_CFG` 是 Lab 通用混合地形，**尚未对应旧 TITA 实际的正/负台阶分布**。
+`TerrainImporterCfg` 负责将地形放入场景并提供出生原点，`terrain_generator` 决定具体生成什么形状。此前的`ROUGH_TERRAINS_CFG`是Lab通用混合地形；当前选择已改为TITA正/负台阶。官方混合方案保留作对照。
 
-`max_init_terrain_level=5` 是出生难度限制相关配置，不会自动实现训练中的升降级规则。地形生成、初始难度选择、Curriculum 更新是三个相关环节，仍需分别迁移。当前通用 ROUGH 的生成器 curriculum 默认关闭。
+`max_init_terrain_level=5` 是出生难度限制相关配置，不会自动实现训练中的升降级规则。地形生成、初始难度选择、Curriculum更新是三个相关环节；当前三者均已配置，真实升降级长运行仍待验证。
 
-物理材质与视觉材质也分开：前者决定摩擦、恢复系数等接触参数，后者决定外观。当前静/动摩擦均为1，恢复系数为0；这些固定值不代表已迁入旧材质随机化。
+物理材质与视觉材质也分开：前者决定摩擦、恢复系数等接触参数，后者决定外观。当前静/动摩擦均为1，恢复系数为0；地面保持固定，机器人随后由startup Event随机化，详见06。
 
-`restitution=0` 保留旧固定地面值，这也是 Lab 通用材质的默认值。两个接触材质怎样合成，另外由 combine mode 决定；选中 multiply 时相乘，模式冲突时还受 PhysX 优先级规则影响。
+`restitution=0` 保留旧固定地面值，这也是 Lab 通用材质的默认值。当前双方均用average合成；机器人随机化后，接触对系数为mu_pair=(mu_robot+1)/2、e_pair=e_robot/2。旧Gym恢复合成未做二进制复现。
+
+材质类、Scene配置与startup已接通，当前代码见上；完整采样与时机见[06 Events](06_events迁移.md)。
 
 本章使用的PhysX材质类为`isaaclab_physx.sim.spawners.materials.PhysxRigidBodyMaterialCfg`。
 
@@ -141,8 +214,7 @@ Lab 的计算过程是：
 
 | 参数 | 当前含义 |
 | --- | --- |
-| `prim_path` | 在真实机身刚体 `Geometry/base_link` 下创建扫描坐标节点 |
-| 路径末尾 `/height_scanner` | 新建的普通 Xform 名称，无质量、无碰撞；默认 SensorFrameCfg 负责创建 |
+| `prim_path` | 绑定已有Geometry/base_link，提供机身位姿 |
 | `offset.pos=(0,0,20)` | 射线起点抬高20 m，便于从地形上方向下求交；不抬高机器人 |
 | `ray_alignment="yaw"` | 网格跟随位置与航向，忽略滚转/俯仰造成的扫描平面倾斜 |
 | `size=[1.6,1.0]`、`resolution=0.1` | x 从-0.8到0.8、y 从-0.5到0.5，含端点，共17×11条射线 |
@@ -152,7 +224,7 @@ Lab 的计算过程是：
 | `debug_vis=False` | 不显示调试交点，计算仍保留 |
 | `global_world_only=True` | Newton 使用的字段，当前 PhysX 忽略 |
 
-扫描节点可以是新建的子节点，但它的机身祖先必须存在。当前 PhysX 实现通过刚体祖先跟踪位姿，因此要按 TITA 的实际 USD 层级填写路径。
+当前PhysX按已有prim及其刚体祖先跟踪位姿。RayCasterCfg不配置spawn字段，prim_path直接绑定已有base_link；真实射线命中数值未单独核实。原子节点未生成的问题保留在[09 F1](09_阶段审查.md#f1-扫描器子节点没有创建阻断初始化)。
 
 ### 4.3 射线命中点与最终高度观测不是同一个量
 
@@ -185,7 +257,7 @@ heights = torch.clip(
 
 PhysX 根据几何、运动状态、摩擦等参数求解接触。`activate_contact_sensors=True` 给机器人刚体开启接触报告；`ContactSensorCfg` 再指定读取范围和缓冲方式。传感器本身不额外制造接触力。
 
-当前 PhysX 接触传感器会递归筛选所选子树中启用报告的刚体，并建立逐刚体 view，因此可以处理 TITA 的嵌套刚体。实际绑定数量和顺序仍待运行确认。
+当前 PhysX 接触传感器会递归筛选所选子树中启用报告的刚体，并建立逐刚体 view，因此可以处理 TITA 的嵌套刚体。首次环境已创建传感器；逐体力值与接触效果仍待真实运行检查。
 
 配置与读取的关系是：
 
@@ -215,7 +287,15 @@ _w：用世界坐标表示
 
 聚合发生在同一身体、同一采样时刻；不把整台机器人合成一个力，也不对历史求和。向量可能互相抵消，聚合后也无法还原每个接触点的位置和受力。
 
-它只报告法向分量，不包含轮地切向摩擦。这不表示 PhysX 没有求解摩擦。旧兼容属性 `net_forces_w` 在当前后端也返回法向量并给出兼容警告，不能按名字理解成完整接触反力。
+`net_normal_forces_w`报告法向分量。PhysX同时求解切向摩擦，Sim6.2的`net_forces_w`提供法向力与摩擦力的向量和。本任务显式读取法向字段，保持奖励、终止和cost的既定物理量。
+
+若刚体 b 在接触点 k 受到大小 $f^N_{b,k}$、方向 $\mathbf n_{b,k}^{w}$ 的法向力，则接口表达的是：
+
+$$
+\mathbf F_b^w=\sum_{k\in\mathcal C_b}f^N_{b,k}\mathbf n_{b,k}^w.
+$$
+
+这是先对向量相加。一般 $\lVert\sum_k\mathbf F_k\rVert_2\ne\sum_k\lVert\mathbf F_k\rVert_2$，因此“合力的范数”与“各接触点力大小之和”不是同一个量。这里公式不加入切向摩擦分量。
 
 ### 5.3 形状、历史与判据
 
@@ -231,25 +311,21 @@ _w：用世界坐标表示
 
 接触传感器默认 `update_period=0`，按物理步调度；正历史长度保留物理步采样。这里3帧力历史，不是旧任务100帧接触状态缓冲。底层读取接触报告使用2.5 ms物理步长。
 
-`track_air_time=True` 开启力阈值判定与计时。当前 PhysX 默认按合力范数超过1 N判断接触；旧 TITA 按轮子 `Fz>1 N`，再与上一策略帧状态取 OR，并按策略周期计时。侧墙接触时范数可以非零而Fz为0，因此这两种判据及时间窗口需要另行对齐。
+`track_air_time=True` 开启力阈值判定与计时。当前PhysX默认按聚合法向力范数超过1 N判断接触；旧 TITA 按轮子 `Fz>1 N`，再与上一策略帧状态取 OR，并按策略周期计时。侧墙接触时范数可以非零而Fz为0，因此这两种判据及时间窗口需要另行对齐。
 
-## 6. 当前迁移到哪里
+## 6. 当前状态
 
-当前已配置机器人、固定材质、地形导入、187点扫描、全身接触报告与灯光。此前做过 USD 路径/刚体数量静态检查，以及实际网格生成函数的CPU点数与顺序检查；没有验证传感器成功初始化或真实读数。
-
-尚未完成：旧台阶地形与课程、策略高度任务特征及旧接触计时。当前高度/小腿碰撞奖励已在08章接入并静态/局部CPU核对，尚未运行；碰撞读取入口已统一为明确的法向力属性。机身当前接触力终止已在[07章](07_terminations迁移.md)接入，尚未运行。Lab 已有 `height_scan`、`undesired_contacts`、`illegal_contact` 等函数，但其默认偏置、力范数和历史最大值窗口必须与旧公式分别核对。
-
-数据接入顺序是：Scene创建传感器，MDP函数读取或处理数据，ObservationsCfg、RewardsCfg、TerminationsCfg选择相应函数。本章不讨论用户暂缓的真机接触力来源。
+TITA台阶、两种传感器与课程已配置。四处额外碰撞已关闭；接触诊断和用户运行结果见07/19。当前射线与旧高度格、法向力与旧合接触力仍有口径差异，真实逐点数值及训练效果未验证。
 
 ## 7. 对照源码
 
 | 要查什么 | Gym | Lab |
 | --- | --- | --- |
-| 创建场景与地形 | [create_sim](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:843)、[实际台阶](/home/eaziel/Downloads/tita_rl-master/utils/terrain.py:78) | [官方 Scene 例子](/home/eaziel/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/core/velocity/velocity_env_cfg.py:81)、[InteractiveSceneCfg](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/scene/interactive_scene_cfg.py:22) |
-| 高度点与查询 | [_init_height_points / _get_heights](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1035) | [RayCasterCfg](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sensors/ray_caster/ray_caster_cfg.py:25)、[ray_hits_w](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sensors/ray_caster/ray_caster_data.py:58)、[新建扫描节点](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sim/spawners/sensors/sensors.py:204) |
-| 高度的用途 | [高度观测](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:379)、[高度奖励](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1165)、[模型取数](/home/eaziel/Downloads/tita_rl-master/modules/actor_critic.py:764) | [height_scan](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/observations.py:281) |
-| 接触绑定与输出 | [接触状态计算](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:436) | [ContactSensorCfg](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sensors/contact_sensor/contact_sensor_cfg.py:19)、[PhysX 绑定](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py:351)、[输出数据类](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor_data.py:74) |
-| 接触奖励/终止 | [奖励函数起点](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1153)、[check_termination](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:699) | [undesired_contacts](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/rewards.py:293)、[illegal_contact](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/terminations.py:174) |
+| 创建场景与地形 | [create_sim](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:843)、[实际台阶](/home/eaziel/Downloads/tita_rl-master/utils/terrain.py:78) | [官方 Scene 例子](/home/eaziel/IsaacLab-main/source/isaaclab_tasks/isaaclab_tasks/core/velocity/velocity_env_cfg.py)、[InteractiveSceneCfg](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/scene/interactive_scene_cfg.py) |
+| 高度点与查询 | [_init_height_points / _get_heights](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1035) | [RayCasterCfg](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/sensors/ray_caster/ray_caster_cfg.py)、[ray_hits_w](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/sensors/ray_caster/ray_caster_data.py)、[SensorFrame生成函数（当前未被调用）](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/sim/spawners/sensors/sensors.py) |
+| 高度的用途 | [高度观测](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:379)、[高度奖励](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1165)、[模型取数](/home/eaziel/Downloads/tita_rl-master/modules/actor_critic.py:764) | [height_scan](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/observations.py) |
+| 接触绑定与输出 | [接触状态计算](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:436) | [ContactSensorCfg](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/sensors/contact_sensor/contact_sensor_cfg.py)、[PhysX 绑定](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py)、[输出数据类](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor_data.py) |
+| 接触奖励/终止 | [奖励函数起点](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1153)、[check_termination](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:699) | [undesired_contacts](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/rewards.py)、[illegal_contact](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/terminations.py) |
 
 ## 补充问答
 
@@ -259,7 +335,7 @@ _w：用世界坐标表示
 
 > 为啥有这个？？不应该吧
 
-**A：** 你问的是路径末尾的`/height_scanner`。它是传感器创建的普通坐标节点，源USD只需存在真实机身父节点`Geometry/base_link`。当前SensorFrameCfg负责创建这个节点；PhysX传感器沿祖先找到机身刚体并跟踪它的位姿。第4.2节的参数表给出了完整路径含义。
+**A：** 这个后缀原本用于表示机身下的独立扫描坐标节点。此前我按RayCasterCfg的说明认为默认SensorFrameCfg会创建它；本次追到实际PhysX构造链后确认没有执行spawn，因此这段旧解释有误。当前直接绑定已有Geometry/base_link，不配置spawn字段；offset定义射线起点偏移。具体复现与修正见[09 F1](09_阶段审查.md#f1-扫描器子节点没有创建阻断初始化)。
 
 **Q：**
 
@@ -341,7 +417,7 @@ forces_w形状为(N,B,3)：环境数、传感器身体数、世界系xyz力分�
 
 奖励中的body_names=["left_leg_3","right_leg_3"]从这份按身体分开的数据中选择两条腿，得到(N,2,3)，再对xyz求模、比较0.1 N并计数。例：左腿(0,0,20) N、右腿(0,0,0) N，得到[True,False]→[1.0,0.0]→1。轮子没有被选择，正常轮地接触不会计入这项。
 
-当前未过滤接触对象，所以这个力可能来自地形、其他物体或允许发生的自碰撞；选择小腿不等于限定“小腿—地面”这一对。当前保存奖励函数已经使用上面的明确法向力属性。本地net_forces_w兼容getter会发警告再回退到该属性；当前直接读取避免了这层兼容行为。源码依据：[PhysX传感器绑定](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py:351)、[读取报告](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py:547)、[兼容getter](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sensors/contact_sensor/base_contact_sensor_data.py:196)。当前说明与CPU检查不代表传感器已经运行。
+当前未过滤接触对象，所以这个力可能来自地形、其他物体或允许发生的自碰撞；选择小腿不等于限定“小腿—地面”这一对。当前保存奖励函数已经使用上面的明确法向力属性。Sim6.2的net_forces_w提供含摩擦的总力；当前代码明确读取net_normal_forces_w。源码依据：[PhysX传感器绑定](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py)、[读取报告](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py)、[兼容getter](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/sensors/contact_sensor/base_contact_sensor_data.py)。接口和CPU检查不代表接触力数值已逐项校验。
 
 **Q：**
 
@@ -353,6 +429,12 @@ forces_w形状为(N,B,3)：环境数、传感器身体数、世界系xyz力分�
 
 **A：** 接触力和速度接口后缀的_w都表示world，说明向量按世界坐标轴给出分量。net_normal_forces_w的最后3列是世界系Fx/Fy/Fz；normal说明接触面的法向分量，_w说明用哪套坐标轴表达，二者分别说明力的种类和坐标系。
 
-世界坐标轴不跟着机器人转；机身坐标轴跟着机器人转。接触力先按世界系表达，仍然可以通过坐标旋转转换到机身系表达。速度接口root_vel_w使用相同命名约定；其中角速度分量曾简写为wx/wy/wz，那个w是在代写角速度符号ω，不是world后缀。详细例子见[events.py问答](../../code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py.md#补充问答)。
+世界坐标轴不跟着机器人转；机身坐标轴跟着机器人转。接触力先按世界系表达，仍然可以通过坐标旋转转换到机身系表达。速度接口root_vel_w使用相同命名约定；其中角速度分量曾简写为wx/wy/wz，那个w是在代写角速度符号ω，不是world后缀。详细例子见[events.py问答](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md#补充问答)。
 
-[返回迁移入口](README.md) · [查看来源与覆盖表](00_迁移映射索引.md)
+**Q：** 还有，我想问，我的地形怎么是这样？哪些代码让我的地形变成了，凹凸不平+凹离散金字塔+凸离散金字塔+凸平原这样的？？我看到这个地形，第一反应是不安，因为又是一个我不知道代码的东西！！！！
+
+**A：** 来源就是Scene中的terrain_generator=ROUGH_TERRAINS_CFG。这个引用接入了官方六种子地形的整套预设；具体类型、权重和地图大小见正文2.1。此前引用时没有展开说明这套预设包含什么，是讲解缺口。它仍未对齐旧TITA的两类台阶，属于00清单中的地形待迁移项。
+
+**Q：** 不对，我没换RANDOM AGENT啊！回答地形吧，我去试试
+
+**A：** 该次日志确实是zero_agent。“随机生成地形”说的是TerrainGenerator选择地图块的方式；agent选择则决定动作。换agent不是出现这套地形的原因。

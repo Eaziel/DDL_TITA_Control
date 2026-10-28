@@ -1,0 +1,72 @@
+{
+  "scope": "Current saved action/state/push/reset/group/packing code; other groups are fixture constants",
+  "boundary": "Native ManagerBasedRLEnv.step/_reset_idx plus native managers on CPU; simulator/state/reset setters are stand-ins; no AppLauncher or training",
+  "runs": [
+    {
+      "policy_steps": 12,
+      "physics_steps": 48,
+      "partial_resets": [
+        2,
+        5,
+        9
+      ],
+      "push_steps": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "max_error_against_gym_six_after_wheel_permutation": 0.0,
+      "repeated_reads": true,
+      "final_obs_enabled": false,
+      "packing_shape": [
+        4,
+        586
+      ],
+      "internal_policy_unclipped": true
+    },
+    {
+      "policy_steps": 12,
+      "physics_steps": 48,
+      "partial_resets": [
+        2,
+        5,
+        9
+      ],
+      "push_steps": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "max_error_against_gym_six_after_wheel_permutation": 0.0,
+      "repeated_reads": true,
+      "final_obs_enabled": true,
+      "packing_shape": [
+        4,
+        586
+      ],
+      "internal_policy_unclipped": true
+    }
+  ],
+  "definitions": {
+    "state_order": [
+      "vx*2",
+      "vy*2",
+      "vz*2",
+      "left_contact-.5",
+      "right_contact-.5",
+      "lag_slot/(L-1)"
+    ],
+    "contact_threshold": "world normal Fz > 1 N; previous raw contact OR current raw contact",
+    "cold_start": "zero velocity and false contacts until first completed policy step",
+    "reset": "keep contact memory and sampled state, matching the old auto-reset rule"
+  },
+  "limits": [
+    "normal contact force differs from Gym total force",
+    "task joint/contact order still needs conversion for old checkpoints",
+    "initial/public reset differs from Gym reset that executes an extra zero-action step",
+    "future state-changing events must preserve this sampling boundary"
+  ],
+  "invalid_shape_rejected": true
+}

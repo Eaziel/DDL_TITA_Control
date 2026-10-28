@@ -1,0 +1,389 @@
+{
+  "date": "2026-10-23",
+  "scope": "Read-only XML/pxr/config-source audit; no assistant simulation, no asset modifications",
+  "old_urdf": "/home/eaziel/Downloads/tita_rl-master/resources/tita/urdf/tita_description.urdf",
+  "current_usd": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/assets/data/robots/tita/usd/tita.usd",
+  "old_collision_count": 5,
+  "current_collision_count": 9,
+  "old_links": [
+    {
+      "link": "base_link",
+      "collisions": [
+        {
+          "shape": "box",
+          "parameters": {
+            "size": "0.47 0.3 0.19"
+          },
+          "origin": {
+            "rpy": "0 0 0",
+            "xyz": "0 0 0.017"
+          }
+        }
+      ]
+    },
+    {
+      "link": "spad",
+      "collisions": []
+    },
+    {
+      "link": "spad1",
+      "collisions": []
+    },
+    {
+      "link": "left_camera",
+      "collisions": []
+    },
+    {
+      "link": "ch201",
+      "collisions": []
+    },
+    {
+      "link": "right_camara",
+      "collisions": []
+    },
+    {
+      "link": "left_leg_1",
+      "collisions": []
+    },
+    {
+      "link": "left_leg_2",
+      "collisions": []
+    },
+    {
+      "link": "left_leg_3",
+      "collisions": [
+        {
+          "shape": "box",
+          "parameters": {
+            "size": "0.2 0.07 0.05"
+          },
+          "origin": {
+            "rpy": "0 0 -0.131",
+            "xyz": "0.1 0.021 -0.002"
+          }
+        }
+      ]
+    },
+    {
+      "link": "left_leg_4",
+      "collisions": [
+        {
+          "shape": "cylinder",
+          "parameters": {
+            "length": "0.034",
+            "radius": "0.0925"
+          },
+          "origin": {
+            "rpy": "0 0 0",
+            "xyz": "0 0 0"
+          }
+        }
+      ]
+    },
+    {
+      "link": "right_leg_1",
+      "collisions": []
+    },
+    {
+      "link": "right_leg_2",
+      "collisions": []
+    },
+    {
+      "link": "right_leg_3",
+      "collisions": [
+        {
+          "shape": "box",
+          "parameters": {
+            "size": "0.2 0.07 0.05"
+          },
+          "origin": {
+            "rpy": "0 0 -0.131",
+            "xyz": "0.1 0.021 -0.002"
+          }
+        }
+      ]
+    },
+    {
+      "link": "right_leg_4",
+      "collisions": [
+        {
+          "shape": "cylinder",
+          "parameters": {
+            "length": "0.034",
+            "radius": "0.0925"
+          },
+          "origin": {
+            "rpy": "0 0 0",
+            "xyz": "0 0 0"
+          }
+        }
+      ]
+    }
+  ],
+  "current_colliders": [
+    {
+      "body": "left_leg_4",
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_4/left_leg_4/left_leg_4",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.18595606088638303,
+        0.18587650358676908,
+        0.03666000161319971
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        -5.551115123125783e-17,
+        0.0,
+        -0.003530000802129507
+      ]
+    },
+    {
+      "body": "left_leg_3",
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_3/left_leg_3",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.2687824964523315,
+        0.09485291317105292,
+        0.05250000208616257
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        0.095603734254837,
+        0.017433820292353623,
+        0.007249999791383743
+      ]
+    },
+    {
+      "body": "left_leg_2",
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_2/left_leg_2",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.2787283435463905,
+        0.12594044953584668,
+        0.11589999683201313
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        0.07641799375414848,
+        2.4046748876571655e-05,
+        -0.02944999840110535
+      ]
+    },
+    {
+      "body": "left_leg_1",
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_1/left_leg_1",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.10189999639987946,
+        0.12627677619457245,
+        0.16840000450611115
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        0.01224999874830246,
+        0.0,
+        0.0018000006675720215
+      ]
+    },
+    {
+      "body": "right_leg_4",
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_4/right_leg_4/right_leg_4",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.18595606088638303,
+        0.18587650358676908,
+        0.03666000161319971
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        0.0,
+        0.0,
+        0.0035300008021294516
+      ]
+    },
+    {
+      "body": "right_leg_3",
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_3/right_leg_3",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.2687824964523315,
+        0.09485291317105292,
+        0.05250000208616257
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        0.09560373425483702,
+        0.017433820292353623,
+        -0.007249999791383771
+      ]
+    },
+    {
+      "body": "right_leg_2",
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_2/right_leg_2",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.2787283435463905,
+        0.12594044953584668,
+        0.11589999683201313
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        0.07641799375414848,
+        2.4046748876571655e-05,
+        0.02944999840110535
+      ]
+    },
+    {
+      "body": "right_leg_1",
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_1/right_leg_1",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexHull",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.10189999639987946,
+        0.12627677619457245,
+        0.16840000450611115
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        -0.01224999874830246,
+        0.0,
+        0.0018000006675720215
+      ]
+    },
+    {
+      "body": "base_link",
+      "path": "/TITARobot/Geometry/base_link/base_link/base_link",
+      "type": "Mesh",
+      "collision_enabled": true,
+      "approximation": "convexDecomposition",
+      "source_mesh_bounds_size_in_body_frame": [
+        0.5041629076004028,
+        0.312385231256485,
+        0.20674999058246613
+      ],
+      "source_mesh_bounds_center_in_body_frame": [
+        -0.006426095962524414,
+        -2.086162567138672e-07,
+        0.023024998605251312
+      ]
+    }
+  ],
+  "mass_api_authorship": [
+    {
+      "body": "base_link",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "left_leg_1",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "left_leg_2",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "left_leg_3",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "left_leg_4",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "right_leg_1",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "right_leg_2",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "right_leg_3",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    },
+    {
+      "body": "right_leg_4",
+      "mass_authored": true,
+      "com_authored": true,
+      "diagonal_inertia_authored": true
+    }
+  ],
+  "source_bounds_limit": "Bounds are source mesh extents, not cooked PhysX convex-decomposition shapes or a penetration test",
+  "user_self_collision_off_run": {
+    "reported_improved": true,
+    "cfg_enabled_self_collisions_false_read_verified": true,
+    "two_logged_resets_steps": [
+      62,
+      84
+    ],
+    "two_logged_reset_causes": [
+      "base_contact",
+      "base_contact"
+    ],
+    "two_logged_force_triples_total_terrain_other_N": [
+      [
+        5862.564,
+        5862.564,
+        0.0
+      ],
+      [
+        348.297,
+        348.297,
+        0.0
+      ]
+    ],
+    "policy_counter_200_logged": true,
+    "normal_context_cleanup_logged": true,
+    "one_step_resets_in_provided_excerpt": 0,
+    "actual_command_not_in_excerpt": true,
+    "training_validated": false
+  },
+  "next_candidate": {
+    "goal": "Align collision presence with legacy URDF before replacing collider geometries",
+    "disable_existing_collider_patterns": [
+      "/Geometry/base_link/[^/]+_leg_1/[^/]+_leg_1/[^/]+_leg_1",
+      "/Geometry/base_link/[^/]+_leg_1/[^/]+_leg_2/[^/]+_leg_2/[^/]+_leg_2"
+    ],
+    "matches": [
+      "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_2/left_leg_2",
+      "/TITARobot/Geometry/base_link/left_leg_1/left_leg_1/left_leg_1",
+      "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_2/right_leg_2",
+      "/TITARobot/Geometry/base_link/right_leg_1/right_leg_1/right_leg_1"
+    ],
+    "matched_body_names": [
+      "left_leg_2",
+      "left_leg_1",
+      "right_leg_2",
+      "right_leg_1"
+    ],
+    "restore_enabled_self_collisions": true,
+    "core_cfg_available": "isaaclab.sim.UsdPhysicsCollisionCfg(collision_enabled=False)",
+    "pattern_match_validation": "Exactly four existing collider meshes; no other collider matched",
+    "runtime_verified": false
+  },
+  "pending_geometry_alignment": "base box size/origin, leg3 boxes size/origin/rotation, wheels cylinders; no exact colliding pair identified",
+  "collision_count_limit": "5 active URDF collision elements versus 9 USD CollisionAPI mesh prims. PhysX cooked shape count, especially for convex decomposition, was not queried."
+}

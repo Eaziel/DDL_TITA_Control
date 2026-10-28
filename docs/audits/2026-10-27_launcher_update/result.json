@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-27",
+  "backup": "/home/eaziel/.local/share/isaacsim-launcher-backups/20261027_155007",
+  "files": {
+    "/home/eaziel/.local/share/isaacsim-launcher/env.sh": {
+      "sha256": "82abb8df2d26e73b2895148f471027f02fb9b4fa52d1478d8f7e08ed84561d55",
+      "content": "# Enter the shared Isaac Sim / Isaac Lab environment.\n\n# 清除当前终端继承的Conda激活状态，再进入独立venv。\nif declare -F conda >/dev/null; then\n    while [[ -n \"${CONDA_PREFIX:-}\" ]]; do\n        conda deactivate || return 1\n    done\nfi\n\nexport UV_PROJECT_ENVIRONMENT=\"$HOME/my_venvs/lab3_sim62/.venv\"\nif [[ ! -f \"$UV_PROJECT_ENVIRONMENT/bin/activate\" ]]; then\n    printf 'venv activation script not found: %s\\n' \"$UV_PROJECT_ENVIRONMENT/bin/activate\" >&2\n    return 1\nfi\nsource \"$UV_PROJECT_ENVIRONMENT/bin/activate\" || return 1\ncd \"$HOME/IsaacLab-main\" || return 1\n"
+    },
+    "/home/eaziel/.local/share/isaacsim-launcher/rc.sh": {
+      "sha256": "0089cfcadbdc54c47f587adc0b9e897e5beb15c7336b6d32ab2be7c5d663bb8d",
+      "content": "# Start Isaac Sim and keep the configured interactive shell afterward.\n\n# 保留用户的终端设置；进入新环境后不再新开或替换shell。\n[[ ! -f \"$HOME/.bashrc\" ]] || source \"$HOME/.bashrc\"\nsource \"$HOME/.local/share/isaacsim-launcher/env.sh\" || return 1\n\nhistory -s 'isaacsim isaacsim.exp.full'\nisaacsim isaacsim.exp.full || printf '\\nIsaac Sim exited with status %s. The terminal remains available.\\n' \"$?\"\n"
+    },
+    "/home/eaziel/.local/share/applications/isaacsim.desktop": {
+      "sha256": "8c254a0756709c6e9976163e1a9c3f83e983b538dc414f0df3a9b11825f32136",
+      "content": "[Desktop Entry]\nVersion=1.0\nType=Application\nName=Isaac Sim 6.2\nComment=启动Sim 6.2；退出后保留lab3_sim62环境与IsaacLab-main工作目录\nExec=gnome-terminal --title=\"Isaac Sim 6.2\" --working-directory=/home/eaziel/IsaacLab-main -- bash --rcfile /home/eaziel/.local/share/isaacsim-launcher/rc.sh -i\nIcon=/home/eaziel/my_venvs/lab3_sim62/.venv/lib/python3.12/site-packages/isaacsim/exts/isaacsim.simulation_app/data/omni.isaac.sim.png\nTerminal=false\nCategories=Development;Science;\nStartupWMClass=IsaacSim\n"
+    },
+    "/home/eaziel/Desktop/isaacsim.desktop": {
+      "sha256": "8c254a0756709c6e9976163e1a9c3f83e983b538dc414f0df3a9b11825f32136",
+      "content": "[Desktop Entry]\nVersion=1.0\nType=Application\nName=Isaac Sim 6.2\nComment=启动Sim 6.2；退出后保留lab3_sim62环境与IsaacLab-main工作目录\nExec=gnome-terminal --title=\"Isaac Sim 6.2\" --working-directory=/home/eaziel/IsaacLab-main -- bash --rcfile /home/eaziel/.local/share/isaacsim-launcher/rc.sh -i\nIcon=/home/eaziel/my_venvs/lab3_sim62/.venv/lib/python3.12/site-packages/isaacsim/exts/isaacsim.simulation_app/data/omni.isaac.sim.png\nTerminal=false\nCategories=Development;Science;\nStartupWMClass=IsaacSim\n"
+    }
+  },
+  "removed": "/home/eaziel/.local/share/applications/IsaacSim.desktop",
+  "alias": "goisaac-6.2",
+  "simulator_launch": "not run; installed rc tested using shell function stub returning 7",
+  "checked_shell": {
+    "python": "/home/eaziel/my_venvs/lab3_sim62/.venv/bin/python",
+    "venv": "/home/eaziel/my_venvs/lab3_sim62/.venv",
+    "cwd": "/home/eaziel/IsaacLab-main",
+    "conda_prefix": null
+  },
+  "desktop_validation": "passed",
+  "desktop_database_update": "passed",
+  "desktop_trust_set": "gio exit 0; GUI double-click not tested"
+}

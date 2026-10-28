@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-25",
+  "scope": "Proposal-only native command generator with CPU robot/registry fixtures; no source edits or simulation",
+  "old_reference": "Final AugAssign AST extracted from original LeggedRobot._resample_commands",
+  "boundary_cases": [
+    {
+      "xy": [
+        0.0,
+        0.0
+      ],
+      "result_xy": [
+        0.0,
+        0.0
+      ],
+      "passed": true
+    },
+    {
+      "xy": [
+        0.12,
+        0.09
+      ],
+      "result_xy": [
+        0.0,
+        0.0
+      ],
+      "passed": true
+    },
+    {
+      "xy": [
+        0.15,
+        0.15
+      ],
+      "result_xy": [
+        0.15000000596046448,
+        0.15000000596046448
+      ],
+      "passed": true
+    },
+    {
+      "xy": [
+        0.2,
+        0.0
+      ],
+      "result_xy": [
+        0.0,
+        0.0
+      ],
+      "passed": true
+    },
+    {
+      "xy": [
+        -0.12,
+        0.09
+      ],
+      "result_xy": [
+        -0.0,
+        0.0
+      ],
+      "passed": true
+    },
+    {
+      "xy": [
+        0.2001,
+        0.0
+      ],
+      "result_xy": [
+        0.20010000467300415,
+        0.0
+      ],
+      "passed": true
+    }
+  ],
+  "native_parent_and_child_full_reset": true,
+  "partial_reset_unselected_unchanged": true,
+  "parent_heading_and_angular_velocity_preserved": true,
+  "native_timer_and_command_counters_preserved_1002_steps": true,
+  "observed_native_resample_steps": [
+    1000
+  ],
+  "num_envs": 128,
+  "command_shape": [
+    128,
+    3
+  ],
+  "cfg_validate": true,
+  "proposal_ast": true,
+  "source_implemented": false,
+  "known_limits": [
+    "Old-vs-Lab random draw streams and callback timing are not made identical.",
+    "Native float-countdown scheduling retained; resampling was observed at step 1000 in this CPU run. Reward/command callback order is not aligned to old Gym by this change.",
+    "Physics state/visualization registry are CPU fixtures; no real scene or training validation."
+  ],
+  "execution_note": "Tool process emitted Warp CUDA initialization error 100; native CPU checks completed exit 0, with no GPU or simulation execution."
+}

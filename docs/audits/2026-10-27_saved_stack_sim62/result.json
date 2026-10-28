@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-27",
+  "python": "/home/eaziel/my_venvs/lab3_sim62/.venv/bin/python",
+  "torch": "2.11.0+cu130",
+  "boundary": "Actual saved code on CPU; wrapper environment state is synthetic; no Kit, physics, optimizer, or training.",
+  "current_fir_trace": [
+    8.0,
+    2.0,
+    80.0,
+    -60.0
+  ],
+  "current_fir_grouped": {
+    "max_target_error": 0.0,
+    "max_action_rate_error": 0.015625,
+    "all_action_rates_zero": false
+  },
+  "current_wrapper_checks_passed": true,
+  "actual_wrapper_cost_attribute": "num_cost",
+  "actor_checks_passed": true,
+  "actual_auxiliary_method": "auxilary_loss",
+  "source_sha256": {
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/actions.py": "c2558ee39e727b714dc713f084317b22fa7b2338101c91b70b73417d66a8e906",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/observations.py": "fca07095125fbe28420dcde784582b9e438dd633d1c0f96432700fde47e32c87",
+    "TITA_Lab/src/TITA_Lab/learning/np3o/env_wrapper.py": "406231b08ab1735ffd62c9aee698952e6018a67afc31379b56ede58662aed5f0",
+    "TITA_Lab/src/TITA_Lab/learning/np3o/actor.py": "d588889ef80a29dac89f00f095e6bac18ffccb6b835b311e681029be18347264",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/observation_layout.py": "86a3c46541b306fe4ed3ed6dc02c3d682a38588689fac3a6322fe9307077503b"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-27",
+  "scope": "Current document links/format/math preservation; existing source hash and full actor/wrapper excerpt comparison. No Sim or training.",
+  "local_links_checked": 556,
+  "missing_local_links": [],
+  "unbalanced_fences": [],
+  "withdrawn_task_references_in_active_docs": [],
+  "display_math_blocks_preserved": 62,
+  "changed_math_docs": [],
+  "source_files_unchanged": 32,
+  "changed_source_files": [],
+  "full_source_excerpt_ast_matches": {
+    "actor": true,
+    "env_wrapper": true
+  }
+}

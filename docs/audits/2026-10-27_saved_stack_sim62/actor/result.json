@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "torch": "2.11.0+cu130",
+  "device": "cpu",
+  "scope": "saved actor and saved auxiliary-loss body; random tensor forward/backward, no optimizer or simulator",
+  "source_sha256": {
+    "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/learning/np3o/actor.py": "d588889ef80a29dac89f00f095e6bac18ffccb6b835b311e681029be18347264",
+    "/home/eaziel/Downloads/tita_rl-master/modules/common_modules.py": "ac28e02852fe720287735acfbc10e31704f1de21eab3fa7ba5640bba675c8d79",
+    "/home/eaziel/Downloads/tita_rl-master/modules/actor_critic.py": "9c832e74fd5c51d8ad209e4d40aa7d4f770a42381307418c4cf3dcf699f85309"
+  },
+  "actual_method_name": "auxilary_loss",
+  "method_name_matches_planned_interface": false,
+  "arithmetic_checks_passed": true,
+  "forward_max_abs_error": {
+    "1": 0.0,
+    "4": 0.0,
+    "64": 0.0
+  },
+  "auxiliary_loss_max_abs_error": {
+    "4": 3.814697265625e-06,
+    "32": 0.0
+  },
+  "parameter_gradient_max_abs_error": {
+    "4": 0.0,
+    "32": 0.0
+  },
+  "input_gradient_max_abs_error": {
+    "4": 0.0,
+    "32": 0.0
+  },
+  "batchnorm_buffers_equal": true,
+  "both_history_windows_correct": true,
+  "comparison_tolerance": {
+    "rtol": 1e-05,
+    "atol": 1e-05
+  },
+  "user_source_modified": false,
+  "reused_check": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/docs/audits/2026-10-26_saved_actor/check_saved_actor.py"
+}

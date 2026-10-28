@@ -1,0 +1,42 @@
+{
+  "scope": "CPU action buffers, actual new Lab JointAction parent, actual reward function; no environment construction or physics.",
+  "python": "/home/eaziel/my_venvs/lab3_sim62/.venv/bin/python",
+  "source_sha256": "f0fa0c1b4e31eb3338eccbeafd98a3688df6f4cbbe33a65248de53e78d782903",
+  "source_method_before": "def process_actions(self, actions: torch.Tensor) -> None:\n\n        self.previous_clipped_actions.copy_(self.clipped_actions)\n        self.clipped_actions.copy_(actions.clamp(-self.cfg.raw_clip, self.cfg.raw_clip))\n\n        # c_t=clip(a_t, ±100)，u_t=0.2*c_(t-1)+0.8*c_t。\n        \"\"\"Update filtered joint commands from policy actions.\"\"\"\n\n        self.previous_clipped_actions.copy_(self.clipped_actions)\n        self.clipped_actions.copy_(actions.clamp(-self.cfg.raw_clip, self.cfg.raw_clip))\n\n        # c_t=clip(a_t, ±100)，u_t=0.2*c_(t-1)+0.8*c_t。\n        # 保存的是上一裁剪动作c_(t-1)，因此是两点FIR（Finite Impulse Response，有限脉冲响应），\n        # 不是递归EMA（Exponential Moving Average，指数移动平均）：u_t = α * u_{t-1} + (1-α) * c_t\n        previous_weight = self.cfg.previous_weight\n        filtered = previous_weight * self.previous_clipped_actions + (1.0 - previous_weight) * self.clipped_actions\n\n        super().process_actions(filtered)\n        self._raw_actions.copy_(actions)",
+  "candidate_change": "Remove only the first two duplicated copy_ statements in memory.",
+  "inputs": [
+    10.0,
+    0.0,
+    200.0,
+    -200.0
+  ],
+  "expected_filtered": [
+    8.0,
+    2.0,
+    80.0,
+    -60.0
+  ],
+  "current_filtered": [
+    10.0,
+    0.0,
+    100.0,
+    -100.0
+  ],
+  "candidate_filtered": [
+    8.0,
+    2.0,
+    80.0,
+    -60.0
+  ],
+  "grouped_current": {
+    "max_target_error": 200.0,
+    "max_action_rate_error": 186777.96875,
+    "all_action_rates_zero": true
+  },
+  "grouped_candidate": {
+    "max_target_error": 0.0,
+    "max_action_rate_error": 0.015625,
+    "all_action_rates_zero": false
+  },
+  "source_unchanged": true
+}

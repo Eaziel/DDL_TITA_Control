@@ -1,0 +1,17 @@
+{
+  "scope": "Current five saved cost functions, CPU state/sensor stand-ins",
+  "environments": 64,
+  "max_errors_against_gym": {
+    "joint_position_limit_cost": 0.0,
+    "joint_effort_limit_cost": 0.0,
+    "joint_velocity_limit_cost": 0.0,
+    "wheel_contact_force_cost": 0.0,
+    "wheel_stumble_cost": 0.0
+  },
+  "force_threshold_equality_and_zero_and_unselected_bodies": true,
+  "stumble_ratio_equality_negative_vertical_and_zero": true,
+  "current_pyi_names_missing_from_current_cost_module": [],
+  "required_export_name": "joint_effort_limit_cost",
+  "physics_force_limit": "Normal contact forces in Lab differ from total contact forces in old Gym; same vector inputs only",
+  "simulation_or_training_started": false
+}

@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-22",
+  "evidence": "User-pasted terminal log; assistant did not execute simulation",
+  "task": "TitaLab-Velocity-Tita",
+  "physics": "isaacsim_physx",
+  "device": "cuda:0",
+  "num_envs": 4,
+  "max_steps": 200,
+  "physics_dt_s": 0.0025,
+  "policy_dt_s": 0.01,
+  "simulated_duration_s": 2.0,
+  "seed": null,
+  "observations": {
+    "policy": 33,
+    "history": 330,
+    "scan": 187,
+    "dynamics": 30,
+    "privileged_state": 6
+  },
+  "action_dimension": 8,
+  "cost_terms": [
+    "acc_smoothness",
+    "dof_vel_limits",
+    "feet_contact_forces",
+    "pos_limit",
+    "stumble",
+    "torque_limit"
+  ],
+  "cost_shapes": [
+    [
+      4,
+      6
+    ],
+    [
+      4,
+      6
+    ]
+  ],
+  "print_policy_steps_from_current_source": [
+    1,
+    200
+  ],
+  "env0_cost_samples": [
+    [
+      0.09465301036834717,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "all_step_assertions_in_current_source": [
+    "shape (N,6)",
+    "all finite",
+    "all nonnegative"
+  ],
+  "assertion_failure_or_traceback_in_log": false,
+  "normal_cleanup_and_shell_prompt_return": true,
+  "four_source_corrections_read_only_confirmed": true,
+  "not_established": [
+    "number of automatic resets",
+    "terminal-step costs versus reset state",
+    "15 s push execution",
+    "20 s episode timeout",
+    "old Gym physical parity",
+    "balancing or training success"
+  ]
+}

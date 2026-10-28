@@ -1,10 +1,28 @@
 # run_sim.py 代码解释
 
+**阅读目标：** 理解独立非RL脚本怎样把采样的材质参数分配到机器人并写入物理后端；它不代表RL任务事件已经运行。
+
+> 本页为独立非RL脚本的既有解释，不属于本次RL迁移计算审查；源码未改。
+
 解释的文件目录：`/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_non_RL/scripts/`。
 
 解释的文件：[run_sim.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_non_RL/scripts/run_sim.py)。
 
 原解释日期：2026-10-15；文档整理：2026-10-18。本页按“源码→创建随机桶→按环境取值→广播材质→写入后端”的顺序保留原解释。它对应非RL独立脚本，当前RL环境的随机化状态见项目记忆。本次未修改脚本或运行仿真。
+
+## 当前环境和运行入口
+
+当前脚本使用IsaacLab-main与Sim6.2的兼容AppLauncher入口。它仍能调用现有物理接口；改用launch_simulation属于可选维护，不在本文自动替换代码。
+
+当前USD路径是`TITA_non_RL/assets/tita.usd`，按终端工作目录解析。保留源码时，由用户从项目根目录启动：
+
+```bash
+source "$HOME/my_venvs/lab3_sim62/.venv/bin/activate"
+cd /mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR
+python TITA_non_RL/scripts/run_sim.py --num_envs 1 --device cuda:0 --viz kit
+```
+
+若希望从任意目录启动，__file__路径改法见[代码检查清单](../../../docs/当前代码检查与修改清单.md)。本轮没有运行该脚本。
 
 ## 摩擦与恢复系数随机化
 

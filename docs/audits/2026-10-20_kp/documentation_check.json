@@ -1,0 +1,30 @@
+{
+  "files": 38,
+  "current_lines": 5232,
+  "fence_errors": [],
+  "broken_links": [],
+  "broken_anchors": [],
+  "lost_questions": [],
+  "verbatim_history": {
+    "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py.md": true,
+    "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py.md": true,
+    "assets/tita.py.md": true
+  },
+  "migration_lines": {
+    "00_迁移映射索引.md": 84,
+    "01_physics.md": 206,
+    "02_scene迁移.md": 378,
+    "03_actions迁移.md": 309,
+    "04_commands迁移.md": 293,
+    "05_observations迁移.md": 233,
+    "06_events迁移.md": 250,
+    "07_terminations迁移.md": 160,
+    "08_rewards迁移.md": 426,
+    "09_阶段审查.md": 238,
+    "README.md": 42
+  },
+  "assistant_source_writes": false,
+  "git_accessed": false,
+  "raw_project_history_preserved": true,
+  "stage_result": {}
+}

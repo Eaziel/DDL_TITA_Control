@@ -1,0 +1,735 @@
+{
+  "date": "2026-10-28",
+  "scope": "Document hashes, exact question blocks and display-math hashes before editing.",
+  "documents": {
+    "AGENTS.md": {
+      "sha256": "47f7ad9f03d91d37a628b4f1ced00c6a1a01a160f8c8c6d8633bf5fc8c4368fa",
+      "math": [],
+      "questions": []
+    },
+    "PROJECT_MEMORY.md": {
+      "sha256": "5294ed583170cbf5d442788304ed9031ee6f3ad0ff185e2567b43e91435c0dec",
+      "math": [],
+      "questions": []
+    },
+    "README.md": {
+      "sha256": "e251751ba456c4ff34a61f9b6449f6e525de8134a08d9c6142f802496ceff2b4",
+      "math": [],
+      "questions": []
+    },
+    "docs/PROJECT_HISTORY.md": {
+      "sha256": "649d117c970cacb9185753db1e963189c2aacd0e851ba45698dde61c0481906b",
+      "math": [],
+      "questions": []
+    },
+    "docs/README.md": {
+      "sha256": "d4e8e1da6ece2a5a2135a920215a492b79d7c525ae4f82edb6b613a3f46083eb",
+      "math": [],
+      "questions": []
+    },
+    "docs/USD_CHECK_2026-10-15.md": {
+      "sha256": "965750f98db29888735ccea22fa56f418e7833ecccc7fe25d2d1ec89a2e94e28",
+      "math": [],
+      "questions": []
+    },
+    "docs/开源协议说明.md": {
+      "sha256": "d80f0cf46b51d4c62e12ba4eb30216913b1292c23492c9f4c8c79a1a9a69d46f",
+      "math": [],
+      "questions": [
+        "**Q：** 对了，我发现我git选的开源协议是apache2,但nv文件头都是BSD-3-Clause，可以改git仓库的开源协议吗？"
+      ]
+    },
+    "docs/新对话续接提示词.md": {
+      "sha256": "0ff7505811111b3450e89fe8de9593f21a2a3c58daf9424f7470674d782ccd98",
+      "math": [],
+      "questions": []
+    },
+    "docs/新版IsaacLab与IsaacSim安装教程_Ubuntu_uv.md": {
+      "sha256": "bd097dddfea4a0a6b4091fdb6f7550659303e3eadba809ab310787ed5cd09e4c",
+      "math": [],
+      "questions": []
+    },
+    "docs/训练流程与Wrapper入门.md": {
+      "sha256": "b98128df77c85cda172916d17b8d9e9fe8da71e09b144a631df310b50aada95f",
+      "math": [
+        "e659bb920ff03be147073b06b329739fed3d34433cb0b0f1d28278b85e213c4c",
+        "2d3d936d9f36c86f4ecd783b173bcbc524aae66bedf212bff017fe6a4f6cc34a"
+      ],
+      "questions": [
+        "**Q：这个包装器是不是把已有lab官方的训练软件流程“提取出来”放到自己的训练框架？**",
+        "**Q：结合你的意思（NP3O），我感觉这就是截断了使用官方创建任务的时候选择的py rl库，把这条路线引导至其他框架比如np3o。**",
+        "**Q：我还没搞懂官方的原厂软件流程。**"
+      ]
+    },
+    "docs/audits/README.md": {
+      "sha256": "ee5570fb312a790e6ebccf700da95dd04ef5a0928ba6ebf1c69d52a9ae5ea493",
+      "math": [],
+      "questions": [
+        "**Q：你一直说的cpu检查是啥？**"
+      ]
+    },
+    "docs/history/2026-10-20_整理前记录.md": {
+      "sha256": "4d13a99bdde6d925f63e4e4db998af0d76f68ba16ee92ec9947a777792b8df34",
+      "math": [],
+      "questions": [
+        "**Q：** “不是，我点push他也没让我输入啊”",
+        "**Q：** “.git属性和.git忽略可以存在于多个目录吗？仅管同级目录的忽略？属性我不知道这个有啥作用。”",
+        "**Q：** “而且我没发现有.git（这个好像是必有的吧，是文件夹还是文件我忘了，不是git init会给吗？我忘了！）。而且我发现多了个叫本地git备份的，这是你搞的，还是git支持？”"
+      ]
+    },
+    "docs/migration/00_迁移映射索引.md": {
+      "sha256": "94f6e4b0f35a08cb731aedccb4a328ec434e9518d92d265bc6141fd1ebbc5a38",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> 我们做域随机化了吗？我记得还没做？不仅动作，就是所有的域随机化。"
+      ]
+    },
+    "docs/migration/01_physics.md": {
+      "sha256": "e053b50ea9cadb70d1fe7c0d8c83c738f39eaf8b9eef5e2e8f92d18f5ae060c0",
+      "math": [
+        "33406d1ed843bc744f06d56b595df9fa68228648636c7005e93b2c9e98d30622"
+      ],
+      "questions": [
+        "**Q：**\n\n> 为啥deci=4？？咋算的？？gym的substep是啥？？"
+      ]
+    },
+    "docs/migration/02_scene迁移.md": {
+      "sha256": "4feeb957a5d8ee4964b7abd86ad93f3cc85e5729d9d046e9bc642a52b7110ee8",
+      "math": [
+        "d4a9198da110126befeb757b0725e06446ac3aa51d05f954117f7077c218f84e",
+        "8e75bd36722d8b2358272d14d938737fc20af6f50d9ae14c159c05bc23c77093"
+      ],
+      "questions": [
+        "**Q：**\n\n> 为啥有这个？？不应该吧",
+        "**Q：**\n\n> 你说的这个又是啥？我代码里没有啊？但你也没说修改。",
+        "**Q：**\n\n> 我还想问，聚合法向接触力是啥？",
+        "**Q：**\n\n> 我只是想让pylance认识。以及想知道为啥这里没给地面设恢复系数",
+        "**Q：**\n\n> 你说的“我查了你本地源码：旧的 `RigidBodyMaterialCfg` ..”意思是，lab开发者开发了新的接口，但仍然保留了旧的？",
+        "**Q：**\n\n> 小腿接触力是啥玩意？？靠，看来我压根没理解当时接触力sensor的创建和原理！",
+        "**Q：**\n\n> 意思就是小腿link碰到东西了？",
+        "**Q：** 我想问了，“w”到底表示啥？？接触力有个w，这里还有w！",
+        "**Q：** 还有，我想问，我的地形怎么是这样？哪些代码让我的地形变成了，凹凸不平+凹离散金字塔+凸离散金字塔+凸平原这样的？？我看到这个地形，第一反应是不安，因为又是一个我不知道代码的东西！！！！",
+        "**Q：** 不对，我没换RANDOM AGENT啊！回答地形吧，我去试试"
+      ]
+    },
+    "docs/migration/03_actions迁移.md": {
+      "sha256": "2a448d4e9326f0ac9c3b53a7b645376bf8fbac3bb77a04ac0dd150edf0863ee0",
+      "math": [
+        "6ff9221ae2dc02a7410866d8347936ca0cce2a5b61b075a0276eed071285faad",
+        "3b191aebd5322a5f34e3d1db7d889238cee4572a7a2f1753e471e3b48c2bcd72",
+        "4eabdde1c3ed384a2daef185f290b9a2ce10e41eb9c1c1e1c1a8ade6d843ee4a",
+        "020dd45ed94e91671cb66df6074b4e3597ee13f2cb6fce1d87acd7dae31a73ea"
+      ],
+      "questions": [
+        "**Q：**\n\n> 为啥rl非要有个action scale？不仅这个，其他rl task也有，比如go2（我记得好像）",
+        "**Q：**\n\n> 不知道推机器人算action吗？凭我的记忆和直觉，commandcfg类更合适？不太记得了。",
+        "**Q：**\n\n> lag_timesteps是啥？就是策略延迟？",
+        "**Q：** 而且，我没搞懂现在在做什么！和usd资产的api有关联吗？比如articulation root啥的？",
+        "**Q：** 电机力矩不是kp*pos+kd*vel+前馈力矩吗？这里我咋没搞懂这公式是啥？？电机强度是啥？？？",
+        "**Q：** 而且咋又成explicit了？？我记得之前一直接触的是implicitactuatorcfg！",
+        "**Q：** stiff不是kp吗？damping不是kd吗？为啥又来kp因子和kd因子？还是全1类似self.stiffness和damping？？这里的self.stiffness和damping shape是啥？？",
+        "**Q：** 但我看到了最后“randomize_motors‘这一项。我好像理解kp和kd因子是啥了，是用来随机化的？",
+        "**Q：** for factors, bounds in ( (actuator.motor_strength, motor_strength_range), (actuator.kp_factor, kp_range), (actuator.kd_factor, kd_range), ):这到底是啥？我的意思是，我没看懂语法和执行过程的数据会是什么！",
+        "**Q：** 这整个函数的作用我也不清楚。"
+      ]
+    },
+    "docs/migration/04_commands迁移.md": {
+      "sha256": "d95101ff7b9474d0fa7300b024046301b73f8856610b7ca746a0f16be5393a50",
+      "math": [
+        "f87b501d1d4f9b29ea2e444f53845771259443796ef2422a47fb8594913dd5e4",
+        "327dd34f2faf293cc788a85f198f9694760ab8f222a5d51dce27cd61691f755a"
+      ],
+      "questions": [
+        "**Q：**\n\n> base_velocity，我们没有指定取第几个数据，他怎么知道track_ang_vel_z_exp就是wz呢？",
+        "**Q：**\n\n> 以及，base_velocity我得加点注释，这个玩意最终是啥内容，shape是啥，看代码我看不来，因为鬼知道那个类最后被咋处理了",
+        "**Q：**\n\n> 不是，那如果命令张量他第三列不是wz呢？？比如我有很多command"
+      ]
+    },
+    "docs/migration/06_events迁移.md": {
+      "sha256": "b25fe8aa0e5f849ba596624dd0945c3275809bbbdffb8ff01456fe650e10bdb9",
+      "math": [],
+      "questions": [
+        "**Q：** 我想问了，“w”到底表示啥？？接触力有个w，这里还有w！",
+        "**Q：** 而且我没搞懂，为啥要robot.spawn.physics_material = terrain.physics_material.copy()给robot.spawn.physics_material？？这不就机器人和地面材质一样了吗？？"
+      ]
+    },
+    "docs/migration/07_terminations迁移.md": {
+      "sha256": "9d5059cd32d9a3577563f93b36a0da1ccff0971cd68b45912bd68a3c469c43d5",
+      "math": [
+        "fd15569197f726b189197845b0453b6a0a96792c40e8cce927b4583f3a198a73"
+      ],
+      "questions": [
+        "**Q：**\n\n> any是什么函数？",
+        "**Q：** 但我看到机器人疯狂的reset，希望这些reset不是异常的reset，真的很频繁，我有点担心开始训练的时候就出问题，因为看起来机器人刚落地就reset了！",
+        "**Q：** 我们代码的行为，base碰到腿，也算接触吗？我不知道是不是base碰到腿了，我感觉没接触啊！",
+        "**Q：** 而且我想知道zero agent啥意思？random是啥意思？"
+      ]
+    },
+    "docs/migration/08_rewards迁移.md": {
+      "sha256": "e579f8ab0097645e05db3ff3f455bf11d8cee7608da203cb9f6723077a22dec6",
+      "math": [
+        "a8d8acb91986f1ea90298e1e601b186a8b365d78f600c28ba4cc15cb27479954",
+        "f52b0f9a1228f2d3e92c772c5dc0d654a49e1503049b6e8c23e9ea4b6215a9c6",
+        "a0b8ea12c6e8f434554ac385d62f171860dc84a525ba1f31544ad510577f30df"
+      ],
+      "questions": [
+        "**Q：**\n\n> base_velocity，我们没有指定取第几个数据，他怎么知道track_ang_vel_z_exp就是wz呢？",
+        "**Q：**\n\n> 我记得，PPO叫近端策略优化，里头就有让连续两次策略输出不要太远，但这或许是PPO的数学架构，和这里的action rate是啥关系？",
+        "**Q：**\n\n> 对那个action rate我还有个问题，因为物理上，观测是连续变化的，所以可以这样做，因为环境连续，要让策略对连续变化的观测产生的响应也是连续变化的，这意味着要求不能有很大的突变，对吧！",
+        "**Q：**\n\n> 而且，功率，这里怎么算？对应物理实体的话，我感觉很复杂啊！电机电功率，取决于很多东西，电机还不是纯功率器件，我的物理学和工程学打架了！物理学告诉我什么P=Fv啥的，以及P=UI（纯功率器件），这里的功率到底是啥？？",
+        "**Q：**\n\n> 而且robomaster这个比赛也有功率限制，这里限制电功率，整机总功率不得大于限制。\n> 如果sim这里的功率，基本就能当作电功率，那我很想知道，什么原理！",
+        "**Q：**\n\n> 我想问，为啥“原生 RewardManager 自动调用它的 reset()”？？",
+        "**Q：**\n\n> 以及，__call__干啥用了？？python的类名，在这里，是不是可以看作func就是构造函数__init__()？",
+        "**Q：**\n\n> 因为ruff插件警告让我写到函数体里，我不想看到黄下划线。",
+        "**Q：**\n\n> 现在是新的step的问题。我没搞懂什么叫普通项？为啥要 * step_dt？active_terms指的就是在rewardcfg里写的项？\n> 还有为啥要这个计算公式啊，你说的旧gym的那个，他为啥这样搞？"
+      ]
+    },
+    "docs/migration/09_阶段审查.md": {
+      "sha256": "6b4b7848be52e4777c9ed783a117544eb9c60df3249af21b78e5c6993a7578bc",
+      "math": [],
+      "questions": []
+    },
+    "docs/migration/11_剩余范围与训练接入.md": {
+      "sha256": "b2ad032f70028f79e6cb62f5a915cfd4f7519b80062ab67f266a4f7248afe728",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> 我目前有点担心NP3O这块，我也说不清是哪一层，哪一步，但结合我前面的问题“能用lab api和自己写函数和类的方式完成的迁移”，你应该知道我啥意思，这个你看看有没有一个可行的解决路线？",
+        "**Q：不用clone什么np3o的仓库吗？我们还没接触到真正的RL算法吧，我指的是真正的，和有差异化的算法设计。**"
+      ]
+    },
+    "docs/migration/12_动作延迟迁移.md": {
+      "sha256": "d61c4e5b39476ebe6f2d148a89b8fd9e087f17e2e1df71249b3c9613b8ff9abd",
+      "math": [
+        "437987b6d6e86e998b8d8f4c463c34f7e2ca5a0ae2c0da8d7a93f9e086b5722c",
+        "73d360de1ea73df2a5d9fe39db862b2b41b89a5e2072dd8a7e8e84f41ed07ddb"
+      ],
+      "questions": [
+        "**Q：** 这一步到底干了啥啊，不就是加了个延迟吗？还是啥？",
+        "**Q：** 历史槽数是啥？？",
+        "**Q：** 尤其是变量之间怎么串起来的，数据怎么串起来的，最后为啥能实现随机延迟。",
+        "**Q：** 但是我不知道哪里的代码实现了，存t-2和t-1,以及t步的？"
+      ]
+    },
+    "docs/migration/13_训练观测迁移.md": {
+      "sha256": "b71f8111dd2f634e3ee09524d0ac2e47bbf3454435938081a97fd86ad8003bd3",
+      "math": [
+        "ac1d5a6e0506173e8fa2f63d19c90594b99ae3c40b49a34e8ae09eebe6bf1836"
+      ],
+      "questions": []
+    },
+    "docs/migration/14_特权状态与观测布局.md": {
+      "sha256": "25732c0e01702da6ade295cd88729923306c3d91e7f531e822c65646c8fbbec4",
+      "math": [],
+      "questions": [
+        "**Q：** 我没理解你说的：依赖顺序仍然是：动作延迟 → 上条的地形/动力学参数 → 本条。",
+        "**Q：** 我没动接触为啥要或滤波？有什么意义吗？",
+        "**Q：** 我没懂两处self.observation_manager.compute_group(\"privileged_state\")在干啥。"
+      ]
+    },
+    "docs/migration/16_接触cost迁移.md": {
+      "sha256": "3e868fb963a834df8538ef13f3db07f6cc2688215d20814f16eafc72737d71cb",
+      "math": [
+        "7eacf80b9f9d23420088dcfa4b00f45d3730c43bcddcefc45f11e71f0933d4ad",
+        "88fab29b1e0d8dc956bb3c160ccc4b8246f44d5f6e209ca7314d2c5d113fbac8"
+      ],
+      "questions": []
+    },
+    "docs/migration/17_cost收集与加速度.md": {
+      "sha256": "45ec9d534bbf54cde507c0bacab6d606a276deb98952b2b39f17ea6450a3d7ad",
+      "math": [
+        "fa2d612f10db4f040a13e81c9e569d4507ad0e1533c2b7542bf9362796561c93",
+        "b2ecb54428198bcb592d722c8cae84310bf2317d8a61f363df012e9e5071250c"
+      ],
+      "questions": [
+        "**Q：** 自己写manager和cfg我真的有点心理恐惧了，讲一下这超长代码吧？这里可能RL原理占小头，编程层面的思维逻辑和流程占大头。",
+        "**Q：** 比如@property（用户原句节选）",
+        "**Q：** self.k_values = torch.tensor( [term.k for term in self._term_cfgs], device=env.device ).view(1, -1) self.d_values = torch.tensor( [term.d for term in self._term_cfgs], device=env.device ).view(1, 1, -1)这里的语法。（保留用户代码，合并换行）",
+        "**Q：** 还有个关键变量你没给注释：_episode_sums"
+      ]
+    },
+    "docs/migration/18_cost接线检查与首次运行.md": {
+      "sha256": "030512442740852e58c678bcd9ba8e5e99e27cf456263a66f8c595d73eba97e3",
+      "math": [],
+      "questions": [
+        "**Q：** 能不能来个可视化的？还是说没必要，或者不能？因为0agent？不能有一个agent吗？"
+      ]
+    },
+    "docs/migration/19_碰撞模型对齐与诊断清理.md": {
+      "sha256": "f5c787ab6896f1493982b9ac230bb8e0223ce9ce7cb4e8ba13dc5241869caa2d",
+      "math": [],
+      "questions": [
+        "**Q：** 我本来想让你写个debug.py啥的，每次需要debug就写个函数或者方法，这样比较好维护，但是因为很可能我们需要debug代码穿插在正规代码之间，所以可能有点不适合，我也不知道。"
+      ]
+    },
+    "docs/migration/21_命令死区迁移.md": {
+      "sha256": "50bbaccc88df02d1683778615c9329810c418c59feb91489e05280c3e9ac8cc3",
+      "math": [],
+      "questions": [
+        "**Q：TitaVelocityCommand这个最后到底咋被用了？这个类也没有被公开（被import啥的）！**",
+        "**Q：而且什么叫消费者？**"
+      ]
+    },
+    "docs/migration/22_训练环境接口.md": {
+      "sha256": "201e5ad8bbec55cc9dae5c422c15cd21c78d0210dc3007257137450232962244",
+      "math": [
+        "2a439cffa4a1c0c77b5e1e8addc8c4e30eeb975cbfa76728beaec66d60871c5f",
+        "509a2768e15053eb661f58e9bcb1a3aa2aeb0350d16f2600d1565d8e555c498f"
+      ],
+      "questions": []
+    },
+    "docs/migration/23_动作网络前向迁移.md": {
+      "sha256": "3985b46b118499efdd71c6828f17db83ff1b11a5e37b9a5620e14419db918a99",
+      "math": [],
+      "questions": []
+    },
+    "docs/migration/24_actor辅助学习损失.md": {
+      "sha256": "15724d7b4333cdcf868a5edff7c5025a217e9c67f50dee951fdb7428e12a794d",
+      "math": [
+        "058324983188e7361582e497f161ddd4e96f0e00743fca5677264f2550d2ea53",
+        "4a67916db573e014ea1a36a83138b70560606eb50720d1d0bce4c93b7abdf488",
+        "d174b0a78416cb6ea20b0ac1850347ee69a7509ab5d629eb230f06beba3d3d67",
+        "8ee3113e40ce5d052a4f1ec60f1ce95b546b0fcf37b7de83f28a9e7cfc4b24aa",
+        "ae617d2de12344c6a009278013ebf2e705f42e82260c67b11dde42c0583dc20d"
+      ],
+      "questions": []
+    },
+    "docs/migration/25_Lab_main与Sim62_入口和配置.md": {
+      "sha256": "af49ae76a7c4700868bc11fbc7e4628be536800b8311b08fcd47395635f76ef8",
+      "math": [],
+      "questions": [
+        "**Q：if not isinstance(env.sim.backend_manager, PhysxManager)，backend_manager，没有代码提示！**",
+        "**Q：我选哪个？uv吗？**"
+      ]
+    },
+    "docs/migration/README.md": {
+      "sha256": "40ccd95be4e7bba240c62c02656c692f6cf0fe8286ebdd55ab42462b6e2768fc",
+      "math": [],
+      "questions": []
+    },
+    "docs/migration/05_observations迁移.md": {
+      "sha256": "d3439c4df553ead94662618918a1e43a9f06669752b42fef57649601e5330f10",
+      "math": [
+        "b2d53630a8b353d9cedd77845fabc05d9c78957ba2dd77cd08db8c76be5b1fb0"
+      ],
+      "questions": [
+        "**Q：**\n\n> 回答一下enable_corruption是不是让noise这一项被考虑了？类似源码的if flag 加noise的计算？\n> if so,那为啥api不叫enable noise？",
+        "**Q：**\n\n> 当前默认关节速度为零，两者目前数值相同。\n> 这句话啥意思？？rel是啥含义？",
+        "**Q：**\n\n> 好了。轮子位置指的是轮子旋转角度？确实不需要这个，轮子无限转圈。是这样理解的吧！",
+        "**Q：**\n\n> 我没搞懂。为啥会调用这个？"
+      ]
+    },
+    "docs/migration/10_首次环境运行.md": {
+      "sha256": "abe33fb905c8946c055ccf60464f393a5b1e1102c2f6eb7b9895538d3880428a",
+      "math": [],
+      "questions": [
+        "**Q：** 我需要在CLI输出里找值得记住的东西吗？或者你带我读一遍重要的内容？CLI输出和代码某个变量名，或者某个term名字对应上，会给人一种原来如此的感觉。"
+      ]
+    },
+    "docs/migration/15_cost迁移.md": {
+      "sha256": "2247c27418ad807166f289fb1afc29e23f9abdb0c41edb2093cf536995dd7256",
+      "math": [
+        "bc7044342fbdce97590705018bff0118fc34d8ac52e5f3a2128b8555804f8944",
+        "9a7c15a98a633ef2ce2d1666f59f533c712550d77c0c2dd33647763a9099cac3"
+      ],
+      "questions": [
+        "**Q：** cost在我学的RL理论里没有提到。cost是mdp中的吗？讲一下什么是cost？",
+        "**Q：** 这个字段属于机器人的 `ArticulationCfg`。Lab会据此提供代码读取的：`asset.data.soft_joint_pos_limits`。为啥？？"
+      ]
+    },
+    "docs/migration/20_地形课程迁移.md": {
+      "sha256": "aa39a4e6fbeaf68d5ad508587c763740fe7a384d34527e037cb4a6d2c06c4ca6",
+      "math": [
+        "149e7fa6c5e39c3c0155f32e55e9b2a74a57ef1eb27fd3ef8b76d0e4b3b7945f",
+        "9d021f386c286f1b256716f9b1686f1db7a55820ad625778c0cc1ea0aab574d8"
+      ],
+      "questions": [
+        "**Q：** 升级降级指的是啥？让地形对于任务来说更简单？"
+      ]
+    },
+    "docs/audits/2026-10-22_cost_wiring/README.md": {
+      "sha256": "0670c9197fbe051218d5203467247d15ceddc1bc12a60f0fc0a866ac79de849a",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-20_kp/README.md": {
+      "sha256": "fc137ce51691c709c8802a550282d34cf0f45d42de3aeda618f518944570daf1",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-21_cost_collection/README.md": {
+      "sha256": "0090f3015183ebb719441217e46196d969ecc7a0a843606c106b9b97ceec3ef9",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-21_current_observations/README.md": {
+      "sha256": "7068d2af1dae81bf6d391e7a3506b8ac658b9bc59d001309fb66ba52785366ef",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-22_cost_first_run/README.md": {
+      "sha256": "bba5a67864038c5358b3d4902d390c314f035e7c10372da8af49da7d812b5987",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-22_kit_visibility/README.md": {
+      "sha256": "c304968f63bce2e8856aef4c6e29fafbda74df9893b47f6e636f6c8686ccd920",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-23_collision_model/README.md": {
+      "sha256": "e1c1c94ca5a4923ae2a199cc39675296090a6560d316a9416d5d489ceac53007",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-23_terrain_curriculum/README.md": {
+      "sha256": "b8d2ddd8a3345fc1b29c8a4f3c1ec37061296fc37575dd0dbc65876003a73b55",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-23_tita_terrain/README.md": {
+      "sha256": "2b1aaae1747353bf08fef900ccb4ccffd57505ed6432a36a0231c9805f32c1fd",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-25_actor_forward/README.md": {
+      "sha256": "bd8390ff90fb94700407013d71127ca8666b5fdc03bad447dcdce3713ade75a2",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-25_command_deadband/README.md": {
+      "sha256": "d14ee90b7fbefa0eaea6e7121f1dc904b8310ff3f17cb11afaf4389610bf0d0b",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-25_curriculum_config/README.md": {
+      "sha256": "4385fbae1aaa0e57269796647302fccf4822b3865710a477c67a88fd55ddb090",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-25_np3o_env_interface/README.md": {
+      "sha256": "51a1b8d701925a33600fdc61081e798334abdd1ae01eed64c5d07061623d0dab",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-26_actor_auxiliary/README.md": {
+      "sha256": "f44de55106549ef6aa1bf47729c438e3a8090ffef805f6df7c12513941c7feec",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-26_saved_actor/README.md": {
+      "sha256": "f1d8484789f393102a38957a485cd9174ad146472512a3d9c6a59da315b628e8",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_external_project_compat/README.md": {
+      "sha256": "2400c03ec29bdadeb1457a5fbf41f2cf8342a463b1db8ec4fad4f1873f366587",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_launcher_update/README.md": {
+      "sha256": "9d289e38062748f65fd69b19feef96feca9c3034b2d25f0567a6bc0dc227898b",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_main_config/README.md": {
+      "sha256": "8fcf9af671f782497e92b59425fd662e3d9d3886d1e61169f64897dacd51d51b",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_recreated_project/README.md": {
+      "sha256": "3ec242a655e344a793f7d7da7d8a422be977d03d68f8f36dc5f9d112c4961a7b",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_saved_stack_sim62/README.md": {
+      "sha256": "65276056b890fe5d198452da4d50fa4cd0f7bb54c46fa383db8a9d07b8b4865a",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_sim62_action_fir/README.md": {
+      "sha256": "48d59480372a023db4f654c664eb71c59c06a7de7511af3be98ff5f02f99feaf",
+      "math": [
+        "072b2fa4cedb9b3bc92f8b5371400bdd382290a4004924cac3e040dbf1b11978",
+        "0ba11887d236abe1509b3b1817a2392696ca0a21b6a9bd0a415fb1ba9ded037d"
+      ],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_sim62_first_run/README.md": {
+      "sha256": "0f4139c8b12402be907dec71c607cc236c211108d75e71f54625526b12c3b132",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-27_uv_sim62_preflight/README.md": {
+      "sha256": "a8dd564037a729d14a0e173a69133af446d2f34eb95b1cf1fa57a3f40344cae6",
+      "math": [],
+      "questions": []
+    },
+    "docs/audits/2026-10-28_conda_removal/README.md": {
+      "sha256": "677bfb672210fa9c0e3fde549acc107a93987ed5fcd8f34a75dc20fa9adddf91",
+      "math": [],
+      "questions": []
+    },
+    "code_explaination/README.md": {
+      "sha256": "1f23e076d0ec1dbff6b3f4c78ec868708f131a5e03d36c8da62c6ede138513e6",
+      "math": [],
+      "questions": []
+    },
+    "code_explaination/Tita_Lab/README.md": {
+      "sha256": "112ff12c6902ee89ad7b0d8c8c03db7cc6932f9efc7c75b141f3cb868cc78dc0",
+      "math": [],
+      "questions": []
+    },
+    "code_explaination/Tita_Lab/scripts/import_assets.py.md": {
+      "sha256": "b822f969c3af01476396c2dac117133545a7acdee35554a5a5df61722caa1caf",
+      "math": [],
+      "questions": [
+        "**Q：** 啥反应没有，f是干啥的？",
+        "**Q：** RANDOM也没机器人！草！我怎么改我的那个IMPORT脚本，一步一步排查？TITA_Lab/scripts/import_assets.py",
+        "**Q：** 有机器人。但是穿模，无物理效果，机器人就是原始USD的姿态，不动。",
+        "**Q：** 有几个报错，不知道啥原因。这次也正常。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/assets/tita.py.md": {
+      "sha256": "3e471db863b20994049861b1c6270c961aa3a105fdb57ce127f2c266a3b0a7c4",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> 这是啥意思？你看我tita.py好着没？",
+        "**Q：** 我还是得按照tita gym的身体box近似来？咋搞啊，我总感觉box近似会影响训练效果，但好像没啥影响，都是防止碰撞。",
+        "**Q：** 我直接去sim里，关usd的就行呗？就是删除leg1和2的，collision api？这四个都删掉？"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/actor.py.md": {
+      "sha256": "f0e15f9a6f11482cd2b94fc0b194fd9e6a736d27376d88934a480c7776884067",
+      "math": [
+        "3796bfb472a2a78a4729e867be608eda652758a75d194200dbb2008a7cfdc2f4",
+        "f3410704809a08fc609fbbae2c79e4bfa3dea9286bd957dba8a9660f79565eea",
+        "b76dbd38ebc1c395ba9aa5d03f51f1bdcd76e28a9fad62d585a145d34c074e41",
+        "7d4ac926a33249061e868e68f3e8ed27dd84e971edf6fb323e52f2be35dee43c",
+        "12812cdf133933ca8d01a9c9a673ac5a4ad52a3e123931945fd87c45ed5c0140",
+        "4ee37efcd404fb7ecee7fc42e30c31c679d074558c6073f3de7e399371e752a8",
+        "bbf23539e58b5bb29923a14460fd961767efecd9cf1f93b053a3f6a8dc7785a4",
+        "1387fc2a7104f885b3bc397afbba5271589a7ee662579ad6ddfa0e9f2848974b",
+        "ac7defe9c55cbfc94986c89c92ca041cc6573c0552ba8244b47c3b7988e49601",
+        "70f86e2ea1f7f5edc803ea27f9ae70dae0fe3b9b1fcb54c7792bc8527e55c400",
+        "a4797015e90f4e415eba0aecce4b14dd33a22d1963eda1a40e92066258b9b504",
+        "7aa1ece5ee3f1de3c6bc066fc481f3d324e54ec92272893592904917d9243914",
+        "a1b37300842b7a2991078a47d471269fd6660efcfea2a9ed826a2967d9e1075f",
+        "e34457c1e62f95c4d9c52d3e69aa864acc889aea23056af08a60376c5951f35b",
+        "b2e5db135ee020af50123f5fa3e7c0566574572d86f79e9a926483ed4954fd84",
+        "986c056f48fdbd4fb76894efe76d7e5417a6b3f81b398ff8ff4c428a5b1ed3e8",
+        "7a127844c07cbc7079ded7e7ed432501ee776884b1f90f118836bbd729a8fbf6",
+        "4e07d85b18beda67ab5c63ba282b85eb04c821c9c4a9306498190848016df8b4",
+        "83feb20e4413dded0b267c4077ab4c856f55361feaa917e01aea8d8c018ccc01",
+        "8ee3113e40ce5d052a4f1ec60f1ce95b546b0fcf37b7de83f28a9e7cfc4b24aa",
+        "ba49ae16c678f0c5c83246fad148506b61262321668a14b5a2605008ffa8cb3c",
+        "ae617d2de12344c6a009278013ebf2e705f42e82260c67b11dde42c0583dc20d",
+        "dd788e474639dc7d6b5a837fe528af3d4332a368f75c0ff8d678cf4c48cedcc2"
+      ],
+      "questions": [
+        "**Q：layers.extend((nn.Linear(previous_dim, hidden_dim), nn.ELU()))这句没看懂，你注释是“每层先做线性变换 Wx+b，再经过ELU非线性变换。”，但是我们没给w和b啊，这句代码最后是一个代数式，还是什么？**",
+        "**Q：LayerNorm是啥？nn.Module又是啥？`*layers`又是啥语法？？形参`*`又是啥鬼？？**",
+        "**Q：forward指的是啥？我没学深度学习神经网络的前向传播和反向传播。这指的是前向传播这个概念吗？**",
+        "**Q：什么叫批量方向？BatchNorm1d这个类也讲。**",
+        "**Q：整个架构指的是数学架构。我都不知道encoder用来干啥的！**",
+        "**Q：Barlow Twins是啥玩意？**",
+        "**Q：self.mlp_encoder(obs_hist.reshape(batch_size, -1))，没看懂。**",
+        "**Q：device=correlation.device的correlation没有代码提示；correlation[off_diagonal_mask].square().sum()这里的square().sum()也没有代码提示。**"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/env_wrapper.py.md": {
+      "sha256": "c780a437b5fab48cc7b099193badc86fb0421f38dae7274ae0da6cf639e9cf5f",
+      "math": [
+        "6195d549f2bfabade0c756a1e36a588fd40634288f2906030b23bea6299b7e63",
+        "c550070c85443eb1632913530ed984fe3095371093da852bc2a058fe9b428878",
+        "0d3e5870cb37a7b3a1e5139e9fda6923f89e4dfd325094f0759d0713b28bf598"
+      ],
+      "questions": [
+        "**Q：infos = dict(extras) 那一段我完全不知道干啥。我想知道 infos 是啥。**",
+        "**Q：get_privileged_observations 这个方法为啥返回 None？**",
+        "**Q：gymnasium 这玩意还得研究研究。gym 的 env 和你说的“_env 直接指向真正的 TitaVelocityEnv”，为啥要这么说？**"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/actuators.py.md": {
+      "sha256": "0a0937a601b611b8218583075939bc9d312cc53555200c782dd27378ca246ade",
+      "math": [],
+      "questions": [
+        "**Q：** 而且，我没搞懂现在在做什么！和usd资产的api有关联吗？比如articulation root啥的？",
+        "**Q：** 电机力矩不是kp*pos+kd*vel+前馈力矩吗？这里我咋没搞懂这公式是啥？？电机强度是啥？？？",
+        "**Q：** 而且咋又成explicit了？？我记得之前一直接触的是implicitactuatorcfg！",
+        "**Q：** stiff不是kp吗？damping不是kd吗？为啥又来kp因子和kd因子？还是全1类似self.stiffness和damping？？这里的self.stiffness和damping shape是啥？？",
+        "**Q：** 但我看到了最后“randomize_motors‘这一项。我好像理解kp和kd因子是啥了，是用来随机化的？"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/cost_manager.py.md": {
+      "sha256": "6652b28d7c96940477ff2d076398b7bd8969d23924da18bdf33244023584a1f6",
+      "math": [
+        "3564a5a11333ec9d01f6bc5be0d0320b6f75f0b99c78109d308bc6321fc7e260",
+        "fda92509ba4941fa34da0ed0790764f50d7e56217084f67598cc4a827e3533d4"
+      ],
+      "questions": [
+        "**Q：** 还有个关键变量你没给注释：_episode_sums",
+        "**Q：** 自己写manager和cfg我真的有点心理恐惧了，讲一下这超长代码吧？这里可能RL原理占小头，编程层面的思维逻辑和流程占大头。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/observation_layout.py.md": {
+      "sha256": "6ee927d0babf38f9ae0e358deb128bcfbc073b56cd84f139915e7045f9705c89",
+      "math": [],
+      "questions": [
+        "**Q：** 我总是看不懂这里：blocks = []，for name, size in layout，value = observations[name]，然后检查和append。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/terrain_cfg.py.md": {
+      "sha256": "38330e43555af92e854acc33fb27a0a055f7ad43002b76296909adf41e13b438",
+      "math": [],
+      "questions": [
+        "**Q：** 为什么不和tita.py同级？我不知道啊，尽量看看官方有没有选择。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py.md": {
+      "sha256": "0a88a725ceced7a9ff30931e5aaed63788fcfede421189c142503fe56ddc556e",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> 我没搞懂。为啥会调用这个？",
+        "**Q：**\n\n> 还有reset,我记得obs hist也写了reset。有这么多reset，我没搞懂啊，我还记得reset是lab的方法，我们重写了是吗？是环境重置的时候，会自动调用所有被登记的reset？这个代码框架有点大，说实话我都忘了obs hist文件里头的内容拿来干啥了。",
+        "**Q：**\n\n> 现在是新的step的问题。我没搞懂什么叫普通项？为啥要 * step_dt？active_terms指的就是在rewardcfg里写的项？\n> 还有为啥要这个计算公式啊，你说的旧gym的那个，他为啥这样搞？",
+        "**Q：** 我没懂两处self.observation_manager.compute_group(\"privileged_state\")在干啥。",
+        "**Q：** compute函数屡次出现，这玩意到底是干啥的？\n\n对应运行语句例如：\n\n```python\nself.curriculum_manager.compute(env_ids=env_ids)\nextras[\"costs\"] = self.cost_manager.compute().clone()\n```"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/actions.py.md": {
+      "sha256": "eff6eed33a11580f08511c9b7ff2048fbddda151847d3188cebf2f8eea4e7a78",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> super().func()到底是啥？他在代码的位置会影响啥？我之前学ros2只知道他会继承父类，但现在的代码，需要我深入了解这玩意到底是干啥的（我不太会问，你应该能洞察到我的真正疑惑吧？）。还有return super,都是啥啊？真的需要认真了解一下这些。",
+        "**Q：** 历史槽数是啥？？",
+        "**Q：** 但是我不知道哪里的代码实现了，存t-2和t-1,以及t步的？"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/commands.py.md": {
+      "sha256": "fb3034585dbcd550842ee13390d1d07815558588d989d8992040455fdcc5fae0",
+      "math": [],
+      "questions": [
+        "**Q：TitaVelocityCommand这个最后到底咋被用了？这个类也没有被公开（被import啥的）！**",
+        "**Q：而且什么叫消费者？**"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/costs.py.md": {
+      "sha256": "31e8abbfa3e292ded5d17df8ca0ab4e2d7d9d134f6b3240e36fe20e5a85709f3",
+      "math": [],
+      "questions": [
+        "**Q：** cost在我学的RL理论里没有提到。cost是mdp中的吗？讲一下什么是cost？"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md": {
+      "sha256": "e4574576bee280b2694e16cc4c62d0ed91b1184ccd26bb07b8c7acb856483d24",
+      "math": [],
+      "questions": [
+        "**Q：if not isinstance(env.sim.backend_manager, PhysxManager)，backend_manager，没有代码提示！**",
+        "**Q：** 我想问了，“w”到底表示啥？？接触力有个w，这里还有w！",
+        "**Q：** .to是啥方法？",
+        "**Q：** .to_torch 和 from_torch细说？",
+        "**Q：** warp不是mujoco后端吗？这里啥意思？physx借用了mujoco后端的设计思想？还是说warp不是mujoco后端？那是什么？",
+        "**Q：** get_material_properties这个方法，和set_material_properties，没有代码提示，显示(function) set_material_properties: Any",
+        "**Q：** 找不到omni，帮我解决一下？添加什么就好了？（不要修改，告诉我让我修改）这是关于from omni.physics.tensors import ArticulationView警告。",
+        "**Q：** for factors, bounds in ( (actuator.motor_strength, motor_strength_range), (actuator.kp_factor, kp_range), (actuator.kd_factor, kd_range), ):这到底是啥？我的意思是，我没看懂语法和执行过程的数据会是什么！",
+        "**Q：** 这整个函数的作用我也不清楚。",
+        "**Q：** 我没懂两处self.observation_manager.compute_group(\"privileged_state\")在干啥。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/observations.py.md": {
+      "sha256": "9dc1ff2e3922b26e5793054f5f5a8d9609520beee8419b39791b4ea51af8690b",
+      "math": [],
+      "questions": [
+        "**Q：** 我没理解你说的：依赖顺序仍然是：动作延迟 → 上条的地形/动力学参数 → 本条。",
+        "**Q：** 我没动接触为啥要或滤波？有什么意义吗？",
+        "**Q：** 关键变量你还是得注释啊，是变量的含义，比如_lag_denominator这些！",
+        "**Q：** 为啥有时候是self device，有时候又是什么sim device，有时候还是device=cpu？",
+        "**Q：** common_step_counter，这是啥？这玩意每一物理sim步+1吗？",
+        "**Q：** 我没懂最后的cat。拼接30和6d的内容，但还是稍微需要解释一下。",
+        "**Q：** 我没懂两处self.observation_manager.compute_group(\"privileged_state\")在干啥。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/observation_history.py.md": {
+      "sha256": "830c82e511db9cf7da0351417fe233aeace9f35685afe1852d8ba40e78ee89a7",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> 还有reset,我记得obs hist也写了reset。有这么多reset，我没搞懂啊，我还记得reset是lab的方法，我们重写了是吗？是环境重置的时候，会自动调用所有被登记的reset？这个代码框架有点大，说实话我都忘了obs hist文件里头的内容拿来干啥了。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md": {
+      "sha256": "11bff779f277c39faa2e55493f770354172c1d1efe19689a8198ffe8ec5ca08f",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> `float()` 没有代码提示。",
+        "**Q：**\n\n> 我想问，为啥“原生 RewardManager 自动调用它的 reset()”？？",
+        "**Q：**\n\n> 以及，__call__干啥用了？？python的类名，在这里，是不是可以看作func就是构造函数__init__()？",
+        "**Q：**\n\n> 我没搞懂啊，__call__这个方法也是python给类的内置方法吗？因为有代码提示。\n> 到底为啥会调用call啊？？你给的这句看起来就普普通通啊，而且之前func传的不是类吗？",
+        "**Q：**\n\n> 我感觉你可以很清晰的讲一些东西，就是说，什么叫“登记”之类的，肯定有一句代码能对应上？",
+        "**Q：**\n\n> 因为ruff插件警告让我写到函数体里，我不想看到黄下划线。"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/terminations.py.md": {
+      "sha256": "14ed5ba0704ad30cde7fbfe0890045a389550290c5aa8c2a19540cf972f7e059",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> 小问题：dim这个参数，他没有代码提示，是没有吗？",
+        "**Q：**\n\n> 第二个是， selected_forces_w = forces_w[:, sensor_cfg.body_ids, :]这句的body_ids，会是什么值？",
+        "**Q：**\n\n> 第三个，torch.linalg.vector_norm(，dim-1指的是，算最后一维的范数吗？就是[:, sensor_cfg.body_ids, :]的最后一个冒号取出来的？",
+        "**Q：**\n\n> any是什么函数？"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/__init__.pyi.md": {
+      "sha256": "521560b70992a520201b5a12f67ba88775d1e78a4fe8e79ec7e6ff871a5cbc91",
+      "math": [],
+      "questions": []
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py.md": {
+      "sha256": "f0cce1409fe6538b61390e0f7687d18572eb6b8ca50782215ae5db3d6411b219",
+      "math": [],
+      "questions": [
+        "**Q：**\n\n> envcfg和现在写的这个有啥区别！？",
+        "**Q：**\n\n> uh，我哪有policycfg？",
+        "**Q：**\n\n> 以及，base_velocity我得加点注释，这个玩意最终是啥内容，shape是啥，看代码我看不来，因为鬼知道那个类最后被咋处理了",
+        "**Q：** 这里的activate_contact_sensors和physics_material也没有代码提示，但有：(function) physics_material: list[RigidBodyMaterialFragment] | Any，(function) activate_contact_sensors: Literal[True]。",
+        "**Q：** 而且我没搞懂，为啥要robot.spawn.physics_material = terrain.physics_material.copy()给robot.spawn.physics_material？？这不就机器人和地面材质一样了吗？？",
+        "**Q：** 这个字段属于机器人的 `ArticulationCfg`。Lab会据此提供代码读取的：`asset.data.soft_joint_pos_limits`。为啥？？",
+        "**Q：** 这玩意到底有啥作用？最后是个bool值？为啥是self.scene.terrain.terrain_generator.curriculum这个路径？？\n\n用户所指代码：\n\n```python\n        # 课程项启用时，确保所选地图按难度排列。\n        if self.scene.terrain.terrain_generator is not None:\n            self.scene.terrain.terrain_generator.curriculum = (\n                self.curriculum.terrain_levels is not None\n            )\n```"
+      ]
+    },
+    "code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/__init__.py.md": {
+      "sha256": "2bb62d6faf7c2ca93c70884599a773746a35161db9d72817af4f12e1cabc7b92",
+      "math": [],
+      "questions": []
+    },
+    "code_explaination/TITA_non_RL/scripts/run_sim.py.md": {
+      "sha256": "993fb14d0cf084c486c13e62876502dd95a5266182ab79bc613a29b7a45ee02e",
+      "math": [],
+      "questions": []
+    },
+    "graduate_research/01_学位要求与可行性判断.md": {
+      "sha256": "10c278b1430a33e4971bd7280d16ea924e44907d81788988527935ef85f1e567",
+      "math": [],
+      "questions": []
+    },
+    "graduate_research/02_文献与代码证据.md": {
+      "sha256": "2c4a5ce20b26918d2b08822933909877f5e854b78dd37316409f5bc82eb7b270",
+      "math": [],
+      "questions": []
+    },
+    "graduate_research/03_候选课题与验证计划.md": {
+      "sha256": "5f167653239776fc5ff07df81a4972587275d43f2fdbc66efc54376b9095c164",
+      "math": [],
+      "questions": []
+    },
+    "graduate_research/04_TITA两篇原文阅读.md": {
+      "sha256": "b72ad2ff9d90da7ca2492ffccf38dd3cdca696820aa427a6dc335f40cdcc7568",
+      "math": [],
+      "questions": []
+    },
+    "graduate_research/README.md": {
+      "sha256": "b51e6b0366915d5e678ca119095d7a9966bc0423f70c22a3190c09d011eef42e",
+      "math": [],
+      "questions": []
+    }
+  }
+}

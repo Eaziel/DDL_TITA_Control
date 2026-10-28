@@ -1,0 +1,41 @@
+{
+  "boundary": "CPU configuration and random-input neural forward only; no simulator, optimizer, or training",
+  "saved_fixes": {
+    "F1": true,
+    "F2": true,
+    "F3": true,
+    "A1": true,
+    "real_current_config_validate": true
+  },
+  "saved_source_sha256": {
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/actions.py": "57ab9a749995a6dd29506ad7fce694b1d568552384d2f698968ef824284506e7",
+    "TITA_Lab/src/TITA_Lab/assets/tita.py": "56bd0ab0de7717da1fb4173b8de6468a9e2e8740b511bbdd3308c8ab29ec216e",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py": "e4b67aaba66fb3f8dca18d4bcee703387cb28876e37d1b88090f8af64ef455a3"
+  },
+  "legacy_network_forward": {
+    "observation_shape": [
+      8,
+      586
+    ],
+    "action_shape": [
+      8,
+      8
+    ],
+    "reward_value_shape": [
+      8,
+      1
+    ],
+    "cost_value_shape": [
+      8,
+      6
+    ],
+    "observation_parts_in_order": [
+      33,
+      187,
+      36,
+      330
+    ],
+    "barlow_auxiliary_loss_finite": true,
+    "scope": "Unmodified legacy network methods with random CPU input; no NP3O update or quality claim"
+  }
+}

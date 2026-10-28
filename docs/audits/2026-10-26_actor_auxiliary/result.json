@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-26",
+  "device": "cpu",
+  "torch": "2.12.0+cu130",
+  "scope": "saved actor forward; proposed auxiliary loss and gradients; no optimizer, simulation, or training",
+  "source_sha256": {
+    "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/learning/np3o/actor.py": "7bcfadd8470e62c95cc60be10e0fd8f19b1e58ff65002572ae45a2acac370b1d",
+    "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/docs/audits/2026-10-26_actor_auxiliary/proposal_actor.py": "261cc27d78ed71e6ce7f9922e2e1818213ee9910be75619ffd03b292ab1b96d3",
+    "/home/eaziel/Downloads/tita_rl-master/modules/common_modules.py": "ac28e02852fe720287735acfbc10e31704f1de21eab3fa7ba5640bba675c8d79",
+    "/home/eaziel/Downloads/tita_rl-master/modules/actor_critic.py": "9c832e74fd5c51d8ad209e4d40aa7d4f770a42381307418c4cf3dcf699f85309"
+  },
+  "current_actor_forward_max_abs_error": {
+    "1": 0.0,
+    "4": 0.0,
+    "64": 0.0
+  },
+  "current_actor_history_window_correct": true,
+  "current_actor_prediction_dim_name": "prediction_dim",
+  "candidate_auxiliary_loss_max_abs_error": {
+    "4": 0.0,
+    "32": 1.9073486328125e-06
+  },
+  "candidate_float32_comparison_tolerance": {
+    "rtol": 1e-05,
+    "atol": 1e-05
+  },
+  "candidate_parameter_gradient_max_abs_error": {
+    "4": 0.0,
+    "32": 0.0
+  },
+  "candidate_input_gradients_and_batchnorm_buffers_equal": true,
+  "candidate_auxiliary_history_is_unshifted": true,
+  "candidate_not_installed_in_user_source": true
+}

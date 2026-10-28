@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-21",
+  "scope": "Read-only inspection of the user-written delay module and a tiny CPU tensor example; no source changes, simulator, or training",
+  "source": "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/actions.py",
+  "findings": [
+    {
+      "saved": "self._lag_buffer[:, :-1, :] = self._lag_buffer[:, :1, :].clone()",
+      "recommended": "self._lag_buffer[:, :-1, :] = self._lag_buffer[:, 1:, :].clone()",
+      "reason": "The saved right side selects the first target and broadcasts it; it does not move the newer targets left."
+    },
+    {
+      "saved": "self._lag_buffer[:, -1, :] = self.process_actions",
+      "recommended": "self._lag_buffer[:, -1, :] = self.processed_actions",
+      "reason": "The saved expression is a bound method, not the processed target tensor."
+    }
+  ],
+  "cpu_example": {
+    "initial": [
+      1,
+      2,
+      3
+    ],
+    "saved_shift_result": [
+      1,
+      1,
+      3
+    ],
+    "correct_shift_and_append_4": [
+      2,
+      3,
+      4
+    ],
+    "method_assignment_error": "TypeError: can't assign a method to a torch.FloatTensor",
+    "held_targets": [
+      0.2,
+      0.2,
+      0.2,
+      0.2,
+      0.4,
+      0.4,
+      0.4,
+      0.4
+    ],
+    "index_0_outputs": [
+      0,
+      0,
+      0.2,
+      0.2,
+      0.2,
+      0.2,
+      0.4,
+      0.4
+    ]
+  },
+  "observed_wiring": {
+    "lag_timesteps_both_action_configs": 3,
+    "shared_indices_allocated_before_parent": true,
+    "randomize_tita_action_lag_startup_and_pyi_export_present": true
+  },
+  "next": "User corrects two lines and understands the data flow before resuming runtime verification or later packages."
+}

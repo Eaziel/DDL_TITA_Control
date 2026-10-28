@@ -1,0 +1,14 @@
+{
+  "user_report": "Actions modified; run ended by itself.",
+  "requested_steps_in_previous_instruction": 200,
+  "steps_evidence": "User report tied to preceding 200-step command; log has no step counter.",
+  "log_sha256": "7bc0fb456ec161234b36f20af445e4aaf659afd93d97a9e6b87ab0103f469ff9",
+  "device": "cuda:0",
+  "num_envs": 4,
+  "seed": 42,
+  "random_agent": true,
+  "ctrl_c_in_excerpt": false,
+  "traceback_in_excerpt": false,
+  "simulation_context_cleared": true,
+  "push_or_timeout_count": "not provided"
+}

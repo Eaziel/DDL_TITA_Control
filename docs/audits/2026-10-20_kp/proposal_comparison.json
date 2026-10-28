@@ -1,0 +1,125 @@
+[
+  {
+    "file": "tasks/velocity/actuators.py",
+    "object": "TitaPDActuator",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/actuators.py.md",
+      "docs/migration/03_actions迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/actuators.py",
+    "object": "TitaPDActuatorCfg",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/actuators.py.md",
+      "docs/migration/03_actions迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/events.py",
+    "object": "push_by_setting_xy_velocity",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py.md",
+      "docs/migration/06_events迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/events.py",
+    "object": "randomize_tita_motor_factors",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py.md",
+      "docs/migration/03_actions迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/events.py",
+    "object": "RandomizeTitaMaterial",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py.md",
+      "docs/migration/06_events迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/rewards.py",
+    "object": "joint_pos_target_l2",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/rewards.py.md"
+    ],
+    "candidate_count": 1
+  },
+  {
+    "file": "tasks/velocity/mdp/rewards.py",
+    "object": "undesired_contacts_current",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/rewards.py.md",
+      "docs/migration/08_rewards迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/rewards.py",
+    "object": "joint_power_signed",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/rewards.py.md",
+      "docs/migration/08_rewards迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/rewards.py",
+    "object": "JointAccelerationPenalty",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/rewards.py.md",
+      "docs/migration/08_rewards迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/terminations.py",
+    "object": "illegal_contact_current",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/terminations.py.md",
+      "docs/migration/07_terminations迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/observations.py",
+    "object": "joint_pos_rel_zero_wheels",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/observations.py.md",
+      "docs/migration/05_observations迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/observations.py",
+    "object": "proprio_history",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/observations.py.md",
+      "docs/migration/05_observations迁移.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/mdp/observation_history.py",
+    "object": "ProprioHistory",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/observation_history.py.md"
+    ],
+    "candidate_count": 2
+  },
+  {
+    "file": "tasks/velocity/tita_velocity_env.py",
+    "object": "TitaVelocityEnv",
+    "matched_document": [
+      "code_explaination/TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py.md"
+    ],
+    "candidate_count": 2
+  }
+]

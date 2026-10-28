@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-23",
+  "scope": "Read-only current source, native terrain config validation, native CurriculumManager and TerrainImporter.update_env_origins with CPU state fixtures; no simulator or training",
+  "current_files": [
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/terrain_cfg.py",
+      "sha256": "7ef10f1ebba3c0b677edd7d646cb27848fa8859e0d4b128bcf40c41d7a4a557a"
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py",
+      "sha256": "318dc3b55980fba723151b5bb3234426584ec5250aadf179ce1a94047dda2645"
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/__init__.pyi",
+      "sha256": "8af77dc2d39d99d782ba2615e0ac6330370009b523fb69e7d38f9ebb9d6e4fb5"
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py",
+      "sha256": "5f4602d923774c7e8776ae428de25f6d54ffbf1c4303840b6f884575c6bc5625"
+    }
+  ],
+  "current_terrain": {
+    "file": "TITA_Lab/src/TITA_Lab/tasks/velocity/terrain_cfg.py",
+    "lab_name": "LAB_TITA_ROUGH_TERRAINS_CFG",
+    "gym_name": "GYM_TITA_ROUGH_TERRAINS_CFG",
+    "both_validate_passed": true,
+    "lab_copy_is_independent": true,
+    "selected_in_env": "LAB_TITA_ROUGH_TERRAINS_CFG",
+    "lab_curriculum": false,
+    "gym_curriculum": true
+  },
+  "proposal": {
+    "switch_selection_to_gym": true,
+    "reexport_function": "isaaclab_tasks.core.velocity.mdp.curriculums.terrain_levels_vel",
+    "add_curriculum_cfg": true,
+    "sync_generator_curriculum_flag": true,
+    "new_custom_mdp_function": false,
+    "environment_step_reset_edits": false,
+    "env_ast_passed": true,
+    "pyi_ast_passed": true,
+    "written_to_user_source": false
+  },
+  "native_vs_old_cpu_cases": [
+    {
+      "case": "up_down_hold_and_unselected",
+      "passed": true,
+      "levels": [
+        4,
+        7,
+        0,
+        0,
+        0,
+        4
+      ],
+      "log_mean": 2.5
+    },
+    {
+      "case": "strict_thresholds_and_minimum",
+      "passed": true,
+      "levels": [
+        0,
+        3,
+        6,
+        5
+      ],
+      "log_mean": 3.5
+    },
+    {
+      "case": "zero_command_zero_distance",
+      "passed": true,
+      "levels": [
+        2,
+        8
+      ],
+      "log_mean": 5.0
+    },
+    {
+      "case": "empty_selection",
+      "passed": true,
+      "levels": [
+        3,
+        5
+      ],
+      "log_mean": 4.0
+    }
+  ],
+  "comparison_method": "Compiled original LeggedRobot._update_terrain_curriculum AST with torch only, init_done=True, same manual seed 31 for each original/native call; original levels and origins exactly match native manager outputs.",
+  "known_boundaries": [
+    "Asset root positions and command tensor were CPU fixtures. Native curriculum manager and native origin-update method were executed.",
+    "No claim of full task config instantiation, proposed lazy export runtime, or real automatic reset validation.",
+    "Old init_done guard is false only during construction; public reset after construction has init_done=True. No new common_step_counter==0 guard added.",
+    "Previously recorded native Hf row difficulty/border/origin differences remain."
+  ],
+  "execution_note": "Warp CUDA initialization emitted error 100 in the tool process; CPU checks finished exit 0; no GPU runtime claim."
+}

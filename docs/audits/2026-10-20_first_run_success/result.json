@@ -1,0 +1,25 @@
+{
+  "source": "User-provided terminal log; not an assistant-run simulation",
+  "task": "TitaLab-Velocity-Tita",
+  "physics": "isaacsim_physx",
+  "num_envs": 4,
+  "requested_max_steps": 20,
+  "dt": 0.0025,
+  "step_dt": 0.01,
+  "action_shape": [
+    4,
+    8
+  ],
+  "policy_shape": [
+    4,
+    33
+  ],
+  "history_shape": [
+    4,
+    330
+  ],
+  "normal_exit_observed": true,
+  "reset_confirmed_by_script_order": true,
+  "twenty_steps_basis": "Command max_steps=20, no visualizers, normal completion; CLI loop source inspected, no per-step counter in log",
+  "training_or_balance_validated": false
+}

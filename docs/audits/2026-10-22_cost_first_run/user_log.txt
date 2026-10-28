@@ -1,0 +1,201 @@
+(env_isaacSL-6.1.0) eaziel@eaziel-ASUS-TX6Pro:/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab$ python -m isaaclab zero_agent \
+  --task TitaLab-Velocity-Tita \
+  --num_envs 4 \
+  --max_steps 200 \
+  --device cuda:0 \
+  --visualizer none \
+  physics=isaacsim_physx
+[INFO]: Parsing configuration from: TITA_Lab.tasks.velocity.config.TITA.env_cfg:VelocityEnvCfg
+Loading user config located at: '/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1792667532.455228   12825 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1792667532.455631   12825 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+2026-10-22T11:12:12Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+2026-10-22T11:12:13Z [976ms] [Warning] [isaaclab.envs.manager_based_env] Seed not set for the environment. The environment creation may not be deterministic.
+[INFO]: Base environment:
+        Environment device    : cuda:0
+        Environment seed      : None
+        Physics step-size     : 0.0025
+        Rendering step-size   : 0.01
+        Environment step-size : 0.01
+[INFO] Generating terrains randomly took Last: 0.897049 s
+[INFO]: Registered backend 'physx' for factory Articulation.
+[INFO]: Registered backend 'physx' for factory ContactSensor.
+[INFO]: Registered backend 'physx' for factory RayCaster.
+[INFO]: Physics scene prim path: /physicsScene
+[INFO]: Time taken for scene creation Last: 3.433129 s, Mean: 3.433129 s, Std: 0.000000 s, N: 1
+[INFO]: Scene manager:  <class InteractiveScene>
+        Number of environments: 4
+        Environment spacing   : 4.0
+        Source prim name      : /World/envs/env_0
+        Global prim paths     : ['/World/ground']
+        Replicate physics     : True
+2026-10-22T11:12:20Z [7,266ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?
+[INFO]: Simulation parameters for joints in /World/envs/env_[^/]+/Robot:
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                   Simulation Joint Information (Prim path: /World/envs/env_[^/]+/Robot)                                                    |
++-------+-------------------+-----------+---------+----------+-----------------+------------------+------------------+---------------------+-----------------+---------------+
+| Index | Name              | Stiffness | Damping | Armature | Static Friction | Dynamic Friction | Viscous Friction |   Position Limits   | Velocity Limits | Effort Limits |
++-------+-------------------+-----------+---------+----------+-----------------+------------------+------------------+---------------------+-----------------+---------------+
+|   0   | joint_left_leg_1  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-0.785, 0.785]   |      25.000     |     60.000    |
+|   1   | joint_right_leg_1 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-0.785, 0.785]   |      25.000     |     60.000    |
+|   2   | joint_left_leg_2  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-1.920, 3.491]   |      25.000     |     60.000    |
+|   3   | joint_right_leg_2 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-1.920, 3.491]   |      25.000     |     60.000    |
+|   4   | joint_left_leg_3  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-2.670, -0.698]  |      25.000     |     60.000    |
+|   5   | joint_right_leg_3 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-2.670, -0.698]  |      25.000     |     60.000    |
+|   6   | joint_left_leg_4  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       | [-1.0e+06, 1.0e+06] |      20.000     |     15.000    |
+|   7   | joint_right_leg_4 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       | [-1.0e+06, 1.0e+06] |      20.000     |     15.000    |
++-------+-------------------+-----------+---------+----------+-----------------+------------------+------------------+---------------------+-----------------+---------------+
+[INFO]: Read mesh prim: /World/ground/terrain/mesh with 689739 vertices and 3943728 faces.
+[INFO]: Time taken for simulation start Last: 3.195320 s, Mean: 3.195320 s, Std: 0.000000 s, N: 1
+[INFO] Command Manager:  <CommandManager> contains 1 active terms.
++------------------------------------------------+
+|              Active Command Terms              |
++-------+---------------+------------------------+
+| Index | Name          |          Type          |
++-------+---------------+------------------------+
+|   0   | base_velocity | UniformVelocityCommand |
++-------+---------------+------------------------+
+
+[INFO] Event Manager:  <EventManager> contains 3 active terms.
++---------------------------------------+
+| Active Event Terms in Mode: 'startup' |
++--------+------------------------------+
+| Index  | Name                         |
++--------+------------------------------+
+|   0    | randomize_material           |
+|   1    | add_base_mass                |
+|   2    | base_com                     |
+|   3    | randomize_motors             |
+|   4    | randomize_action_lag         |
++--------+------------------------------+
++-------------------------------------+
+| Active Event Terms in Mode: 'reset' |
++--------+----------------------------+
+| Index  | Name                       |
++--------+----------------------------+
+|   0    | reset_robot_joints         |
+|   1    | reset_base                 |
++--------+----------------------------+
++----------------------------------------------+
+|    Active Event Terms in Mode: 'interval'    |
++-------+------------+-------------------------+
+| Index | Name       | Interval time range (s) |
++-------+------------+-------------------------+
+|   0   | push_robot |       (15.0, 15.0)      |
++-------+------------+-------------------------+
+
+[INFO] Recorder Manager:  <RecorderManager> contains 0 active terms.
++-----------------------+
+| Active Recorder Terms |
++------------+----------+
+|   Index    | Name     |
++------------+----------+
++------------+----------+
+
+[INFO]: Resolved joint names for the action term TitaJointAction: ['joint_left_leg_1', 'joint_left_leg_2', 'joint_left_leg_3', 'joint_right_leg_1', 'joint_right_leg_2', 'joint_right_leg_3'] [tensor([0, 2, 4, 1, 3, 5], device='cuda:0', dtype=torch.int32)]
+[INFO]: Resolved joint names for the action term TitaJointAction: ['joint_left_leg_4', 'joint_right_leg_4'] [tensor([6, 7], device='cuda:0', dtype=torch.int32)]
+[INFO] Action Manager:  <ActionManager> contains 2 active terms.
++----------------------------------+
+|  Active Action Terms (shape: 8)  |
++-------+--------------+-----------+
+| Index | Name         | Dimension |
++-------+--------------+-----------+
+|   0   | leg_position |         6 |
+|   1   | wheel_effort |         2 |
++-------+--------------+-----------+
+
+[INFO] Observation Manager: <ObservationManager> contains 5 groups.
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (33,)) |
++-----------+----------------------------------+-------------+
+|   Index   | Name                             |    Shape    |
++-----------+----------------------------------+-------------+
+|     0     | base_ang_vel                     |     (3,)    |
+|     1     | projected_gravity                |     (3,)    |
+|     2     | velocity_commands                |     (3,)    |
+|     3     | joint_pos_rel                    |     (8,)    |
+|     4     | joint_vel                        |     (8,)    |
+|     5     | actions                          |     (8,)    |
++-----------+----------------------------------+-------------+
++--------------------------------------------------------------+
+| Active Observation Terms in Group: 'history' (shape: (330,)) |
++-----------------+-----------------------+--------------------+
+|      Index      | Name                  |       Shape        |
++-----------------+-----------------------+--------------------+
+|        0        | proprio               |       (330,)       |
++-----------------+-----------------------+--------------------+
++-----------------------------------------------------------+
+| Active Observation Terms in Group: 'scan' (shape: (187,)) |
++----------------+---------------------+--------------------+
+|     Index      | Name                |       Shape        |
++----------------+---------------------+--------------------+
+|       0        | heights             |       (187,)       |
++----------------+---------------------+--------------------+
++--------------------------------------------------------------+
+| Active Observation Terms in Group: 'dynamics' (shape: (30,)) |
++---------------+-----------------------------+----------------+
+|     Index     | Name                        |     Shape      |
++---------------+-----------------------------+----------------+
+|       0       | parameters                  |     (30,)      |
++---------------+-----------------------------+----------------+
++---------------------------------------------------------------------+
+| Active Observation Terms in Group: 'privileged_state' (shape: (6,)) |
++----------------------+----------------------+-----------------------+
+|        Index         | Name                 |         Shape         |
++----------------------+----------------------+-----------------------+
+|          0           | state                |          (6,)         |
++----------------------+----------------------+-----------------------+
+
+[INFO] Termination Manager:  <TerminationManager> contains 2 active terms.
++---------------------------------+
+|     Active Termination Terms    |
++-------+--------------+----------+
+| Index | Name         | Time Out |
++-------+--------------+----------+
+|   0   | time_out     |   True   |
+|   1   | base_contact |  False   |
++-------+--------------+----------+
+
+[INFO] Reward Manager:  <RewardManager> contains 10 active terms.
++-------------------------------------+
+|         Active Reward Terms         |
++-------+------------------+----------+
+| Index | Name             |   Weight |
++-------+------------------+----------+
+|   0   | tracking_lin_vel |      1.0 |
+|   1   | tracking_ang_vel |      0.5 |
+|   2   | ang_vel_xy       |    -0.05 |
+|   3   | orientation      |     -1.0 |
+|   4   | base_height      |     -1.0 |
+|   5   | action_rate      |    -0.01 |
+|   6   | collision        |     -1.0 |
+|   7   | powers           |   -2e-05 |
+|   8   | dof_acc          | -2.5e-07 |
+|   9   | termination      |   -200.0 |
++-------+------------------+----------+
+
+[INFO] Curriculum Manager:  <CurriculumManager> contains 0 active terms.
++-------------------------+
+| Active Curriculum Terms |
++-------------+-----------+
+|    Index    | Name      |
++-------------+-----------+
++-------------+-----------+
+
+[INFO]: Completed setting up the environment...
+[INFO]: Gym observation space: Dict('dynamics': Box(-inf, inf, (4, 30), float32), 'history': Box(-inf, inf, (4, 330), float32), 'policy': Box(-inf, inf, (4, 33), float32), 'privileged_state': Box(-inf, inf, (4, 6),float32), 'scan': Box(-inf, inf, (4, 187), float32))
+[INFO]: Gym action space: Box(-inf, inf, (4, 8), float32)
+[INFO] Zero agent is running, press Ctrl+C to exit...
+[COST] terms: ['acc_smoothness', 'dof_vel_limits', 'feet_contact_forces', 'pos_limit', 'stumble', 'torque_limit']
+[COST] shape: (4, 6)
+[COST] env0: [0.09465301036834717, 0.0, 0.0, 0.0, 0.0, 0.0]
+[COST] terms: ['acc_smoothness', 'dof_vel_limits', 'feet_contact_forces', 'pos_limit', 'stumble', 'torque_limit']
+[COST] shape: (4, 6)
+[COST] env0: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+[INFO]: SimulationContext cleared
+(env_isaacSL-6.1.0) eaziel@eaziel-ASUS-TX6Pro:/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab$ 

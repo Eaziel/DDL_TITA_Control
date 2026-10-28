@@ -1,8 +1,8 @@
 # 01 Physics：物理步长、策略周期和 PhysX 参数
 
-更新：2026-10-18。本文中的 Lab 配置已写入项目并做过静态核对，尚未运行 RL 环境。
+**目标与结果：** 确定一次策略动作对应多少物理时间，并把旧求解参数放到Lab正确的配置对象。
 
-这一章解决两个问题：**仿真每次前进多久，以及物理引擎怎样求解。** 动作怎样变成力矩，放在 [03 Actions](03_actions迁移.md) 中解释。
+整理：2026-10-26。物理后端与时间配置已写；已有200策略步用户环境日志。此章解释控制/物理周期与求解参数，不把短运行当作求解数值或训练效果验证。 当前证据与整体状态以[项目记忆](../../PROJECT_MEMORY.md)为准。
 
 ## 1. Gym 原来怎么做
 
@@ -84,11 +84,21 @@ self.post_physics_step()
 
 内部子步不会自动让 Python 中的 `_compute_torques()` 多执行一次。位置/速度求解迭代次数也不等于子步数：迭代是在一个时间步内求解约束，不是再次推进时间。
 
+时间关系可统一写成：
+
+$$
+\Delta t_{sub}=\frac{\Delta t_{sim}}{S},\qquad
+\Delta t_{policy}=D\Delta t_{sim},\qquad
+f_{sim}=\frac1{\Delta t_{sim}},\quad f_{policy}=\frac1{\Delta t_{policy}}.
+$$
+
+当前 $S=1,D=4$，所以物理调用频率400Hz，策略频率100Hz；求解迭代次数不出现在这些时间换算中。
+
 ## 2. Lab 中怎样写
 
 ### 2.1 环境配置负责时间和后端
 
-在当前 [env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py) 中，物理预设为：
+在当前 [env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py) 中，物理预设为：
 
 ```python
 @configclass
@@ -126,7 +136,7 @@ step_dt    = cfg.sim.dt * cfg.decimation = 0.01 s
 
 ### 2.2 机器人属性放在资产配置
 
-旧 Gym 将很多参数集中在 `sim.physx` 中。Lab 中有一部分属于机器人及碰撞体，当前已放进 [assets/tita.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/assets/tita.py) 的 `UsdFileCfg`：
+旧 Gym 将很多参数集中在 `sim.physx` 中。Lab 中有一部分属于机器人及碰撞体，当前已放进 [assets/tita.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/assets/tita.py) 的 `UsdFileCfg`：
 
 ```python
 articulation_props={
@@ -170,6 +180,12 @@ collision_props={
 
 如果将来迁移 `substeps>1` 的工程，可以先按 `dt_Lab=dt_Gym/S`、`D_Lab=D_Gym*S` 匹配时间尺度；但控制器、延迟和传感器的调用次数也会受影响，不能仅靠这两个公式宣布执行过程等价。本项目当前不需要这一步。
 
+## 资产参数怎样对应
+
+旧asset选项还包括刚体阻尼和速度上限。当前已显式补零阻尼、关节腿25/轮20 rad/s，以及刚体线/角速度上限。USD中的Newton速度属性不能自动成为PhysX约束，必须设置对应后端参数；遗漏的发现经过见[09 F2/F3](09_阶段审查.md)。
+
+旧max_gpu_contact_pairs和新gpu_max_rigid_contact_count不是同名同单位承诺；当前复用2**23作为容量配置，不据数值相同宣称缓冲行为等价。线程、默认buffer倍数和接触采样开关没有逐字段硬套。
+
 ## 4. 当前结果与验证边界
 
 - 当前文件已经配置 PhysX、重力、时间参数及上述资产物理属性。
@@ -181,9 +197,9 @@ collision_props={
 
 | 要查什么 | Gym | Lab |
 | --- | --- | --- |
-| 时间和物理参数 | [sim 配置](/home/eaziel/Downloads/tita_rl-master/configs/legged_robot_config.py:218)、[TITA control](/home/eaziel/Downloads/tita_rl-master/configs/tita_constraint_config.py:63) | [SimulationCfg](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sim/simulation_cfg.py:35)、[PhysxCfg](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager_cfg.py:33) |
-| 时间循环 | [step](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:295)、[_parse_cfg](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:993) | [physics_dt / step_dt](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py:259)、[step](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_rl_env.py:205) |
-| 机器人属性 | [创建环境与资产](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:164) | [PhysX schemas 配置](/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/sim/schemas/schemas_cfg.py:245) |
+| 时间和物理参数 | [sim 配置](/home/eaziel/Downloads/tita_rl-master/configs/legged_robot_config.py:218)、[TITA control](/home/eaziel/Downloads/tita_rl-master/configs/tita_constraint_config.py:63) | [SimulationCfg](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/sim/simulation_cfg.py)、[PhysxCfg](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/physics/physx_manager_cfg.py) |
+| 时间循环 | [step](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:295)、[_parse_cfg](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:993) | [physics_dt / step_dt](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_env.py)、[step](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py) |
+| 机器人属性 | [创建环境与资产](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:164) | [PhysX schemas 配置](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/sim/schemas/schemas_cfg.py) |
 
 ## 补充问答
 
@@ -198,4 +214,3 @@ collision_props={
 Gym的substeps在一次simulate内部再细分积分时间。若dt=0.0025、substeps=2，一次simulate仍前进2.5 ms，内部走两个1.25 ms子步。Python的_compute_torques只在外层循环调用，内部子步不会额外调用它。第1.3节列出了这三层时间关系。
 
 [返回迁移入口](README.md) · [查看来源与覆盖表](00_迁移映射索引.md)
-

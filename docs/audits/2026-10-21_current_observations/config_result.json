@@ -1,0 +1,13 @@
+{
+  "configuration_validate": true,
+  "ast_parse": [
+    "mdp/actions.py",
+    "mdp/observations.py",
+    "mdp/events.py",
+    "mdp/__init__.pyi",
+    "config/TITA/env_cfg.py",
+    "tita_velocity_env.py",
+    "observation_layout.py"
+  ],
+  "simulation_or_training_started": false
+}

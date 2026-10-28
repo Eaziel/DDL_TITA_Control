@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-23",
+  "scope": "Read-only source/USD audit; documentation edits only; no assistant simulation",
+  "user_report": "好了。完美。我刚运行了，我把自碰撞打开，现象正常。",
+  "user_report_limits": "No new full log, launch command, step count or seed supplied; does not establish training success.",
+  "usd": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/assets/data/robots/tita/usd/tita.usd",
+  "meters_per_unit": 1.0,
+  "collider_api_prim_count": 9,
+  "enabled_collider_prim_count": 5,
+  "colliders": [
+    {
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_4/left_leg_4/left_leg_4",
+      "type": "Mesh",
+      "collision_enabled": true
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_3/left_leg_3",
+      "type": "Mesh",
+      "collision_enabled": true
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_2/left_leg_2",
+      "type": "Mesh",
+      "collision_enabled": false
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_1/left_leg_1",
+      "type": "Mesh",
+      "collision_enabled": false
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_4/right_leg_4/right_leg_4",
+      "type": "Mesh",
+      "collision_enabled": true
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_3/right_leg_3",
+      "type": "Mesh",
+      "collision_enabled": true
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_2/right_leg_2",
+      "type": "Mesh",
+      "collision_enabled": false
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_1/right_leg_1",
+      "type": "Mesh",
+      "collision_enabled": false
+    },
+    {
+      "path": "/TITARobot/Geometry/base_link/base_link/base_link",
+      "type": "Mesh",
+      "collision_enabled": true
+    }
+  ],
+  "source_self_collision_setting": "enabled_self_collisions=True remains commented in tita.py; no explicit override",
+  "source_usd_authored_self_collision_setting": null,
+  "urdf_vs_usd_zero_pose_link_transform_max_abs_error": 2.2280596770444337e-08,
+  "cleanup_proposal": {
+    "ast_passed": true,
+    "print_calls": 0,
+    "assert_statements": 0,
+    "written_to_source": false
+  },
+  "next_proposal": "Replace base_link and both leg_3 collision Meshes with exact URDF box dimensions and local poses; wheels unchanged for this step; not yet implemented."
+}

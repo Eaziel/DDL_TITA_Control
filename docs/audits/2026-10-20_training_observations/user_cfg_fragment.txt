@@ -1,0 +1,34 @@
+    @configclass
+    class ScanCfg(ObsGroup):
+        """Terrain heights relative to the nominal base clearance."""
+
+        heights = ObsTerm(
+            func=mdp.height_scan,
+            params={"sensor_cfg": SceneEntityCfg("height_scanner"), "offset": 0.4},
+            clip=(-1.0, 1.0),
+            scale=5.0,
+        )
+
+        def __post_init__(self) -> None:
+            self.enable_corruption = False
+            self.concatenate_terms = True
+
+    @configclass
+    class DynamicsCfg(ObsGroup):
+        """Randomized physical parameters available during training."""
+
+        parameters = ObsTerm(
+            func=mdp.TitaDynamicsParameters,
+            params={
+                "asset_cfg": SceneEntityCfg(
+                    "robot", body_names="base_link", joint_names=TITA_JOINT_NAMES, preserve_order=True
+                )
+            },
+        )
+
+        def __post_init__(self) -> None:
+            self.enable_corruption = False
+            self.concatenate_terms = True
+
+    scan: ScanCfg = ScanCfg()
+    dynamics: DynamicsCfg = DynamicsCfg()

@@ -1,0 +1,22 @@
+{
+  "evidence": "user-provided partial runtime log",
+  "attachment": "/home/eaziel/.codex/attachments/a1009f07-eced-4dda-9acc-59a6ea71daec/Pasted text.txt",
+  "sha256": "6f2729c2eefee4c275415fbba5593648b07a3b609a26c8fcfa73e55e148c189f",
+  "num_envs": 4,
+  "device": "cuda:0",
+  "seed": 42,
+  "agent": "random",
+  "observations": {
+    "policy": 33,
+    "history": 330,
+    "scan": 187,
+    "dynamics": 30,
+    "privileged_state": 6
+  },
+  "actions": 8,
+  "interrupted_by_ctrl_c": true,
+  "cleaned_up": true,
+  "traceback_in_excerpt": false,
+  "completed_steps": "unknown",
+  "push_or_timeout_confirmed": false
+}

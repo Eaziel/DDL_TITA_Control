@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-23",
+  "scope": "User-provided 29 reset lines; current source and static USD/schema checks; no assistant simulation run",
+  "episodes": 29,
+  "steps": [
+    1,
+    1,
+    22,
+    12,
+    27,
+    10,
+    1,
+    24,
+    1,
+    2,
+    12,
+    1,
+    5,
+    29,
+    4,
+    31,
+    27,
+    2,
+    1,
+    13,
+    22,
+    27,
+    1,
+    1,
+    1,
+    12,
+    14,
+    1,
+    27
+  ],
+  "one_step_episodes": 10,
+  "two_step_episodes": 2,
+  "min_duration_s": 0.01,
+  "max_duration_s": 0.31,
+  "all_reasons": [
+    "base_contact"
+  ],
+  "cause_confirmed": false,
+  "contact_scope": "Current termination uses aggregate normal force on selected base_link, not terrain-only force",
+  "self_collision_static": {
+    "usd_explicit_attribute": false,
+    "tita_cfg_explicit_override": false,
+    "installed_schema_default": true,
+    "schema_path": "/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/lib/python3.12/site-packages/isaacsim/extscache/omni.usd.schema.physx-110.3.2+110.3.0.lx64.r.cp312.u7f4/plugins/PhysxSchema/resources/generatedSchema.usda:1232",
+    "joint_collision_enabled_authored": false,
+    "joint_collision_enabled_schema_value": false,
+    "runtime_articulation_self_collision_value_read": false,
+    "note": "Joint-connected adjacent links are normally filtered; no inference that all base-leg pairs collide"
+  },
+  "sensor_reset_source_check": "ContactSensor.reset zeros current and history force buffers; update fetches PhysX every physics step. Does not prove backend data cannot be stale.",
+  "zero_agent": "For current TitaJointAction terms, raw action is zeros (N,8) each policy step; PD and damping still act; no learning",
+  "random_agent": "Fresh independent uniform [-1,1) raw actions (N,8) per policy step; same task action mapping; no learning",
+  "next_diagnostic": {
+    "sensor_name": "base_contact_debug",
+    "sensor_prim_path": "{ENV_REGEX_NS}/Robot/Geometry/base_link",
+    "filter": [
+      "/World/ground/terrain/mesh"
+    ],
+    "reads": "Pre-reset original trigger force, independent base total normal force, terrain-only force, and vector residual total-terrain",
+    "config_validate_passed": true,
+    "user_applied": true,
+    "simulator_run": false,
+    "limitations": "Filter matching must be confirmed by nonzero terrain force on a known terrain contact; residual alone is not proof of self collision",
+    "user_supplied_runtime_output": true
+  },
+  "filtered_followup": {
+    "evidence": "user_filtered_contact_excerpt.txt",
+    "contact_rows": 45,
+    "reset_rows": 44,
+    "reset_rows_one_step": 11,
+    "excerpt_starts_with_unpaired_contact_row": true,
+    "current_source_print_order": "RESET then CONTACT; do not pair the leading orphan with the following RESET",
+    "trigger_total_max_abs_difference_N": 0.0,
+    "terrain_zero_rows": 41,
+    "terrain_nonzero_rows": 4,
+    "other_over_1_N_rows": 43,
+    "terrain_only_rows": 2,
+    "trigger_range_N": [
+      29.12,
+      8607.972
+    ],
+    "terrain_filter_has_positive_runtime_readings": true,
+    "conclusion": "Large non-terrain base contact force is present in reported data. Self collision is the leading hypothesis in the current single-robot terrain scene; the exact colliding pair and backend freshness are not yet verified.",
+    "self_collision_root_cause_confirmed": false
+  },
+  "next_step": {
+    "action": "Temporary single-variable A/B: add enabled_self_collisions=False to existing PhysxArticulationCfg in TITA_Lab/src/TITA_Lab/assets/tita.py",
+    "retain": "Same zero-agent single-environment command, seed and all other physics/action/reset/termination settings; retain filtered contact diagnostics",
+    "evaluation": "Check non-terrain force and 1-step reset occurrence over comparable policy-step budgets; use equal episode counts as needed because changed dynamics consumes random samples at different reset times",
+    "user_applied": true,
+    "assistant_simulator_run": false,
+    "migration_boundary": "Old Gym self_collisions=0 enables collision; diagnostic False is not the final migration target",
+    "if_supported": "Restore self-collision and identify exact non-adjacent link pair/collision geometry before deciding on repair or justified pair filtering",
+    "official_guidance": "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.3/dev_guide/guides/articulation_stability_guide.html#articulation-link-self-collision"
+  },
+  "self_collision_off_followup": {
+    "evidence": "../2026-10-23_collision_model/self_collision_disabled_excerpt.txt",
+    "current_source_false_verified": true,
+    "two_reset_steps": [
+      62,
+      84
+    ],
+    "two_contact_other_N": [
+      0.0,
+      0.0
+    ],
+    "policy_counter_200_logged": true,
+    "normal_cleanup_logged": true,
+    "interpretation": "Strong support for self-collision involvement; exact colliding pair unverified; collider presence mismatch statically confirmed separately",
+    "current_next_step": "Disable four extra leg1/leg2 colliders and restore self collisions; proposal not yet applied"
+  }
+}

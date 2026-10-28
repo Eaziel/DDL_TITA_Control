@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# 同步本地 Isaac Lab 技能为真实文件；不联网、不 git pull、不创建 symlink。
+# 同步本地 Isaac Lab 技能为真实文件；不读取 Git、不联网、不创建 symlink。
 set -euo pipefail
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 # ===== 可修改的配置：填写 IsaacLab 根目录和安装父目录（不是 skills 目录） =====
-ISAACLAB_ROOT="${ISAACLAB_ROOT:-$HOME/IsaacLab}"
+ISAACLAB_ROOT="${ISAACLAB_ROOT:-$HOME/IsaacLab-main}"
 INSTALL_DIR="${INSTALL_DIR:-$SCRIPT_DIR/.agents}"  # 最终安装到 "$INSTALL_DIR/skills/"
 PYTHON_BIN="${PYTHON_BIN:-python3}"              # Python 3.10+，仅标准库
 # =======================================================================
@@ -20,7 +20,6 @@ import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 from urllib.parse import quote, unquote
@@ -67,21 +66,6 @@ def inventory(folder):
         elif not path.is_dir():
             fail(f'安装目标有不支持的文件类型：{path}')
     return result
-
-
-def git_info(source):
-    try:
-        top = subprocess.check_output(['git', '-C', str(source), 'rev-parse', '--show-toplevel'],
-                                      stderr=subprocess.DEVNULL, text=True).strip()
-        if Path(top).resolve() != source:
-            return None, None
-        commit = subprocess.check_output(['git', '-C', str(source), 'rev-parse', 'HEAD'],
-                                         stderr=subprocess.DEVNULL, text=True).strip()
-        dirty = bool(subprocess.check_output(['git', '-C', str(source), 'status', '--porcelain', '--', 'skills'],
-                                            stderr=subprocess.DEVNULL, text=True).strip())
-        return commit, dirty
-    except (OSError, subprocess.CalledProcessError):
-        return None, None
 
 
 def safe_relative(value):
@@ -145,12 +129,10 @@ def main():
         sources[name] = entry.parent
     if not sources:
         fail('未找到 skills/<user 或 developer>/<目录>/SKILL.md；停止以免误删已安装技能。')
-    commit, dirty = git_info(source)
-    ref = commit or 'HEAD'
-    print(f'源码：{source}\n安装：{skills_target}\n提交：{commit or "无法确定；外部引用使用 GitHub HEAD"}')
-    print('仅同步本地文件，不执行 git pull。')
-    if dirty:
-        print('提示：本地 skills 有未提交改动；同步会采用本地内容，逐文件哈希将记录这些内容。')
+    # 不读取 Git；本次实际来源由逐文件 SHA-256 标识。
+    ref = 'main'
+    print(f'源码：{source}\n安装：{skills_target}\n来源：逐文件 SHA-256；未读取 Git')
+    print('仅同步本地文件，不读取 Git、不联网。')
 
     link_re = re.compile(r'(\]\()([^\s)]+)([^)]*\))')
     records, rewrites, desired = [], [], {}
@@ -227,19 +209,20 @@ def main():
                 return 2
             print('--force：将先备份上述目录再同步。')
 
-        metadata = {'format_version': 1, 'source_root': str(source), 'source_commit': commit,
-                    'source_skills_dirty': dirty, 'method': 'project-local regular-file copy; no symlinks',
+        metadata = {'format_version': 1, 'source_root': str(source), 'source_commit': None,
+                    'source_skills_dirty': None, 'git_inspected': False, 'external_link_ref': ref,
+                    'method': 'project-local regular-file copy; no symlinks',
                     'skills': {name: folder.relative_to(source).as_posix() for name, folder in sources.items()},
                     'files': records, 'adapted_links': rewrites}
         old_comparable = {k: v for k, v in old.items() if k not in ('date', 'synced_at')}
         readme = f'''# Isaac Lab 技能 COPY 同步记录
 
-由 sync_isaaclab_skills.sh 维护。来源：`{source}`；提交：`{commit or '未知'}`。
+由 sync_isaaclab_skills.sh 维护。来源：`{source}`；未读取 Git，具体内容以 isaaclab-skills-source.json 中的逐文件 SHA-256 为准。
 
 - 安装位置：`skills/`，共 {len(sources)} 个技能，全部为普通文件和真实目录。
-- 技能内部支持文件随目录复制；跨目录引用适配为同项目技能路径或来源提交的 GitHub 链接。
+- 技能内部支持文件随目录复制；跨目录引用适配为同项目技能路径或 GitHub main 链接（随上游变化，不作为本次来源版本凭据）。
 - 上游的 docs/source、source、tools 等路径与命令指 Isaac Lab checkout。优先读匹配的本地源码，其他系统使用该机实际安装位置；没有匹配文件时再读链接。
-- 本地源码更新后重新运行同步脚本；脚本不联网、不 git pull、不安装 Python 包或运行仿真。
+- 本地源码更新后重新运行同步脚本；脚本不读取 Git、不联网、不安装 Python 包或运行仿真。
 - 脚本开头的 ISAACLAB_ROOT 是源码根目录，INSTALL_DIR 是安装父目录（通常 xxx/.agents）；也可用 --source 和 --target 临时覆盖。
 - 默认检查本地修改；--dry-run 预览；--force 先备份再覆盖。备份在 skill-sync-backups/，无关技能不受影响。
 - 详细来源、文件哈希和引用适配见 isaaclab-skills-source.json；许可见 ISAACLAB_SKILLS_LICENSE.txt。

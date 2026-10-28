@@ -1,0 +1,35 @@
+{
+  "scope": "Documented proposal only; user task source unmodified; no simulation or training",
+  "envs": 128,
+  "all_joints_and_reordered_subset_match_original_gym": {
+    "joint_position_limit_cost/slice(None, None, None)": 0.0,
+    "joint_torque_limit_cost/slice(None, None, None)": 0.0,
+    "joint_velocity_limit_cost/slice(None, None, None)": 0.0,
+    "joint_position_limit_cost/[7, 2, 0]": 0.0,
+    "joint_torque_limit_cost/[7, 2, 0]": 0.0,
+    "joint_velocity_limit_cost/[7, 2, 0]": 0.0
+  },
+  "strict_equality_is_not_violation": true,
+  "clipped_torque_with_ratio_one_is_zero": true,
+  "saved_position_factor_before_proposal": 1.0,
+  "in_memory_cfg_with_factor_0_9_validate": true,
+  "old_cost_order_from_dir": [
+    "acc_smoothness",
+    "dof_vel_limits",
+    "feet_contact_forces",
+    "pos_limit",
+    "stumble",
+    "torque_limit"
+  ],
+  "old_k_values_in_that_order": [
+    0.1,
+    0.3,
+    0.1,
+    0.3,
+    0.1,
+    0.3
+  ],
+  "candidate_wired_into_environment": false,
+  "proposal_ruff_check": true,
+  "static_usd_note": "USD revolute limits were read without a simulator; wheel bounds are approximately +/-999999 rad; physical inputs are not claimed identical"
+}

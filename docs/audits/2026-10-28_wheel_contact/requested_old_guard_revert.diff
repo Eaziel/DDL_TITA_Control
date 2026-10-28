@@ -1,0 +1,31 @@
+--- TITA_Lab_old/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py (before requested revert)
++++ TITA_Lab_old/TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py (restored historical guard)
+@@ -12,7 +12,6 @@
+ 
+ from isaaclab.managers import ManagerTermBase
+ from isaaclab.utils.math import sample_uniform
+-from isaaclab.utils.string import string_to_callable
+ 
+ from ..actuators import TitaPDActuator
+ from .actions import TitaJointAction
+@@ -103,18 +102,9 @@
+     """Assign shared friction and restitution to all collision shapes of each robot."""
+ 
+     def __init__(self, cfg: EventTermCfg, env: ManagerBasedRLEnv) -> None:
+-        # 该实现依赖 Kit，等仿真启动、事件实例开始构造时再导入。
+-        from isaaclab_physx.physics import PhysxManager
+-
+         super().__init__(cfg, env)
+-        manager_class = env.sim.physics_manager
+-
+-        # 将后端类的字符串引用解析为真正的Python类。
+-        if isinstance(manager_class, str):
+-            manager_class = string_to_callable(manager_class)
+-
+-        if not issubclass(manager_class, PhysxManager):
+-            raise ValueError("RandomizeTitaMaterial supports Isaac Sim PhysX only.")
++        if env.sim.physics_manager.__name__ != "PhysxManager":
++            raise ValueError("RandomizeTitaMaterial currently supports Isaac Sim PhysX only.")
+ 
+         asset_cfg: SceneEntityCfg = cfg.params["asset_cfg"]
+         if asset_cfg.body_ids != slice(None):

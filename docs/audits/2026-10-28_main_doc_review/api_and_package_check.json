@@ -1,0 +1,14 @@
+{
+  "articulation_methods_found": [
+    "set_joint_effort_target_index",
+    "set_joint_position_target_index",
+    "write_joint_position_to_sim_index",
+    "write_joint_velocity_to_sim_index",
+    "write_root_velocity_to_sim_index"
+  ],
+  "articulation_methods_missing": [],
+  "dependency_override_equal_to_local_main": true,
+  "local_editable_sources_exist": true,
+  "missing_local_sources": [],
+  "actor_script_exists": false
+}

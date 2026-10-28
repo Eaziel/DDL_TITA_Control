@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-25",
+  "scope": "Current project configuration import, validate, and Python class identity; no simulator",
+  "observed": {
+    "config_class": "TitaVelocityCommandCfg",
+    "class_type": "TitaVelocityCommand",
+    "lin_vel_deadband": 0.2,
+    "validate_passed": true,
+    "class_identity_assertions_passed": true
+  },
+  "command": "parse_env_cfg(TitaLab-Velocity-Tita, device=cpu, num_envs=4, overrides=[physics=isaacsim_physx]); cfg.validate()",
+  "note": "Warp reported no CUDA device during configuration import; this check does not assess user GPU availability.",
+  "sha256": {
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/commands.py": "578da9839af394d81f7c2ad12c644df74754c35a8a9635e283178f7fdbd817ae",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/__init__.pyi": "45db86e4c660a6c82df99b5620453dbfba61ba7cd4005bcad898b1ce221cb2f9",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py": "631785ea06c5e47e44e442816987ef02cbb7a61933c4c0a96bb6c8bed80a201a"
+  }
+}

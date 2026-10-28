@@ -1,0 +1,69 @@
+{
+  "scope": "Five current cost functions plus documented acceleration/manager/cfg/env candidates",
+  "configuration_validate": true,
+  "cost_column_names": [
+    "acc_smoothness",
+    "dof_vel_limits",
+    "feet_contact_forces",
+    "pos_limit",
+    "stumble",
+    "torque_limit"
+  ],
+  "runs": [
+    {
+      "final_obs_enabled": false,
+      "policy_steps": 12,
+      "physics_steps": 48,
+      "partial_resets": [
+        2,
+        5,
+        9
+      ],
+      "push_steps": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "maximum_error_against_six_gym_methods": 0.0,
+      "cold_reset_repeated_compute_partial_reset_and_snapshot_checks": true
+    },
+    {
+      "final_obs_enabled": true,
+      "policy_steps": 12,
+      "physics_steps": 48,
+      "partial_resets": [
+        2,
+        5,
+        9
+      ],
+      "push_steps": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "maximum_error_against_six_gym_methods": 0.0,
+      "cold_reset_repeated_compute_partial_reset_and_snapshot_checks": true
+    }
+  ],
+  "ruff": [
+    {
+      "file": "mdp/costs.py",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "file": "cost_manager.py",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "file": "tita_velocity_env.py",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "simulation_or_training_started": false,
+  "boundary": "Native ManagerBase entity resolution and native RL step/reset, CPU state and simulator stand-ins; proposed constructor placement checked against source, not real env construction"
+}

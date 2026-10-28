@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-23",
+  "scope": "Read-only current source audit, proposal config validation, six native CPU terrain samples and native 2x2 CPU generator; no Sim/PhysX/training execution",
+  "current_source_files": [
+    {
+      "path": "TITA_Lab/src/TITA_Lab/assets/tita.py",
+      "sha256": "6e87cd2a5d13d6dc510a3c08f93b8d1c0d4c040caa72be1041fb5f90707b131b",
+      "ast_passed": true
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py",
+      "sha256": "ea433e858e7150bddd7642ecb8311d78986a72a6f31025d7adecfc022a47094f",
+      "ast_passed": true
+    },
+    {
+      "path": "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py",
+      "sha256": "acb0198cfa6898680d8688922bea9e7295af5d78c4bd0cb7dcfdd55a6cee55cf",
+      "ast_passed": true
+    }
+  ],
+  "cleanup_state": {
+    "self_collision_explicit_true": true,
+    "reset_contact_prints_removed": true,
+    "cost_prints_removed": true,
+    "formal_history_reward_cost_hooks_retained": true,
+    "remaining": [
+      "Scene.base_contact_debug",
+      "step first-step VIEW prints",
+      "step cost shape/finite/nonnegative asserts"
+    ]
+  },
+  "proposal": {
+    "file": "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/terrain_cfg.py",
+    "constant": "TITA_TERRAINS_CFG",
+    "written_to_source": false,
+    "config_validate_passed": true,
+    "size": [
+      8,
+      8
+    ],
+    "num_rows": 10,
+    "num_cols": 20,
+    "border_width": 25,
+    "horizontal_scale": 0.1,
+    "vertical_scale": 0.005,
+    "slope_threshold": 0.75,
+    "curriculum_layout": true,
+    "automatic_level_updates_wired": false,
+    "stairs_down_proportion": 0.5,
+    "stairs_up_proportion": 0.5,
+    "step_height_range": [
+      0.025,
+      0.115
+    ],
+    "step_width": 0.61,
+    "platform_width": 3.0
+  },
+  "native_sample_checks": {
+    "difficulties": [
+      0,
+      0.5,
+      0.9
+    ],
+    "finite_vertices_and_origins_passed": true,
+    "opposite_height_signs_passed": true,
+    "up_z_max": [
+      0.125,
+      0.3499999940395355,
+      0.5249999761581421
+    ],
+    "down_z_min": [
+      -0.125,
+      -0.3499999940395355,
+      -0.5249999761581421
+    ],
+    "up_origin_z": [
+      0.125,
+      0.35000000000000003,
+      0.525
+    ],
+    "down_origin_z": [
+      -0.1,
+      -0.28,
+      -0.42
+    ]
+  },
+  "native_2x2_cpu_generator": {
+    "seed": 7,
+    "passed": true,
+    "origins_shape": [
+      2,
+      2,
+      3
+    ],
+    "origin_z": [
+      [
+        -0.2,
+        0.275
+      ],
+      [
+        -0.44,
+        0.4
+      ]
+    ],
+    "column_0_down_column_1_up": true
+  },
+  "known_differences": [
+    "Lab curriculum difficulty is (row+uniform[0,1))/num_rows instead of old row/num_rows.",
+    "Lab native heightfield wrapper pads tile borders; origins/vertices are not asserted identical to old Gym.",
+    "Nominal 0.61m stair width quantizes to 0.6m at horizontal scale 0.1m; height quantizes to 5mm.",
+    "Old isaacgym runtime/terrain_utils not installed in this interpreter; no native old-vs-new mesh comparison."
+  ],
+  "execution_note": "CPU check emitted Warp CUDA error 100 about no visible CUDA-capable device; CPU mesh checks completed with exit code 0. This is not a user PhysX GPU test."
+}

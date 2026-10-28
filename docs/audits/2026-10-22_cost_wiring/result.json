@@ -1,0 +1,79 @@
+{
+  "scope": "Current six cost functions, current manager/cfg/env with four in-memory corrections",
+  "configuration_validate": true,
+  "cost_column_names": [
+    "acc_smoothness",
+    "dof_vel_limits",
+    "feet_contact_forces",
+    "pos_limit",
+    "stumble",
+    "torque_limit"
+  ],
+  "runs": [
+    {
+      "final_obs_enabled": false,
+      "policy_steps": 12,
+      "physics_steps": 48,
+      "partial_resets": [
+        2,
+        5,
+        9
+      ],
+      "push_steps": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "maximum_error_against_six_gym_methods": 0.0,
+      "cold_reset_repeated_compute_partial_reset_and_snapshot_checks": true
+    },
+    {
+      "final_obs_enabled": true,
+      "policy_steps": 12,
+      "physics_steps": 48,
+      "partial_resets": [
+        2,
+        5,
+        9
+      ],
+      "push_steps": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "maximum_error_against_six_gym_methods": 0.0,
+      "cold_reset_repeated_compute_partial_reset_and_snapshot_checks": true
+    }
+  ],
+  "ruff": [
+    {
+      "file": "mdp/costs.py",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "file": "cost_manager.py",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "file": "tita_velocity_env.py",
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "simulation_or_training_started": false,
+  "boundary": "Native ManagerBase entity resolution and native RL step/reset, CPU state and simulator stand-ins; proposed constructor placement checked against source, not real env construction",
+  "saved_source_constructor_failure": "Can't instantiate abstract class TitaCostManager without an implementation for abstract method '_prepare_terms'",
+  "saved_velocity_parameter_failure": "The term 'dof_vel_limits' expects mandatory parameters: ['asset_cfg'] and optional parameters: ['soft_ratio'], but received: ['sensor_cfg'].",
+  "saved_velocity_k": 0.1,
+  "in_memory_corrections": [
+    "_prepare_term -> _prepare_terms",
+    "k_values shape (1,6) and restore d_values (1,1,6)",
+    "dof_vel_limits params sensor_cfg -> robot asset_cfg",
+    "dof_vel_limits k 0.1 -> 0.3"
+  ],
+  "user_source_files_modified": false
+}

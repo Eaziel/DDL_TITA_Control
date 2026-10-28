@@ -1,0 +1,38 @@
+{
+  "boundary": "CPU math, native managers, and pre-launch CLI only; no AppLauncher/physics/training",
+  "checks": {
+    "saved_apply_actions_bug": {
+      "reproduced": "NotImplementedError from the inherited abstract apply_actions",
+      "first_target_written_before_exception": true
+    },
+    "candidate_action_processing_and_reward": {
+      "action_dim": 8,
+      "group_sizes": [
+        6,
+        2
+      ],
+      "steps": 12,
+      "apply_per_step": 4,
+      "max_target_error": 0.0,
+      "raw_observation_and_clipped_reward_distinct": true,
+      "clipped_history_preserved_on_partial_reset": true,
+      "saturated_action_rate_zero": true
+    },
+    "candidate_torques_against_actual_gym_methods": {
+      "steps": 16,
+      "physics_calls_per_step": 4,
+      "gym_filter_enabled": true,
+      "lag_disabled": true,
+      "max_torque_error_Nm": 1.9073486328125e-06
+    },
+    "official_zero_agent_cli_prelaunch": {
+      "physics": "PhysxCfg",
+      "num_envs": 4,
+      "max_steps": 20,
+      "visualizer": null,
+      "registered_entry_point": true,
+      "configuration_validate_passed": true
+    }
+  },
+  "failures": {}
+}

@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-28",
+  "target": "/home/eaziel/miniconda3",
+  "environments": [
+    "env_isaacSL-6.1.0",
+    "DL_study"
+  ],
+  "shell_config_backup": "/home/eaziel/conda-uninstall-backup-20261028-bm9q7hwt",
+  "status": "completed",
+  "git_operations": false,
+  "project_source_changes": false,
+  "root_exists_after": false
+}

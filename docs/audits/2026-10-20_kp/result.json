@@ -1,0 +1,199 @@
+{
+  "scope": "Saved implementation through motor factors; unfinished mdp/actions.py excluded",
+  "boundary": "CPU formulas/managers and in-memory USD only; no simulation or training",
+  "checks": {
+    "config_and_exports": {
+      "validate": true,
+      "policy_dt": 0.01,
+      "reward_terms": [
+        "tracking_lin_vel",
+        "tracking_ang_vel",
+        "ang_vel_xy",
+        "orientation",
+        "base_height",
+        "action_rate",
+        "collision",
+        "powers",
+        "dof_acc",
+        "termination"
+      ],
+      "action_names": [
+        "leg_position",
+        "wheel_effort"
+      ],
+      "unfinished_module_imported": false
+    },
+    "native_observation_manager": {
+      "policy_shape": [
+        128,
+        33
+      ],
+      "history_shape": [
+        128,
+        330
+      ],
+      "noise_final_halfwidths": [
+        0.2,
+        0.05,
+        0.01,
+        0.075
+      ],
+      "source_joint_pos_unmodified": true
+    },
+    "history_timeline": {
+      "transitions": 40,
+      "partial_resets": 2,
+      "repeat_reads": true,
+      "tuple_reset": true
+    },
+    "native_reward_and_termination_managers": {
+      "terms": [
+        "tracking_lin_vel",
+        "tracking_ang_vel",
+        "ang_vel_xy",
+        "orientation",
+        "base_height",
+        "action_rate",
+        "collision",
+        "powers",
+        "dof_acc",
+        "termination"
+      ],
+      "native_manager_compute": true,
+      "reset_keeps_step_reward": true,
+      "timeout_masks_failure": true,
+      "final_positive_ordinary_sum": true
+    },
+    "motor_randomization_and_compute": {
+      "formula_max_error": 0.0,
+      "gym_method_max_error": 9.5367431640625e-07,
+      "gym_filter_and_lag_disabled": true,
+      "groups": [
+        6,
+        2
+      ],
+      "factors_keep_across_reset": true,
+      "partial_selection": true
+    },
+    "material_mass_com_push": {
+      "material_shared_per_robot": true,
+      "friction_range": [
+        0.2,
+        2.75
+      ],
+      "restitution_range": [
+        0,
+        1
+      ],
+      "native_mass_com_terms": true,
+      "partial_push_preserves_other_columns": true
+    },
+    "usd_geometry_and_sensor_paths": {
+      "body_count": 9,
+      "usd_colliders": 9,
+      "urdf_collision_elements": {
+        "base_link": 1,
+        "spad": 0,
+        "spad1": 0,
+        "left_camera": 0,
+        "ch201": 0,
+        "right_camara": 0,
+        "left_leg_1": 0,
+        "left_leg_2": 0,
+        "left_leg_3": 1,
+        "left_leg_4": 1,
+        "right_leg_1": 0,
+        "right_leg_2": 0,
+        "right_leg_3": 1,
+        "right_leg_4": 1
+      },
+      "root_joint_disabled": true,
+      "scanner_child_matches_before_spawn": 0,
+      "base_matches": 1,
+      "contact_descendant_candidates": 9,
+      "height_rays": 187,
+      "authored_velocity_damping": {
+        "/TITARobot/Geometry/base_link": {},
+        "/TITARobot/Geometry/base_link/left_leg_1": {},
+        "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2": {},
+        "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3": {},
+        "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_4": {},
+        "/TITARobot/Geometry/base_link/right_leg_1": {},
+        "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2": {},
+        "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3": {},
+        "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_4": {},
+        "/TITARobot/Physics/root_joint": {},
+        "/TITARobot/Physics/joint_left_leg_1": {
+          "newton:velocityLimit": "1432.39453125",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_left_leg_2": {
+          "newton:velocityLimit": "1432.39453125",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_left_leg_3": {
+          "newton:velocityLimit": "1432.39453125",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_left_leg_4": {
+          "newton:velocityLimit": "1145.9156494140625",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_right_leg_1": {
+          "newton:velocityLimit": "1432.39453125",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_right_leg_2": {
+          "newton:velocityLimit": "1432.39453125",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_right_leg_3": {
+          "newton:velocityLimit": "1432.39453125",
+          "state:angular:physics:velocity": "0.0"
+        },
+        "/TITARobot/Physics/joint_right_leg_4": {
+          "newton:velocityLimit": "1145.9156494140625",
+          "state:angular:physics:velocity": "0.0"
+        }
+      }
+    },
+    "raycaster_constructor_and_pose_tracking": {
+      "constructor_created_sensor_frame": false,
+      "existing_config_error": "No prim found at '/TITARobot/Geometry/base_link/height_scanner'.",
+      "proposed_base_path_pose_tracking": true,
+      "boundary": "Native method AST plus native BaseRayCaster; lifecycle callbacks and PhysX view replaced"
+    },
+    "native_reset_events": {
+      "native_event_manager": true,
+      "ids": [
+        0,
+        3,
+        19
+      ],
+      "joint_ranges_preserved": true,
+      "root_xyz_quaternion": true,
+      "native_soft_clamp_inactive_for_current_ranges": true
+    },
+    "native_interval_schedule": {
+      "trigger_steps": [
+        1500,
+        3000
+      ],
+      "reset_step": 800,
+      "global_timer_survives_partial_reset": true
+    },
+    "local_physx_schema_defaults": {
+      "physxRigidBody:angularDamping": "0.05000000074505806",
+      "physxRigidBody:maxAngularVelocity": "5729.580078125",
+      "physxJoint:maxJointVelocity": "inf",
+      "physxArticulation:enabledSelfCollisions": "True"
+    },
+    "proposed_config_corrections": {
+      "configuration_validation": true,
+      "angular_velocity_deg_s": 57295.77951308232,
+      "source_files_written": false
+    }
+  },
+  "failures": {},
+  "configuration_scope": "ActionsCfg/RewardsCfg reconstructed at the Kp cutoff; current in-progress FIR configuration and exports excluded"
+}

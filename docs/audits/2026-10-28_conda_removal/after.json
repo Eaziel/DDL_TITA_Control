@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-28",
+  "miniconda_exists": false,
+  "conda_config_exists": false,
+  "conda_user_data_exists": false,
+  "conda_shell_init_remaining": false,
+  "python": "/home/eaziel/my_venvs/lab3_sim62/.venv/bin/python",
+  "base_prefix": "/home/eaziel/PythonRuntimes/cpython-3.12.16-linux-x86_64-gnu",
+  "sim": "6.2.0.0",
+  "torch": "2.11.0+cu130",
+  "tita_package": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/__init__.py",
+  "conda_import_paths": [],
+  "new_project_exists": true,
+  "old_project_exists": true,
+  "non_rl_project_exists": true,
+  "new_lab_exists": true,
+  "old_lab_exists": true,
+  "new_source_files_matching_previous_check": 32,
+  "new_source_files_different_from_previous_check": [],
+  "scope": "Post-uninstall paths, shell text, package metadata and import only; no simulation/training."
+}

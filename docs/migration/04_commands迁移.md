@@ -1,8 +1,8 @@
 # 04 Commands：速度目标、航向目标与重采样
 
-更新：2026-10-18。当前 CommandsCfg 及环境登记已写入并静态核对；补充配置对象、运行时生成器及命令张量的对应。平移死区和命令更新时序仍有差异，未运行仿真。
+**目标与结果：** 每段时间给机器人一个速度/航向任务，并让观测和跟踪奖励读取同一组目标。
 
-Commands 回答的是：**这段时间希望机器人怎么运动？** 它给策略任务目标；Actions 才是策略为完成目标输出的八维关节控制信号。
+整理：2026-10-26。当前使用TitaVelocityCommandCfg，在原生速度/航向生成器上增加0.2m/s平移死区；实现、导出和配置身份检查通过（见21）。命令相对奖励的更新时机仍有差异，尚无本项新增仿真日志。 当前证据与整体状态以[项目记忆](../../PROJECT_MEMORY.md)为准。
 
 ## 1. Gym 原来怎么做
 
@@ -82,6 +82,23 @@ self.commands[:, 2] = torch.clip(
 
 0.5 是航向误差到目标转速的比例系数，不是关节 PD 的 Kp。目标朝向可以保持 10 s，但当前朝向一直变化，因此目标转速仍需每 0.01 s 更新。
 
+用角度误差 $e_\psi$ 表示上述代码：
+
+$$
+e_\psi=\operatorname{wrap}_{[-\pi,\pi)}(\psi_{target}-\psi),\qquad
+\omega_{z,cmd}=\operatorname{clip}(0.5e_\psi,-1,1).
+$$
+
+系数0.5的量纲为 $\mathrm{s}^{-1}$：弧度误差乘它得到rad/s。平移死区则是：
+
+$$
+\mathbf v_{xy,cmd}\leftarrow
+\begin{cases}
+\mathbf v_{xy,cmd},&\lVert\mathbf v_{xy,cmd}\rVert_2>0.2\ \mathrm{m/s},\\
+\mathbf0,&\text{其他情况}.
+\end{cases}
+$$
+
 ### 1.4 目标如何参与训练
 
 旧基础观测拼入 `commands[:, :3]`，策略因此知道要追踪什么。速度奖励再比较目标速度与实际机身速度，评价本次运动结果。
@@ -90,16 +107,17 @@ self.commands[:, 2] = torch.clip(
 
 ## 2. Lab 中怎样写
 
-当前 [env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py) 中已有：
+当前 [env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py) 中已有：
 
 ```python
 @configclass
 class CommandsCfg:
     """Velocity and heading command specifications for TITA."""
 
-    base_velocity = mdp.UniformVelocityCommandCfg(
+    base_velocity = mdp.TitaVelocityCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
+        lin_vel_deadband=0.2,
         heading_command=True,
         heading_control_stiffness=0.5,
         rel_heading_envs=1.0,
@@ -173,15 +191,17 @@ if self.cfg.heading_command:
 | 旧回调里的工作 | Lab 中由谁负责 | 当前状态 |
 | --- | --- | --- |
 | 到期抽取新目标、每步更新目标转速 | CommandManager / UniformVelocityCommand | 基础配置已接入 |
-| 更新局部地面高度 | Scene 中的 RayCaster，MDP 再取数 | 传感器已配置，待运行 |
-| 定时推机器人 | interval Event | 尚未迁入 |
+| 更新局部地面高度 | Scene中的RayCaster，MDP再取数 | 已初始化，scan187已写；真实逐点数值待验证 |
+| 定时推机器人 | interval Event | 15 s全局事件已写，CPU时序通过；真实触发未评估 |
 | disturbance 施力 | 相应 Event | 旧默认关闭，当前保持关闭 |
 
 这解释了为什么 Lab 代码比旧回调短：通用实现由框架提供，任务仍需指定参数，并核对没有被现成类覆盖的特殊规则。
 
-## 4. 尚未对齐的两条规则
+## 4. 死区已补齐，更新时机仍有差异
 
-### 4.1 0.2 m/s 平移死区
+平移死区已经写入，见[21](21_命令死区迁移.md)；命令相对奖励的调用时序不由该子类改变。
+
+### 4.1 0.2 m/s 平移死区（已写）
 
 旧采样末尾还有：
 
@@ -191,7 +211,7 @@ self.commands[env_ids, :2] *= (
 ).unsqueeze(1)
 ```
 
-当 `(vx,vy)` 的模不大于 0.2 m/s 时，同时把 vx、vy 归零，yaw_rate 不受这条规则影响。当前标准命令项没有实现这一步，后续需补专用规则。
+当 `(vx,vy)` 的模不大于 0.2 m/s 时，同时把 vx、vy 归零，yaw_rate 不受这条规则影响。原生标准命令项没有这一步；当前TitaVelocityCommand子类已在采样后执行该规则。
 
 它不等于随机抽取 standing 环境：一个按采样速度大小判断，只清平移；另一个按概率抽样，并清三个速度分量。因此不能靠改 `rel_standing_envs` 对齐。
 
@@ -210,14 +230,14 @@ Lab：物理 → 终止/奖励 → 重置 → 更新命令 → 下一观测
 
 ## 5. 对照源码与验证边界
 
-本章配置和 `VelocityEnvCfg.commands` 登记做过静态核对，尚未运行命令项或验证跟踪。
+本章配置与commands登记已核对，命令项随基础环境成功初始化；0.2 s日志未覆盖10 s重采样，也没有跟踪效果评估。
 
 | 要查什么 | Gym | Lab |
 | --- | --- | --- |
-| 参数与采样 | [commands 配置](/home/eaziel/Downloads/tita_rl-master/configs/tita_constraint_config.py:76)、[_resample_commands](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1103) | [官方 CommandsCfg](/home/eaziel/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/core/velocity/velocity_env_cfg.py:134)、[配置类](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/commands/commands_cfg.py:35) |
-| 航向反馈 | [_post_physics_step_callback](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:536) | [_resample_command / _update_command](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/commands/velocity_command.py:157) |
-| 调用与时序 | [post_physics_step](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:409) | [CommandTerm.compute](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/managers/command_manager.py:145)、[环境 step](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_rl_env.py:205) |
-| 观测取目标 | [compute_observations](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:335) | [generated_commands](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/observations.py:775) |
+| 参数与采样 | [commands 配置](/home/eaziel/Downloads/tita_rl-master/configs/tita_constraint_config.py:76)、[_resample_commands](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1103) | [官方 CommandsCfg](/home/eaziel/IsaacLab-main/source/isaaclab_tasks/isaaclab_tasks/core/velocity/velocity_env_cfg.py)、[配置类](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/commands/commands_cfg.py) |
+| 航向反馈 | [_post_physics_step_callback](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:536) | [_resample_command / _update_command](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/commands/velocity_command.py) |
+| 调用与时序 | [post_physics_step](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:409) | [CommandTerm.compute](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/command_manager.py)、[环境 step](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py) |
+| 观测取目标 | [compute_observations](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:335) | [generated_commands](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/observations.py) |
 
 ## 补充问答
 
@@ -238,7 +258,7 @@ ang_vel_error = torch.square(
 
 当前命令项由UniformVelocityCommand生成，列顺序为[vx_cmd,vy_cmd,wz_cmd]；函数用[:,2]取得目标wz，再与实际三维角速度[wx,wy,wz]的第三列比较。command_name选择命令项，函数中的索引选择该项的列。这一组合依赖双方相同的数据格式约定。
 
-源码：[角速度奖励](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/rewards.py:345)。
+源码：[角速度奖励](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/rewards.py)。
 
 <a id="23-base_velocity配置对象与实际命令张量"></a>
 
@@ -272,7 +292,7 @@ return self._terms[name].command
 # heading_target单独保存在生成器中；当前wz_cmd由航向误差计算，输出仍为三列。
 ```
 
-源码：[创建张量与command属性](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/mdp/commands/velocity_command.py:80)、[get_command](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/managers/command_manager.py:368)、[创建命令项](/home/eaziel/IsaacLab/source/isaaclab/isaaclab/managers/command_manager.py:394)。
+源码：[创建张量与command属性](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/commands/velocity_command.py)、[get_command](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/command_manager.py)、[创建命令项](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/command_manager.py)。
 
 **Q：**
 

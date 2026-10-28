@@ -1,0 +1,79 @@
+(env_isaacSL-6.1.0) eaziel@eaziel-ASUS-TX6Pro:/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab$ 
+python -m isaaclab zero_agent \
+  --task TitaLab-Velocity-Tita \
+  --num_envs 4 \
+  --max_steps 20 \
+  --device cuda:0 \
+  --visualizer none \
+  physics=isaacsim_physx
+[INFO]: Parsing configuration from: TITA_Lab.tasks.velocity.config.TITA.env_cfg:VelocityEnvCfg
+Loading user config located at: '/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1792485700.114283   30373 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1792485700.114666   30373 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+2026-10-20T08:41:40Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+2026-10-20T08:41:41Z [1,100ms] [Warning] [isaaclab.envs.manager_based_env] Seed not set for the environment. The environment creation may not be deterministic.
+[INFO]: Base environment:
+        Environment device    : cuda:0
+        Environment seed      : None
+        Physics step-size     : 0.0025
+        Rendering step-size   : 0.01
+        Environment step-size : 0.01
+[INFO] Generating terrains randomly took Last: 0.852578 s
+[INFO]: Registered backend 'physx' for factory Articulation.
+[INFO]: Time taken for scene creation Last: 3.143504 s, Mean: 3.143504 s, Std: 0.000000 s, N: 1
+[INFO]: SimulationContext cleared
+Traceback (most recent call last):
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/app/sim_launcher.py", line 582, in launch_simulation
+    yield physics_cfg
+  File "/home/eaziel/IsaacLab/source/isaaclab_rl/isaaclab_rl/entrypoints/simple_agents.py", line 86, in run
+    with contextlib.closing(gym.make(args_cli.task, cfg=env_cfg)) as env:
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/miniconda3/envs/env_isaacSL-6.1.0/lib/python3.12/site-packages/gymnasium/envs/registration.py", line 735, in make
+    env = env_creator(**env_spec_kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py", line 34, in __init__
+    super().__init__(cfg=cfg, render_mode=render_mode, **kwargs)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_rl_env.py", line 79, in __init__
+    super().__init__(cfg=cfg)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py", line 125, in __init__
+    self._init_sim()
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py", line 175, in _init_sim
+    self.scene = InteractiveScene(self.cfg.scene)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/scene/interactive_scene.py", line 175, in __init__
+    self._add_entities_from_cfg()
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/scene/interactive_scene.py", line 806, in _add_entities_from_cfg
+    self._articulations[asset_name] = asset_cfg.class_type(asset_cfg)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/utils/string.py", line 221, in __call__
+    return self._resolve()(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/assets/articulation/articulation.py", line 29, in __new__
+    return super().__new__(cls, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/utils/backend_utils.py", line 151, in __new__
+    return impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/eaziel/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation.py", line 121, in __init__
+    super().__init__(cfg)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/assets/articulation/base_articulation.py", line 135, in __init__
+    super().__init__(cfg)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/assets/asset_base.py", line 88, in __init__
+    super().__init__(cfg)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/assets/asset.py", line 54, in __init__
+    self.cfg._post_spawn(self.stage)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/assets/articulation/articulation_cfg.py", line 133, in _post_spawn
+    define_actuator_properties(author_prim_path, self.actuators, stage=stage)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sim/schemas/schemas_actuators.py", line 196, in define_actuator_properties
+    _author_actuator_prims(stage, articulation_prim_path, actuator_cfgs)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sim/schemas/schemas_actuators.py", line 209, in _author_actuator_prims
+    _validate_newton_native_actuator_cfgs(actuator_cfgs)
+  File "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/sim/schemas/schemas_actuators.py", line 89, in _validate_newton_native_actuator_cfgs
+    raise ValueError(
+ValueError: Newton-native actuator execution does not support 'legs' (TitaPDActuatorCfg), 'wheels' (TitaPDActuatorCfg). Disable 'use_newton_actuators' or use a supported actuator config.
+(env_isaacSL-6.1.0) eaziel@eaziel-ASUS-TX6Pro:/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/TITA_Lab$ 

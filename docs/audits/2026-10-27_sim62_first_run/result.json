@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-27T16:25:03.770751+08:00",
+  "evidence_source": "User-provided partial runtime log and read-only source checks",
+  "attachment": "/home/eaziel/.codex/attachments/a081fcaf-fcd3-42bb-bc41-9d1f19dfb63f/Pasted text.txt",
+  "log_sha256": "74f824be2704f7059a7d3ecde45f4816a45db62dbcddb675558a94330a24e06b",
+  "user_report": "GUI appeared and behaved as before.",
+  "log_observations": {
+    "device": "cuda:0",
+    "num_envs": 1,
+    "physics_backend": "physx",
+    "physics_dt": 0.0025,
+    "env_dt": 0.01,
+    "observations": {
+      "policy": 33,
+      "history": 330,
+      "scan": 187,
+      "dynamics": 30,
+      "privileged_state": 6
+    },
+    "action_dim": 8,
+    "zero_agent_loop_announced": true,
+    "simulation_context_cleared": true,
+    "app_shutting_down": true,
+    "traceback_in_excerpt": false,
+    "completed_step_count": "not printed",
+    "timeout_or_push_confirmed": false
+  },
+  "source_status": {
+    "raycaster_spawn_removed": true,
+    "backend_guard_uses_instance_and_local_import": true,
+    "registration_expectation_updated": true
+  },
+  "current_source_checks": {
+    "new_python_config_construct_and_validate": "passed",
+    "actual_registration_test": "passed",
+    "events_observations_ast": "passed",
+    "material_mass_com_reset_api_review": "No additional API patch identified for these configured terms."
+  },
+  "editor_findings": {
+    "user_extraPaths": "Still uses old Lab and conda paths.",
+    "workspace_settings": "Currently defaults environment/package manager to conda.",
+    "new_simulation_context_backend_manager": "Defined in __init__ with PhysicsManager annotation.",
+    "official_editor_discovery": "Read-only helpers found 12 new Lab package roots and no old paths, but failed to discover Sim extensions; setup_editor was not executed.",
+    "new_tensor_extension": "/home/eaziel/my_venvs/lab3_sim62/.venv/lib/python3.12/site-packages/isaacsim/extscache/omni.physics.tensors-110.4.4+110.4.0.lx64.r.cp312.u7f4"
+  },
+  "boundaries": [
+    "No user source, editor configuration or git metadata modified.",
+    "No simulator or training executed by assistant.",
+    "No long-rollout, readback-value or full NP3O result established.",
+    "Fabric version warning retained; its cause was not diagnosed."
+  ],
+  "source_sha256": {
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/config/TITA/env_cfg.py": "d4d67b8e803d5958c06d0b4d66f1ddbd401a63671a44a6b33871aae768ba3cad",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/events.py": "f3458efa61134d84c09fb627130ee4b3bbb1700798ecdb74fa51ee611aba5309",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/mdp/observations.py": "fca07095125fbe28420dcde784582b9e438dd633d1c0f96432700fde47e32c87",
+    "TITA_Lab/src/TITA_Lab/tasks/velocity/tita_velocity_env.py": "5f4602d923774c7e8776ae428de25f6d54ffbf1c4303840b6f884575c6bc5625",
+    "TITA_Lab/tests/test_registration.py": "f39286c623010a8f68507e3b2f4e8bd873a70ebd6e5a409a8cd6d455b517bfd2"
+  },
+  "next_command_config_check": "passed: PhysxCfg, env.seed=42, num_envs=4, step_dt=0.01; no native runtime",
+  "source_unchanged_during_document_update": true
+}

@@ -1,0 +1,162 @@
+{
+  "date": "2026-10-22",
+  "evidence": "User zero_agent Kit log plus read-only local USD/config checks; no assistant GUI/simulation run",
+  "logged_command": "zero_agent --num_envs 1 --device cuda:0 --visualizer kit physics=isaacsim_physx",
+  "user_reports": [
+    "terrain visible and Robot Xform exists but robot not seen",
+    "F framing produced no apparent reaction",
+    "random_agent also did not show robot; no random-agent log attached",
+    "import_assets.py render-only diagnostic shows robot; authored pose, no motion and visible interpenetration",
+    "After restoring run_simulator: user says this run is also normal; four CUDA graph capture/fallback log lines supplied",
+    "Robot is visible after asset-follow camera configuration; user now observes very frequent resets, apparently on landing"
+  ],
+  "log_observations": {
+    "eight_joints_created": true,
+    "cost_shape": [
+      1,
+      6
+    ],
+    "normal_cleanup_after_user_ctrl_c": true
+  },
+  "static_usd": {
+    "path": "TITA_Lab/src/TITA_Lab/assets/data/robots/tita/usd/tita.usd",
+    "default_prim": "/TITARobot",
+    "mesh_count": 9,
+    "invisible_mesh_count": 0,
+    "geometry_prim_exists": true,
+    "scope": "Authored/composed asset only; not runtime viewport visibility"
+  },
+  "camera": {
+    "current_eye": [
+      8,
+      0,
+      5
+    ],
+    "current_lookat": [
+      0,
+      0,
+      0
+    ],
+    "origin": "world",
+    "hypothesis": "Source-derived primary explanation: world-origin camera and single-environment terrain spawn near y=-76 m do not match; awaiting actual RL root_pos_w and asset-follow GUI check"
+  },
+  "fabric": {
+    "warnings_present": true,
+    "paths_of_marker_warnings": [
+      "/Visuals/Command/velocity_current",
+      "/Visuals/Command/velocity_goal"
+    ],
+    "causal_link_to_robot_invisibility": "Not established"
+  },
+  "rough_preset": {
+    "rows": 10,
+    "cols": 20,
+    "tile_size_m": [
+      8,
+      8
+    ],
+    "curriculum": false,
+    "sub_terrains": {
+      "pyramid_stairs": 0.2,
+      "pyramid_stairs_inv": 0.2,
+      "boxes": 0.2,
+      "random_rough": 0.2,
+      "hf_pyramid_slope": 0.1,
+      "hf_pyramid_slope_inv": 0.1
+    }
+  },
+  "camera_cfg_api_check": {
+    "KitVisualizerCfg_asset_tracking_fields_validated": true,
+    "native_default_visualizer_cfg_field_propagation_checked": true,
+    "GUI_verified": false,
+    "proposed_connection": "sim.visualizer_cfgs=[KitVisualizerCfg(origin_type=\"asset\", origin_env_index=0, origin_track_path=\"robot\", eye=(1.5,1.5,1), lookat=(0,0,0))]",
+    "config_constructor_and_validate_passed": true,
+    "native_tracking_reads": "scene[\"robot\"].data.root_pos_w.torch[0]",
+    "camera_formula": "eye_world=robot_position+cfg.eye; target_world=robot_position+cfg.lookat",
+    "user_applied": true,
+    "user_reports_robot_visible_after_follow_cfg": true,
+    "assistant_observed_gui": false,
+    "current_source_wiring_checked": true
+  },
+  "current_next_step": "Robot visibility restored per user report; diagnose frequent resets by logging pre-reset episode steps, simulation duration and termination reason. No actuator/Fabric changes required for this visibility fix.",
+  "user_source_modified": false,
+  "standalone_diagnostic": {
+    "user_reports_static_robot_visible": true,
+    "current_main_render_only": false,
+    "current_main_calls_run_simulator": true,
+    "use_fabric_explicitly_overridden": false,
+    "joint_initialization_and_physics_loop_in_run_simulator_not_executed": false,
+    "dynamic_physics_verified": false,
+    "scope": "User runtime report and read-only current source check; no assistant GUI run",
+    "user_reports_dynamic_run_normal": true,
+    "use_newton_actuators_explicitly_overridden": false,
+    "use_newton_actuators_native_default": true,
+    "verification_limit": "Assistant has not run or observed simulation; user reports normal dynamic run without full contact or trajectory evidence"
+  },
+  "actuator_graph_fallback": {
+    "user_log_excerpt": "user_dynamic_excerpt.txt",
+    "failed_during": "Host Newton actuator CUDA Graph capture reading PhysX DOF positions",
+    "error": "operation would make the legacy stream depend on a capturing blocking stream",
+    "native_runtime_source": "/home/eaziel/IsaacLab/source/isaaclab/isaaclab/actuators/newton/physx_runtime.py:109-180",
+    "fallback": "Empty captured-graph tuple; compute invokes _run_native_actuator_kernels eagerly",
+    "means_cpu_fallback": false,
+    "specific_closed_source_cuda_call_identified": false,
+    "suggestion": "Set use_newton_actuators=False in independent SimulationCfg; switches actuator execution path, not physics backend or only graph capture",
+    "suggestion_user_applied_or_runtime_verified": false,
+    "rl_cfg_already_false": true,
+    "priority": "Side issue; not an invisibility diagnosis prerequisite. No evidence linking it to RL invisibility."
+  },
+  "spawn_source_derivation": {
+    "num_envs": 1,
+    "terrain_col": 0,
+    "initial_rows": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "terrain_origin_y_m": -76.0,
+    "terrain_origin_x_options_m": [
+      -36.0,
+      -28.0,
+      -20.0,
+      -12.0,
+      -4.0,
+      4.0
+    ],
+    "reset_xy_offset_range_m": [
+      -1.0,
+      1.0
+    ],
+    "position_formula": "default_root_pose[:,:3] + env.scene.env_origins[env_ids] + rand_samples[:,:3]",
+    "actual_rl_position_logged": false,
+    "native_sources": [
+      "isaaclab/terrains/terrain_importer.py:382-401",
+      "isaaclab/terrains/terrain_generator.py:179-185,331-338",
+      "isaaclab/envs/mdp/events.py:2137"
+    ]
+  },
+  "old_gym_camera": {
+    "source": "/home/eaziel/Downloads/tita_rl-master/envs/base_task.py:97-130",
+    "free_cam_default": false,
+    "follow_env_default": 0,
+    "initial_eye_offset_m": [
+      0,
+      2,
+      1
+    ],
+    "target": "root_states[lookat_id,:3]",
+    "update": "render() calls lookat() every frame while not free_cam"
+  },
+  "reset_followup": {
+    "user_reports": "Very frequent resets, apparently at landing",
+    "old_termination": "Any selected base body net-contact-force norm > 1 N, or episode_length_buf > max_episode_length",
+    "current_termination": "base_contact: selected base_link normal-contact-force norm > 1 N; time_out: 20 s",
+    "policy_context": "Previous provided command is zero_agent; no trained balance policy",
+    "cause_verified": false,
+    "next_diagnostic": "Before existing TitaVelocityEnv._reset_idx body, print env0 episode_length_buf, step_dt times steps, and active TerminationManager.get_term flags; skip initial common_step_counter==0 reset",
+    "diagnostic_user_applied": false
+  }
+}

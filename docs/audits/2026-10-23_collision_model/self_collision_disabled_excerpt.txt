@@ -1,0 +1,16 @@
+用户2026-10-23提供的运行日志节选；完整启动命令未提供：
+[INFO] Zero agent is running, press Ctrl+C to exit...
+[VIEW] env_origin: [-20.0, -76.0, 0.6963827013969421]
+[VIEW] robot_position: [-20.079620361328125, -76.18803405761719, 1.0308870077133179]
+[RESET] env=0 steps=62 time=0.620s reasons=['base_contact']
+[CONTACT] trigger=5862.564N total=5862.564N terrain=5862.564N other=0.000N
+[RESET] env=0 steps=84 time=0.840s reasons=['base_contact']
+[CONTACT] trigger=348.297N total=348.297N terrain=348.297N other=0.000N
+[COST] terms: ['acc_smoothness', 'dof_vel_limits', 'feet_contact_forces', 'pos_limit', 'stumble', 'torque_limit']
+[COST] shape: (1, 6)
+[COST] env0: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+[INFO]: SimulationContext cleared
+[19.310s] Simulation App Shutting Down
+
+用户报告：现象变好了。
+第200步由当前源码的打印条件及日志对应，不能扩大为训练通过或长时稳定性。

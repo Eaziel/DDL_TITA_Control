@@ -1,0 +1,26 @@
+{
+  "urdf_collapsed_mass_kg": {
+    "base_link": 13.2,
+    "left_leg_1": 2.064,
+    "left_leg_2": 3.0984,
+    "left_leg_3": 0.57244,
+    "left_leg_4": 1.5094,
+    "right_leg_1": 2.064,
+    "right_leg_2": 3.0987,
+    "right_leg_3": 0.57244,
+    "right_leg_4": 1.5094
+  },
+  "usd_mass_kg": {
+    "base_link": 13.199999809265137,
+    "left_leg_1": 2.063999891281128,
+    "left_leg_2": 3.098400115966797,
+    "left_leg_3": 0.5724400281906128,
+    "left_leg_4": 1.5094000101089478,
+    "right_leg_1": 2.063999891281128,
+    "right_leg_2": 3.0987000465393066,
+    "right_leg_3": 0.5724400281906128,
+    "right_leg_4": 1.5094000101089478
+  },
+  "max_mass_difference_kg": 1.9073486257070726e-07,
+  "boundary": "Static USD/XML comparison, not a dynamics test"
+}

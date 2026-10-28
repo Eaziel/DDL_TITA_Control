@@ -1,0 +1,17 @@
+{
+  "ruff": {
+    "checked_files": 7,
+    "passed": false,
+    "diagnostics": [
+      {
+        "file": "mdp/observations.py",
+        "code": "I001",
+        "reason": "Import .actions before .events"
+      }
+    ]
+  },
+  "source_files_modified": false,
+  "simulation_started": false,
+  "training_started": false,
+  "user_report": "CLI observation dimensions visible; latest runtime log not provided"
+}

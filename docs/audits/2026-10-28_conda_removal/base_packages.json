@@ -1,0 +1,1302 @@
+{
+  "prefix": "/home/eaziel/miniconda3",
+  "conda_packages": [
+    {
+      "name": "_libgcc_mutex",
+      "version": "0.1",
+      "build": "main",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "_openmp_mutex",
+      "version": "5.1",
+      "build": "52_gnu",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "anaconda-anon-usage",
+      "version": "0.8.1",
+      "build": "pyhb46e38b_100",
+      "subdir": "noarch"
+    },
+    {
+      "name": "anaconda-auth",
+      "version": "0.15.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "anaconda-channel-guide",
+      "version": "0.2.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "anaconda-cli-base",
+      "version": "0.9.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.7.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "anyio",
+      "version": "4.12.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "archspec",
+      "version": "0.2.6",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "boltons",
+      "version": "25.0.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "brotlicffi",
+      "version": "1.2.0.1",
+      "build": "py314h7354ed3_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "bzip2",
+      "version": "1.0.8",
+      "build": "h5eee18b_6",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "c-ares",
+      "version": "1.34.7",
+      "build": "hd44998d_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "ca-certificates",
+      "version": "2026.8.13",
+      "build": "h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "build": "py314h3b52fac_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.4.7",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "click",
+      "version": "8.4.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda",
+      "version": "26.7.2",
+      "build": "py314h9e666f3_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-anaconda-telemetry",
+      "version": "0.3.0",
+      "build": "pyhd3eb1b0_1",
+      "subdir": "noarch"
+    },
+    {
+      "name": "conda-anaconda-tos",
+      "version": "0.2.2",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-completer",
+      "version": "0.3.2",
+      "build": "hd3cdded_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-completion",
+      "version": "0.3.2",
+      "build": "pyhba3e0a1_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "conda-content-trust",
+      "version": "0.3.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-index",
+      "version": "0.12.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-libmamba-solver",
+      "version": "26.7.0",
+      "build": "pyh3785b3c_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "conda-lockfiles",
+      "version": "0.2.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-package-handling",
+      "version": "2.5.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-package-streaming",
+      "version": "0.13.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-pypi",
+      "version": "0.11.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-rattler-solver",
+      "version": "0.1.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "conda-self",
+      "version": "0.2.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "cpp-expected",
+      "version": "1.1.0",
+      "build": "hdb19cb5_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.0",
+      "build": "py314hef7b95b_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "dbus",
+      "version": "1.16.2",
+      "build": "h5bd4931_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "distro",
+      "version": "1.9.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "expat",
+      "version": "2.8.2",
+      "build": "h7354ed3_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "filelock",
+      "version": "3.29.4",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "fmt",
+      "version": "12.1.0",
+      "build": "h44f220b_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "frozendict",
+      "version": "2.4.7",
+      "build": "py314h47b2149_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "gettext",
+      "version": "0.25.1",
+      "build": "hd8bbc44_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "gettext-tools",
+      "version": "0.25.1",
+      "build": "hc68a75d_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "icu",
+      "version": "78.3",
+      "build": "h53478e7_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "idna",
+      "version": "3.18",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "jansson",
+      "version": "2.15.0",
+      "build": "hbcba0ee_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "jaraco.classes",
+      "version": "3.4.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "jaraco.context",
+      "version": "6.1.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "jaraco.functools",
+      "version": "4.4.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "jeepney",
+      "version": "0.7.1",
+      "build": "pyhd3eb1b0_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "jinja2",
+      "version": "3.1.6",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "keyring",
+      "version": "25.7.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "ld_impl_linux-64",
+      "version": "2.44",
+      "build": "h9e0c5a2_3",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libarchive",
+      "version": "3.8.8",
+      "build": "h54a5bc8_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libasprintf",
+      "version": "0.25.1",
+      "build": "ha6c9436_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libasprintf-devel",
+      "version": "0.25.1",
+      "build": "ha6c9436_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libbrotlicommon",
+      "version": "1.2.0",
+      "build": "h32cd6e7_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libbrotlidec",
+      "version": "1.2.0",
+      "build": "ha2c5f68_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libbrotlienc",
+      "version": "1.2.0",
+      "build": "h2e96acb_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libcurl",
+      "version": "8.21.0",
+      "build": "hd8fa685_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libev",
+      "version": "4.33",
+      "build": "h7f8727e_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libexpat",
+      "version": "2.8.2",
+      "build": "h7354ed3_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libffi",
+      "version": "3.4.8",
+      "build": "h06d3fd0_3",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libgcc",
+      "version": "15.2.0",
+      "build": "h69a1729_8",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libgcc-ng",
+      "version": "15.2.0",
+      "build": "h166f726_8",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libgettextpo",
+      "version": "0.25.1",
+      "build": "h64fc44f_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libgettextpo-devel",
+      "version": "0.25.1",
+      "build": "h64fc44f_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libiconv",
+      "version": "1.18",
+      "build": "h75a1612_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libidn2",
+      "version": "2.3.8",
+      "build": "hf80d704_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libkrb5",
+      "version": "1.22.2",
+      "build": "hbd13c29_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libmamba",
+      "version": "2.3.2",
+      "build": "he97f470_3",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libmambapy",
+      "version": "2.3.2",
+      "build": "py314heb26620_3",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libmpdec",
+      "version": "4.0.1",
+      "build": "h47b2149_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libnghttp2",
+      "version": "1.69.0",
+      "build": "h8214106_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libsolv",
+      "version": "0.7.39",
+      "build": "h04d0c11_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libssh2",
+      "version": "1.11.1",
+      "build": "hfbabe93_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libstdcxx",
+      "version": "15.2.0",
+      "build": "h39759b7_8",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libstdcxx-ng",
+      "version": "15.2.0",
+      "build": "hc03a8fd_8",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libunistring",
+      "version": "1.4.2",
+      "build": "h34b0ebb_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libuuid",
+      "version": "1.41.5",
+      "build": "h5eee18b_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libxcb",
+      "version": "1.17.0",
+      "build": "h9b100fa_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libxml2",
+      "version": "2.15.3",
+      "build": "he45aeb6_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "libzlib",
+      "version": "1.3.2",
+      "build": "h47b2149_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "lmdb",
+      "version": "1.0.0",
+      "build": "hfe55579_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "lz4-c",
+      "version": "1.9.4",
+      "build": "h7354ed3_5",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "markupsafe",
+      "version": "3.0.3",
+      "build": "py314h47b2149_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "menuinst",
+      "version": "2.5.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "more-itertools",
+      "version": "11.0.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "msgpack-python",
+      "version": "1.2.1",
+      "build": "py314h7354ed3_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "ncurses",
+      "version": "6.6",
+      "build": "hfaaeb4e_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "nlohmann_json",
+      "version": "3.11.2",
+      "build": "h6a678d5_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "openssl",
+      "version": "3.6.4",
+      "build": "h781a0a9_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pcre2",
+      "version": "10.46",
+      "build": "hf426167_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1",
+      "build": "pyh0d26453_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "pkce",
+      "version": "1.0.3",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.11.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pthread-stubs",
+      "version": "0.3",
+      "build": "h47b2149_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "py-rattler",
+      "version": "0.25.0",
+      "build": "py314hef7b95b_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pybind11-abi",
+      "version": "5",
+      "build": "hd3eb1b0_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "pycosat",
+      "version": "0.6.6",
+      "build": "py314h5eee18b_2",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.4",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.4",
+      "build": "py314h6e1b9ff_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.14.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pygments",
+      "version": "2.20.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pyjwt",
+      "version": "2.13.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pyproject_hooks",
+      "version": "1.2.0",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "pysocks",
+      "version": "1.7.1",
+      "build": "py314h06a4308_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "python",
+      "version": "3.14.7",
+      "build": "h2bd7c14_101_cp314",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "python-build",
+      "version": "1.5.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "python-installer",
+      "version": "1.0.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "python_abi",
+      "version": "3.14",
+      "build": "4_cp314",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "readchar",
+      "version": "4.2.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "readline",
+      "version": "8.3",
+      "build": "hc2a1206_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "reproc",
+      "version": "14.2.7",
+      "build": "h7bdf020_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "reproc-cpp",
+      "version": "14.2.7",
+      "build": "h7bdf020_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "ruamel.yaml",
+      "version": "0.18.16",
+      "build": "py314h4aee224_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "ruamel.yaml.clib",
+      "version": "0.2.14",
+      "build": "py314h4aee224_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "secretstorage",
+      "version": "3.5.0",
+      "build": "py314h3e8c6aa_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "semver",
+      "version": "3.0.4",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "setuptools",
+      "version": "83.0.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "shellingham",
+      "version": "1.5.4",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "simdjson",
+      "version": "3.10.1",
+      "build": "hdb19cb5_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "sqlite",
+      "version": "3.53.2",
+      "build": "h795bf6d_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "tk",
+      "version": "9.0.4",
+      "build": "h3840b71_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "tomli",
+      "version": "2.4.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "tomli-w",
+      "version": "1.2.0",
+      "build": "pyhd3eb1b0_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "tomlkit",
+      "version": "0.15.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.0",
+      "build": "py314h6fa48dc_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "typer",
+      "version": "0.25.1",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.3",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "tzdata",
+      "version": "2026c",
+      "build": "he532380_0",
+      "subdir": "noarch"
+    },
+    {
+      "name": "unearth",
+      "version": "0.18.2",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.7.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "wheel",
+      "version": "0.47.0",
+      "build": "py314h06a4308_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "xorg-libx11",
+      "version": "1.8.13",
+      "build": "h65de747_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "xorg-libxau",
+      "version": "1.0.12",
+      "build": "h9b100fa_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "xorg-libxdmcp",
+      "version": "1.1.5",
+      "build": "h9b100fa_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "xorg-xorgproto",
+      "version": "2025.1",
+      "build": "h47b2149_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "xz",
+      "version": "5.8.2",
+      "build": "h448239c_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "yaml-cpp",
+      "version": "0.9.0",
+      "build": "he852c71_1",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.2",
+      "build": "h47b2149_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "zstandard",
+      "version": "0.25.0",
+      "build": "py314h89db63a_0",
+      "subdir": "linux-64"
+    },
+    {
+      "name": "zstd",
+      "version": "1.5.7",
+      "build": "h11fc155_0",
+      "subdir": "linux-64"
+    }
+  ],
+  "python_distributions": [
+    {
+      "name": "anaconda-anon-usage",
+      "version": "0.8.1"
+    },
+    {
+      "name": "anaconda-auth",
+      "version": "0.15.2"
+    },
+    {
+      "name": "anaconda-channel-guide",
+      "version": "0.2.0"
+    },
+    {
+      "name": "anaconda-cli-base",
+      "version": "0.9.1"
+    },
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.7.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.12.1"
+    },
+    {
+      "name": "archspec",
+      "version": "0.2.6"
+    },
+    {
+      "name": "boltons",
+      "version": "25.0.0"
+    },
+    {
+      "name": "brotlicffi",
+      "version": "1.2.0.1"
+    },
+    {
+      "name": "build",
+      "version": "1.5.1"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.4.7"
+    },
+    {
+      "name": "click",
+      "version": "8.4.1"
+    },
+    {
+      "name": "conda",
+      "version": "26.7.2"
+    },
+    {
+      "name": "conda-anaconda-telemetry",
+      "version": "0.3.0"
+    },
+    {
+      "name": "conda-anaconda-tos",
+      "version": "0.2.2"
+    },
+    {
+      "name": "conda-completer",
+      "version": "0.3.2"
+    },
+    {
+      "name": "conda-completion",
+      "version": "0.3.2"
+    },
+    {
+      "name": "conda-content-trust",
+      "version": "0.3.2"
+    },
+    {
+      "name": "conda-libmamba-solver",
+      "version": "26.7.0"
+    },
+    {
+      "name": "conda-lockfiles",
+      "version": "0.2.1"
+    },
+    {
+      "name": "conda-package-handling",
+      "version": "2.5.0"
+    },
+    {
+      "name": "conda-pypi",
+      "version": "0.11.0"
+    },
+    {
+      "name": "conda-rattler-solver",
+      "version": "0.1.1"
+    },
+    {
+      "name": "conda-self",
+      "version": "0.2.1"
+    },
+    {
+      "name": "conda_index",
+      "version": "0.12.1"
+    },
+    {
+      "name": "conda_package_streaming",
+      "version": "0.13.0"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.0"
+    },
+    {
+      "name": "distro",
+      "version": "1.9.0"
+    },
+    {
+      "name": "filelock",
+      "version": "3.29.4"
+    },
+    {
+      "name": "frozendict",
+      "version": "2.4.7"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "idna",
+      "version": "3.18"
+    },
+    {
+      "name": "installer",
+      "version": "1.0.1"
+    },
+    {
+      "name": "jaraco.classes",
+      "version": "3.4.0"
+    },
+    {
+      "name": "jaraco.context",
+      "version": "6.1.0"
+    },
+    {
+      "name": "jaraco.functools",
+      "version": "4.4.0"
+    },
+    {
+      "name": "jeepney",
+      "version": "0.7.1"
+    },
+    {
+      "name": "Jinja2",
+      "version": "3.1.6"
+    },
+    {
+      "name": "keyring",
+      "version": "25.7.0"
+    },
+    {
+      "name": "libmambapy",
+      "version": "2.3.2"
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0"
+    },
+    {
+      "name": "MarkupSafe",
+      "version": "3.0.3"
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2"
+    },
+    {
+      "name": "menuinst",
+      "version": "2.5.2"
+    },
+    {
+      "name": "more-itertools",
+      "version": "11.0.2"
+    },
+    {
+      "name": "msgpack",
+      "version": "1.2.1"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "pip",
+      "version": "26.2.1"
+    },
+    {
+      "name": "pkce",
+      "version": "1.0.3"
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.11.0"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0"
+    },
+    {
+      "name": "py-rattler",
+      "version": "0.25.0"
+    },
+    {
+      "name": "pycosat",
+      "version": "0.6.6"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.4"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.14.2"
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.46.4"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.20.0"
+    },
+    {
+      "name": "PyJWT",
+      "version": "2.13.0"
+    },
+    {
+      "name": "pyproject_hooks",
+      "version": "1.2.0"
+    },
+    {
+      "name": "PySocks",
+      "version": "1.7.1"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.2"
+    },
+    {
+      "name": "readchar",
+      "version": "4.2.2"
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2"
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0"
+    },
+    {
+      "name": "ruamel.yaml",
+      "version": "0.18.16"
+    },
+    {
+      "name": "ruamel.yaml.clib",
+      "version": "0.2.14"
+    },
+    {
+      "name": "SecretStorage",
+      "version": "3.5.0"
+    },
+    {
+      "name": "semver",
+      "version": "3.0.4"
+    },
+    {
+      "name": "setuptools",
+      "version": "83.0.0"
+    },
+    {
+      "name": "shellingham",
+      "version": "1.5.4"
+    },
+    {
+      "name": "tomli",
+      "version": "2.4.0"
+    },
+    {
+      "name": "tomli_w",
+      "version": "1.2.0"
+    },
+    {
+      "name": "tomlkit",
+      "version": "0.15.1"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.70.0"
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4"
+    },
+    {
+      "name": "typer",
+      "version": "0.25.1"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.3"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "unearth",
+      "version": "0.18.2"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.7.0"
+    },
+    {
+      "name": "wheel",
+      "version": "0.47.0"
+    },
+    {
+      "name": "zstandard",
+      "version": "0.25.0"
+    }
+  ],
+  "scope": "Package metadata only; no user data or full environment backup. Exact recreation is not guaranteed."
+}

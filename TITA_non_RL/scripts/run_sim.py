@@ -5,28 +5,23 @@
 
 import argparse
 
-from isaaclab.app import AppLauncher
+from isaaclab.app import add_launcher_args, launch_simulation
+from isaaclab.utils import instantiate
 
-# add argparse arguments
-parser = argparse.ArgumentParser(
-    description="This script demonstrates adding a custom robot to an Isaac Lab environment."
-)
+parser = argparse.ArgumentParser(description="Spawn and simulate the TITA robot.")
 parser.add_argument(
     "--num_envs", type=int, default=1, help="Number of environments to spawn."
 )
-# append AppLauncher cli args
-AppLauncher.add_app_launcher_args(parser)
-# parse the arguments
+
+# 注册并解析仿真启动参数，例如 --device 和 --viz。
+add_launcher_args(parser)
 args_cli = parser.parse_args()
 
-# launch omniverse app
-app_launcher = AppLauncher(args_cli)
-simulation_app = app_launcher.app
+from pathlib import Path
 
 import isaaclab.sim as sim_utils
 import torch
 import warp as wp
-from isaaclab_physx.sim.spawners.materials import PhysxRigidBodyMaterialCfg
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import AssetBaseCfg
 from isaaclab.assets.articulation import (
@@ -34,11 +29,14 @@ from isaaclab.assets.articulation import (
     BaseArticulation,  # BaseArticulation：与其他后端（如Newton Mjwarp）共用的基类
 )
 from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
+from isaaclab_physx.sim.spawners.materials import PhysxRigidBodyMaterialCfg
 
 # from isaaclab_newton.physics import NewtonCfg, MJWarpSolverCfg
 
 TITA_HWBR_CFG = ArticulationCfg(
-    spawn=sim_utils.UsdFileCfg(usd_path="TITA_non_RL/assets/tita.usd"),
+    spawn=sim_utils.UsdFileCfg(
+        usd_path=str(Path(__file__).resolve().parents[1] / "assets" / "tita.usd"),
+    ),
     init_state=ArticulationCfg.InitialStateCfg(
         joint_pos={
             "joint_.*_leg_1": 0.0,
@@ -87,7 +85,7 @@ class TITARobotSceneCfg(InteractiveSceneCfg):
     # Ground-plane
     ground = AssetBaseCfg(
         prim_path="/World/defaultGroundPlane",
-        spawn=sim_utils.GroundPlaneCfg( # 配置地面的摩擦系数、恢复系数
+        spawn=sim_utils.GroundPlaneCfg(  # 配置地面的摩擦系数、恢复系数
             physics_material=PhysxRigidBodyMaterialCfg(
                 static_friction=1.0,
                 dynamic_friction=1.0,
@@ -105,9 +103,7 @@ class TITARobotSceneCfg(InteractiveSceneCfg):
     )
 
     # robot
-    tita_robot = TITA_HWBR_CFG.replace(
-        prim_path="{ENV_REGEX_NS}/TITA_Robot"
-    )
+    tita_robot = TITA_HWBR_CFG.replace(prim_path="{ENV_REGEX_NS}/TITA_Robot")
 
 
 def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
@@ -141,7 +137,7 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
     materials = wp.to_torch(view.get_material_properties()).clone()
     materials[..., 0] = mu[:, None]  # 静摩擦
     materials[..., 1] = mu[:, None]  # 动摩擦，与静摩擦相同
-    materials[..., 2] = e[:, None]   # 恢复系数
+    materials[..., 2] = e[:, None]  # 恢复系数
 
     env_ids = torch.arange(n, dtype=torch.int32, device="cpu")
     view.set_material_properties(
@@ -150,7 +146,7 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
     )
 
     print("每个环境的摩擦和恢复系数：", torch.stack((mu, e), dim=-1))
-    
+
     # 实际起始状态
     robot.write_joint_position_to_sim_index(position=joint_pos)
     robot.write_joint_velocity_to_sim_index(velocity=joint_vel)
@@ -158,34 +154,37 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
     robot.actuators.target_command.set_position_index(value=joint_pos)
     robot.actuators.target_command.set_velocity_index(value=joint_vel)
 
-    while simulation_app.is_running():
+    while sim.is_running():
         scene.write_data_to_sim()
         sim.step()
         scene.update(sim_dt)
 
 
 def main():
-    """Main function."""
-
-    # Initialize the simulation context
+    """Spawn and simulate the standalone TITA robot."""
     sim_cfg = sim_utils.SimulationCfg(
         device=args_cli.device,
         dt=0.005,
     )
-    sim = sim_utils.SimulationContext(sim_cfg)
-    sim.set_camera_view([3.5, 0.0, 3.2], [0.0, 0.0, 0.5])
 
-    # Design scene
-    scene_cfg = TITARobotSceneCfg(num_envs=args_cli.num_envs, env_spacing=4.0)
-    scene = InteractiveScene(scene_cfg)
-    # Play the simulator
-    sim.reset()
-    # Now we are ready!
-    print("[INFO]: Setup complete...")
-    # Run the simulator
-    run_simulator(sim, scene)
+    with launch_simulation(sim_cfg, args_cli):
+        sim = sim_utils.SimulationContext(sim_cfg)
+        sim.set_camera_view(
+            [3.5, 0.0, 3.2],
+            [0.0, 0.0, 0.5],
+        )
+
+        scene_cfg = TITARobotSceneCfg(
+            num_envs=args_cli.num_envs,
+            env_spacing=4.0,
+        )
+        scene: InteractiveScene = instantiate(scene_cfg)
+
+        sim.reset()
+        print("[INFO]: Setup complete...")
+
+        run_simulator(sim, scene)
 
 
 if __name__ == "__main__":
     main()
-    simulation_app.close()

@@ -1,0 +1,40 @@
+{
+  "scope": "Current saved scan/dynamics groups and parameter class; six-state checked separately",
+  "boundary": "Native CPU ObservationManager/EventManager, real ray transform Warp kernel; asset properties/hits use stand-ins; no simulator or training",
+  "checks": {
+    "current_environment_with_candidate_groups_validate": true,
+    "groups": {
+      "policy": [
+        8,
+        33
+      ],
+      "history": [
+        8,
+        330
+      ],
+      "scan": [
+        8,
+        187
+      ],
+      "dynamics": [
+        8,
+        30
+      ]
+    },
+    "grid_points_match_gym_order": true,
+    "ray_starts_z_offset_m": 20.0,
+    "sensor_pose_excludes_pattern_offset": true,
+    "height_formula_clip_then_scale": true,
+    "height_output_bounds": [
+      -5.0,
+      5.0
+    ],
+    "nominal_captured_before_startup": true,
+    "mass_and_com_are_deltas": true,
+    "material_values_match_actual_event_writes": true,
+    "motor_factors_match_after_explicit_joint_order_conversion": true,
+    "repeated_reads_and_partial_reset_preserve_references": true,
+    "all_candidate_outputs_finite_for_finite_fake_hits": true
+  },
+  "remaining": "State/packing checked separately; no real physics or training-adapter integration"
+}
