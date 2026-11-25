@@ -1,15 +1,21 @@
-# actuators.py：TITA每个物理步怎样把目标变成力矩
+# actuators.py：位置目标与轮前馈怎样变成施加力矩
 
-**阅读目标：** 读懂控制目标与当前关节状态怎样形成显式PD力矩，以及三个随机因子如何改变控制律。
+内容纯AI生成，由人类要求生成，未经人类修改。源码核对：2026-11-02。
 
-源码目录：`/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/`。
-源码文件：`/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/actuators.py`。
+被解释文件：[actuators.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/actuators.py)。
 
-更新：2026-10-20。实际保存类与旧Gym做CPU计算对照。用户首次真实运行发现A2：需在环境sim上设置use_newton_actuators=False，使用能构造自定义TitaPDActuator的Lab执行路径；默认True的原生模型转换不支持该自定义类。该开关已写入，用户4环境reset/20零动作步正常结束，训练未验证。运行记录见[10](../../../../../../docs/migration/10_首次环境运行.md)。
+本文件定义TITA的显式PD执行器。读完应能从目标角、当前角、目标角速度和力矩前馈推到实际公式，理解Kp/Kd倍率与电机强度分别乘在哪里，并找到Lab真正调用compute的位置。
 
-## 1. 当前执行器代码
+本次只读核对当前文件和本地 IsaacLab-main / Sim 6.2，不代运行事件、物理仿真或训练。
+
+## 1. 当前完整源码
 
 ```python
+# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from __future__ import annotations
 
 import torch
@@ -30,9 +36,9 @@ class TitaPDActuator(IdealPDActuator):
         super().__init__(cfg, *args, **kwargs)
 
         # 无量纲输出比例，用于随机化电机输出力矩，实现：有些给力过大，有些给力不足。
-        self.motor_strength = torch.ones_like(self.stiffness) 
+        self.motor_strength = torch.ones_like(self.stiffness)
         # 用于随机化，如：实际kp = kp * kp_factor = 40.0 * 1.1 = 44，目前先设置为1！
-        self.kp_factor = torch.ones_like(self.stiffness) 
+        self.kp_factor = torch.ones_like(self.stiffness)
         # 同上
         self.kd_factor = torch.ones_like(self.damping)
 
@@ -68,23 +74,28 @@ class TitaPDActuatorCfg(IdealPDActuatorCfg):
     scale_effort_with_kp: bool = False
 ```
 
-## 2. 配置选择类，框架建立实例
+## 2. 从动作文件结束的位置继续
 
-```python
-class_type: type[TitaPDActuator] = TitaPDActuator
-```
+[actions.py](mdp/actions.py.md)已经把策略8个原始数变成6个腿位置目标与2个轮力矩前馈，并做了延迟选择。setter把这些值写进目标缓存，还没有计算完整关节驱动力矩。
 
-TitaPDActuatorCfg继承IdealPDActuatorCfg，保留关节选择、增益、限矩等参数；增加一个轮子前馈开关。class_type保存TitaPDActuator这个类对象。框架根据选中的关节建立此类实例，不需要用户在环境step中手动new或调用compute。
+当前场景配置创建两个 `TitaPDActuator` 实例：
 
-本地真正的构造语句在[ActuatorCollection._build_groups](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/actuators/actuator_collection.py)：
+| 组 | 关节数J | 名义Kp | 名义Kd | 力矩上限 |
+| --- | --- | --- | --- | --- |
+| legs | 6 | 40 | 1 | 60N·m |
+| wheels | 2 | 0 | 0.5 | 15N·m |
 
-```python
-self._groups[actuator_name] = actuator_cfg.class_type(**actuator_kwargs)
-```
+每个实例处理 `(N,J)` 数组，N是并行机器人数。Kp单位N·m/rad，Kd单位N·m·s/rad。配置标量会按相应批量与关节展开为执行器计算可用的参数，不表示只有一个机器人能使用。
 
-actuator_kwargs由框架提供cfg、joint_names、joint_ids、num_envs、device及默认属性。新构造函数的*args、**kwargs把除cfg外收到的位置/关键字参数原样交给父类；不是另一份仿真配置。
+`TitaPDActuatorCfg.class_type`指向实现类；机器人Articulation建立执行器集合时按配置构造实例。USD提供关节、刚体、碰撞与惯性等物理结构，Lab执行器在这些关节上定义力矩计算。执行器不另造一套articulation root，也不自动修复USD关节结构。
 
-## 3. 实例保存什么
+## 3. 显式计算与隐式drive分别在哪里算反馈
+
+显式执行器在Lab侧读取当前关节状态，计算一份力矩并提交物理引擎。隐式执行器把目标与增益交给后端drive，由物理求解过程处理反馈约束。当前使用自定义显式类，才能按旧TITA公式明确控制每个倍率与轮前馈的乘法位置。
+
+两种路径均与物理求解器相连；“显式”不代表不用物理引擎，也不代表一定更精确。它说明控制反馈的实现位置。当前 `sim.use_newton_actuators=False` 保留本地Lab执行路径，使这个Python `compute`真正参与控制；不能只看写了类就断定所有后端设置都会调用它。
+
+## 4. 构造函数为何先创建三个全1矩阵
 
 ```python
 super().__init__(cfg, *args, **kwargs)
@@ -93,47 +104,112 @@ self.kp_factor = torch.ones_like(self.stiffness)
 self.kd_factor = torch.ones_like(self.damping)
 ```
 
-父类把stiffness、damping、限矩解析为(N,J)张量，腿组J=6，轮组J=2。ones_like分别分配三个新张量，继承形状/dtype/device，初始全1；它们没有共享同一份存储。stiffness和damping保持名义值，因子单独保存，便于以后检查与特权观测使用。
+`super().__init__`先初始化 `IdealPDActuator`。`*args`接收额外位置参数，`**kwargs`接收额外关键字参数；调用父类时星号再把它们展开。这样本子类能在不重复列出全部父类构造参数的情况下继续传递机器人关节等信息。
 
-startup Event通过env.scene["robot"].actuators.values()取到这些实例并填因子。类没有重写reset；继承的IdealPDActuator.reset为空操作，因此自动回合重置会调用reset，但不会重抽或清空因子。这符合当前Gym在_init_buffers只抽一次的规则。
+`torch.ones_like`创建与给定张量形状、设备、类型相同的全1数组。腿组的三个因子为 `(N,6)`，轮组为 `(N,2)`。每个环境、每个关节都有自己的倍率。
 
-## 4. compute接收什么，怎样算
+设名义刚度 $K_p$、阻尼 $K_d$，因子 $f_p,f_d$，强度s，则等效反馈中的增益部分为 $f_pK_p$、$f_dK_d$；之后s还乘整份力矩。全1使初始化时等于名义配置，startup事件再把它们独立采样到0.8到1.2。
+
+这些因子是物理随机化参数，不是 `nn.Parameter`，本文件没有神经网络和梯度更新。`stiffness`与 `damping`仍保存名义PD参数；将随机化单独作为因子，可以观测这些变化并保留名义基准。
+
+## 5. `compute`的三个输入分别是什么
+
+```python
+compute(control_action, joint_pos, joint_vel)
+```
+
+`control_action`是 `ArticulationActions` 数据对象，包含该执行器对应的目标关节位置、目标关节速度、力矩前馈与关节编号。名称里的Actions在这里指关节控制数据；它已经不是策略刚输出的无量纲8列数组。
+
+`joint_pos`和 `joint_vel`是本物理步的实际关节位置和速度，分别单位rad、rad/s。所有目标与实测量在当前执行器内按同一 `(N,J)` 排列，因此相减按同一机器人、同一关节对应。
+
+`compute`是这个类约定的普通方法名，需要Lab执行器集合显式调用；Python没有规定“所有叫compute的方法都自动运行”。本项目另有观测manager.compute、cost_manager.compute，它们分别属于不同对象、执行不同算法。
+
+## 6. 反馈误差与前馈先构成力矩
 
 ```python
 error_pos = control_action.joint_positions - joint_pos
 error_vel = control_action.joint_velocities - joint_vel
 feedforward = control_action.joint_efforts
-if self.cfg.scale_effort_with_kp:
-    feedforward = self.kp_factor * feedforward
 ```
 
-control_action是原生ArticulationActions容器，保存本组当前的关节目标：位置、速度、力矩前馈。joint_pos/joint_vel是本组当前实际状态。框架在每次集合compute中都从目标缓冲建立新容器，因此最终改写容器不会在下一次重复缩放原始目标。
+数学上：
 
-当前ActionTerm给腿q_des=q_default+scale*u，给轮tau_ff=5u；速度目标保持0。腿的scale_effort_with_kp=False，轮为True；轮Kp名义值为0，因此位置误差不贡献力矩，p只作用于轮前馈。
+$$
+e_q=q^{des}-q,\qquad e_{\dot q}=\dot q^{des}-\dot q.
+$$
+
+比例反馈 $K_pe_q$ 根据位置偏差施力；速度反馈 $K_de_{\dot q}$ 根据速度偏差施力。前馈 $\tau^{ff}$ 是直接给定的力矩分量，不先由这两个误差算出来。
+
+当前腿通常使用目标角速度0和前馈0，因此：
+
+$$
+\tau_{leg}^{calc}=s\big[f_p\,40(q^{des}-q)-f_d\,1\dot q\big].
+$$
+
+当前轮Kp=0、目标角速度0，且 `scale_effort_with_kp=True`，因此先 `feedforward = kp_factor * feedforward`，再得到：
+
+$$
+\tau_{wheel}^{calc}=s\big[-f_d\,0.5\dot q+f_p\tau^{ff}\big],
+\qquad \tau^{ff}=5u_{delayed}.
+$$
+
+轮的Kp因子在这里仍有作用，因为旧公式用该因子缩放轮前馈；它不是通过零刚度的位置误差起作用。腿的该开关默认False，所以腿前馈若非零也不会在这一分支额外乘Kp因子。
+
+统一形式为：
+
+$$
+\tau^{calc}_{n,j}=s_{n,j}\left[
+ f_{p,n,j}K_{p,n,j}e_{q,n,j}
++f_{d,n,j}K_{d,n,j}e_{\dot q,n,j}
++\widetilde\tau^{ff}_{n,j}\right].
+$$
+
+其中 $\widetilde\tau^{ff}=f_p\tau^{ff}$ 当开关开启，否则直接为 $\tau^{ff}$。所有乘法都是逐元素乘，不是矩阵乘法。
+
+## 7. 用具体数字走完腿与轮
+
+腿某关节：目标−1.4rad、实测−1.5rad、速度0.2rad/s，s=1.1、$f_p=0.9$、$f_d=1.2$，前馈0：
+
+$$
+e_q=0.1,\quad e_{\dot q}=-0.2,\qquad
+\tau^{calc}=1.1(0.9\times40\times0.1-1.2\times0.2)=3.696\mathrm{N\cdot m}.
+$$
+
+轮某关节：延迟后滤波动作0.4，因此前馈2N·m；轮速3rad/s，因子同上：
+
+$$
+\tau^{calc}=1.1(0.9\times2-1.2\times0.5\times3)=0.
+$$
+
+前馈与阻尼在这个例子抵消，所以动作非零也可以输出零净驱动力矩。若轮速不同，结果随当前物理状态改变；同一策略目标在4个物理步保持时，反馈力矩仍可每步不同。
+
+## 8. 限幅以后，输出对象保留什么
 
 ```python
-self.computed_effort = self.motor_strength * (
-    self.kp_factor * self.stiffness * error_pos
-    + self.kd_factor * self.damping * error_vel
-    + feedforward
-)
 self.applied_effort = self._clip_effort(self.computed_effort)
-```
-
-全部乘法为(N,J)逐元素运算，同一环境不同关节可有不同系数。先组合位置反馈、速度反馈、前馈，再乘整份m，最后使用父类_clip_effort。computed_effort与applied_effort这两个原生字段照常供ActuatorCollection汇集；腿限60，轮限15 N·m。
-
-```python
 control_action.joint_efforts = self.applied_effort
 control_action.joint_positions = None
 control_action.joint_velocities = None
 return control_action
 ```
 
-返回容器只保留最终力矩，表示显式执行器已经完成PD；后续提交力矩。位置/速度目标仍保存在集合的target_command中，容器里的None不会清掉那些目标。
+`computed_effort`保存限幅前计算值，`applied_effort`保存限幅后驱动力矩。本地 `IdealPDActuator._clip_effort`按关节力矩上限裁剪：
 
-## 5. 谁调用它
+$$
+\tau^{applied}=\operatorname{clip}(\tau^{calc},-\tau^{limit},\tau^{limit}).
+$$
 
-每个物理步，环境让ActionTerm写目标，Scene调用机器人的write_data_to_sim。内部[ActuatorCollection.compute](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/actuators/actuator_collection.py)执行：
+腿想输出80会裁成60，轮想输出−20会裁成−15。限幅是直接改变提交给后端的数值；奖励或cost的越限评分只是测量结果，两者作用不同。
+
+赋 `joint_positions=None`、`joint_velocities=None` 表示这次输出只提供已计算好的力矩，不继续在这个输出对象里提供位置/速度目标。`None`不等于给位置和速度目标都设为0。
+
+`return control_action`返回传入并被修改的同一个数据对象，调用者继续将其散回整机输出。`applied_effort`也用于功率奖励与力矩cost；因此这些项读到的是控制模型的限幅后输出，不是网络原始数或全系统所有约束力。
+
+## 9. Lab在物理步中怎样调用它
+
+当前父环境每个策略step处理一次动作，随后按decimation执行物理循环。每轮调用动作项apply写目标、Scene写控制数据、Sim推进、Scene更新状态。
+
+本地 `ActuatorCollection.compute`先从整机目标按执行器关节编号取出位置/速度/前馈，构造 `ArticulationActions`，然后执行：
 
 ```python
 control_action = actuator.compute(
@@ -143,50 +219,14 @@ control_action = actuator.compute(
 )
 ```
 
-当前策略每0.01 s给一次动作，物理步为0.0025 s，所以同一策略步内此方法运行4次。目标通常相同，实际角度/速度在变，力矩据此重算。
+`actuator`此时就是已经构造的腿组或轮组 `TitaPDActuator` 实例；Python根据对象实际类型选择子类compute。返回后集合把结果按关节编号写回整机命令，再交后端。自定义类没有自己写while循环，是环境与执行器集合负责反复调用它。
 
-## 检查边界
+这条接线与计算公式能由当前源码确认；电机的真实带宽、效率、驱动器延迟和饱和特性是否被充分近似，需要后续物理验证与实测。当前理想PD加随机倍率并没有包含全部电机电气模型。
 
-当前文件的配置/CPU检查见[阶段审查](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/docs/migration/09_阶段审查.md)；未运行物理环境或训练。
+## 源码与API依据
 
-## 补充问答
-
-**Q：** 而且，我没搞懂现在在做什么！和usd资产的api有关联吗？比如articulation root啥的？
-
-**A：** 当前在迁移“控制响应的域随机化”：让不同环境的机器人具有不同的PD增益比例与力矩输出比例，策略在这些响应差异下训练。USD的刚体、关节、质量、惯量与碰撞描述机械系统；ArticulationRootAPI标记供物理引擎组织为articulation的机构范围。Lab的Articulation对象读这套机构的状态并提交控制量，TitaPDActuator负责由目标和实际状态计算关节力矩，Event负责给这个计算抽参数。本步改变控制计算中的Tensor，不改关节连接或Articulation Root。
-
-```text
-策略动作 → ActionsCfg生成位置目标/轮子前馈
-                          ↓
-当前q、dq → TitaPDActuator.compute → 限幅后的关节力矩
-                          ↑                   ↓
-               startup Event抽的三个因子   物理引擎推进机器人
-```
-
-**Q：** 电机力矩不是kp*pos+kd*vel+前馈力矩吗？这里我咋没搞懂这公式是啥？？电机强度是啥？？？
-
-**A：** 把pos/vel写全，PD控制律是tau_cmd=Kp(q_des-q)+Kd(dq_des-dq)+tau_ff，位置/速度反馈乘的是误差。当前速度目标为0，因此速度反馈为-Kd*dq。这是控制器计算力矩指令的模型；电机内部电流、电磁与驱动动态没有在这条IdealPD公式中完整建模。
-
-stiffness就是名义Kp，damping就是名义Kd。kp_factor=p、kd_factor=d是在名义值上乘的无量纲随机比例；motor_strength=m是在总力矩上乘的无量纲输出比例。旧Gym选择tau=m[p*Kp*error_pos+d*Kd*error_vel+tau_ff]，两轮还将前馈乘p，之后统一限幅。m=0.8表示该模型在限幅前输出为括号内计算值的80%；它是用于模拟输出差异的简化参数，不是电机额定力矩、效率或电功率。
-
-以一个腿关节为例：Kp=40、Kd=1，位置误差0.1 rad，速度误差-1 rad/s，前馈0。名义值输出3 N·m；抽p=1.1、d=0.9、m=0.8后，输出0.8×(44×0.1-0.9)=2.8 N·m，最后仍受固定限矩约束。
-
-**Q：** 而且咋又成explicit了？？我记得之前一直接触的是implicitactuatorcfg！
-
-**A：** 当前assets/tita.py已经保存IdealPDActuatorCfg；Scene再选择继承IdealPD的TitaPDActuator。本轮继续使用这条显式路径。Implicit把目标和增益交给引擎内的drive求解；当前显式路径在Lab模型里每物理步读取q/dq算力矩、限幅，再提交引擎。旧Gym的_compute_torques本来就是这类显式算力矩的方式。这描述控制计算的执行方式，物理积分器属于另一层选择。两者都使用同一个机器人关节机构，不要求改Articulation Root。
-
-**Q：** stiff不是kp吗？damping不是kd吗？为啥又来kp因子和kd因子？还是全1类似self.stiffness和damping？？这里的self.stiffness和damping shape是啥？？
-
-**A：** 是，stiffness/damping是名义Kp/Kd，factor为每个环境/关节的随机倍数。配置中的40.0/1.0是标量；父类把它们展开成(N,J)张量，便于并行计算。腿组J=6，stiffness全40、damping全1；轮组J=2，stiffness全0、damping全0.5。
-
-```python
-self.motor_strength = torch.ones_like(self.stiffness)
-self.kp_factor = torch.ones_like(self.stiffness)
-self.kd_factor = torch.ones_like(self.damping)
-```
-
-ones_like使用参考Tensor的形状、dtype和device，填充值固定为1，不复制原数值。即使轮子的stiffness全0，ones_like(stiffness)仍全1。三次调用建立三份独立Tensor。全1是乘法的中性初值；startup再用随机数覆盖它们。
-
-**Q：** 但我看到了最后“randomize_motors‘这一项。我好像理解kp和kd因子是啥了，是用来随机化的？
-
-**A：** 对。配置决定范围与时机；Event填样本；执行器在每个物理步使用样本。范围相同不意味着三份样本相同，它们由三次独立采样产生。当前startup抽一次，回合reset保留。
+- [Lab IdealPDActuator与实际_clip_effort](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/actuators/actuator_pd.py)
+- [Lab ActuatorCollection.compute](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/actuators/actuator_collection.py)
+- [本项目电机随机化](mdp/events.py.md)
+- [本项目控制目标](mdp/actions.py.md)
+- [PyTorch ones_like](https://docs.pytorch.org/docs/2.11/generated/torch.ones_like.html)

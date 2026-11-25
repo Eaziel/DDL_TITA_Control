@@ -1,34 +1,48 @@
 # 项目文档入口
 
-内容纯 AI 生成，由人类要求生成，未经人类修改。整理：2026-10-28。
+内容纯AI生成，由人类要求生成，未经人类修改。更新：2026-11-25。
 
-这组文档解释原TITA怎样计算，以及当前Lab代码由谁调用、怎样组织数据。当前工程使用IsaacLab-main、IsaacSim6.2和共享venv；运行命令见[项目入口与运行](migration/25_Lab_main与Sim62_入口和配置.md)。本次只联调已经保存的actor和环境，之后暂停新增内容、阅读文档。
+当前已接通从采集到 critic 和六类 cost 约束策略的单批更新。用户把两种损失移到 `losses.py` 后，已经完成 4 环境、24 步的运行。进度与运行证据见[项目记忆](../PROJECT_MEMORY.md)。
 
-## 训练接口与 actor 的学习材料
+## 当前先把一批更新读通
 
-| 顺序 | 阅读材料 | 读完应能说明什么 |
-| --- | --- | --- |
-| 1 | [从官方训练流程理解 Wrapper](训练流程与Wrapper入门.md) | 环境、包装器、runner、算法、PyTorch 各做什么；谁真正更新参数 |
-| 2 | [env_wrapper.py 解释](../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/env_wrapper.py.md) | Lab 的五项返回怎样变成六项；`infos`、`None`、自动 reset 的含义 |
-| 3 | [actor.py 解释](../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/actor.py.md) | 三条网络支路、两个历史窗口、每层计算与辅助损失怎样对应 |
-| 按需 | [586 列布局解释](../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/observation_layout.py.md) | actor 的输入和十项监督目标分别从哪些列取得 |
+| 材料 | 从哪里开始，解决什么问题 |
+| --- | --- |
+| **先读 [check 第 1 节](../code_explaination/Tita_Lab/scripts/check_np3o_interface.py.md#1-从一条经历看完整次更新)** | 跟一条动作经历，看清采集、GAE 和两次网络更新怎样接起来 |
+| [rollout 第 13 节](../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/rollout_storage.py.md#13-gae-把后几步结果算进当前动作) | 用两步重新算一遍，分清回报目标与优势 |
+| [一批经历怎样完成策略更新](一批经历怎样完成策略更新.md) | 需要画整块算法时回看总览，第 7 节指向各文件的详情 |
 
-actor 文档可分两次读：先读架构与前向（0—6 节），再读辅助学习和梯度（7—9 节）。API 索引供回查，章末 Q/A 保留实际提问，不要求一次背完。
+11 月 25 日的单批运行完成了 critic 和策略各 8 次更新。记录包含六类 cost 的损失和合计梯度，以及对同一批数据的拟合图和拆分前后对照。[损失拆分检查](audits/2026-11-25_loss_extraction/README.md)
 
-## 其他材料怎样查
+## 按当前疑问回查
+
+| 需要理解什么 | 阅读入口 |
+| --- | --- |
+| 官方训练怎样串起环境、wrapper、runner和PPO | [训练流程与Wrapper](训练流程与Wrapper入门.md)，第6节是调用链，第9节对照当前自有check |
+| 每个重要Py文件的用途 | [重要代码解释索引](重要代码解释索引.md)，本页只放链接与简要介绍 |
+| 动作高斯分布、密度、熵与Torch接口 | [policy解释](../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/policy.py.md) |
+| 观测怎样经过扫描/历史编码并预测价值 | [critic解释](../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/critic.py.md) |
+| actor的网络、辅助预测与Barlow Twins | [actor解释](../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/actor.py.md) |
+| 一次环境step/reset由谁调用各模块 | [环境主类解释](../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py.md) |
+| 586列的顺序与各观测组 | [观测打包解释](../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/observation_layout.py.md) |
+
+数学与API的详细解释以对应源码页为主。迁移章节记录原Gym做法、Lab落点和迁移理由；不将章末旧“下一步”当作当前执行计划。
+
+## 状态、来源与运行
 
 | 需要 | 入口 |
 | --- | --- |
-| 新版Lab＋完整Sim的公开安装教程 | [Ubuntu＋uv安装教程](新版IsaacLab与IsaacSim安装教程_Ubuntu_uv.md) |
-| 当前代码需要改哪里 | [检查与修改清单](当前代码检查与修改清单.md) |
-| 本次actor联调 | [26 actor与环境联调](migration/26_actor与环境联调.md) |
-| 当前进度、约定和缺口 | [项目记忆](../PROJECT_MEMORY.md) |
-| Gym 与 Lab 的功能对应 | [迁移目录](migration/README.md) |
-| 找原参数和执行行为的代码位置 | [00 映射表](migration/00_迁移映射索引.md) |
-| 按源码文件查对象、索引和数学 | [源码解释目录](../code_explaination/README.md) |
-| 核对一次检查实际证明了什么 | [证据目录](audits/README.md) |
-| 查以前的决定与故障 | [项目历史](PROJECT_HISTORY.md) |
+| 新对话接手 | [Agent说明](AGENT_HANDOFF.md)、[可复制续接提示](新对话续接提示词.md) |
+| 新助手如何理解用户与讲解代码（必读） | [协作与讲解](../project_memory/协作与讲解.md)、[解释文档写法](../code_explaination/README.md#解释文档怎样写) |
+| 当前进度、剩余工作与权限 | [项目记忆入口](../PROJECT_MEMORY.md)、[迁移状态](../project_memory/迁移状态.md)、[AGENTS](../AGENTS.md) |
+| 当前检查结论 | [检查清单](当前代码检查与修改清单.md) |
+| Gym参数和行为的来源 | [00映射索引](migration/00_迁移映射索引.md) |
+| 按功能查看迁移阶段 | [迁移目录](migration/README.md) |
+| 全部源码解释 | [代码解释目录](../code_explaination/README.md) |
+| 安装及手动运行 | [25项目入口](migration/25_Lab_main与Sim62_入口和配置.md)、[Ubuntu＋uv教程](新版IsaacLab与IsaacSim安装教程_Ubuntu_uv.md) |
+| 运行日志与静态检查各证明什么 | [证据目录](audits/README.md)，当前单批更新见[约束检查](audits/2026-11-14_constrained_policy_update/README.md)，超时GAE见[历史两次检查](audits/2026-11-04_gae/README.md) |
+| 过去的决定、故障和修正 | [项目历史](PROJECT_HISTORY.md) |
+| 历史USD检查与协议问题 | [USD快照](USD_CHECK_2026-10-15.md)、[协议说明](开源协议说明.md) |
+| 研究与职业方向 | [研究调研](../graduate_research/README.md)、[求职项目建议](../career_planning/2026-11-08_TITA求职项目建设建议.md) |
 
-迁移正文按“目标 → Gym 怎样做 → Lab 怎样对应 → 迁移理由与差异”组织。旧审查中的代码属于当时快照；当前状态以项目记忆和新证据为准。2026-10-15 的 [USD 检查](USD_CHECK_2026-10-15.md) 保留为历史资产快照，[协议说明](开源协议说明.md) 保留为当时问答。
-
-按当前问题选择材料，无需通读全部迁移章、排查日志或研究文献。
+历史记录保留当时日期与证据；研究/职业提案不代表当前迁移已接受或已实施的计划。

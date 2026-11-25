@@ -51,7 +51,7 @@ TITA_CFG = ArticulationCfg(
             "joint_.*_leg_3": -1.5,
             "joint_.*_leg_4": 0.0,
         },
-        pos=(0.0, 0.0, 0.3),
+        pos=(0.0, 0.0, 0.45),
     ),
     actuators={
         "legs": IdealPDActuatorCfg(

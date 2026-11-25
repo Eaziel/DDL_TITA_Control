@@ -175,7 +175,7 @@ ObservationManager准备条目时执行term_cfg.func(env, **params)，用返回�
 
 ## 7. 其他观测与训练接入的分工
 
-[13](13_训练观测迁移.md)的scan187/dynamics30和[14](14_特权状态与观测布局.md)的state6及586拼接/末端裁剪均已保存，当前代码CPU检查通过。当前普通PPO的actor和critic都只选policy组；新布局函数尚未接适配器。裁剪放在拼接输出端，内部policy/history仍保留未裁剪值。
+[13](13_训练观测迁移.md)的scan187/dynamics30和[14](14_特权状态与观测布局.md)的state6及586拼接/末端裁剪均已保存，当前代码CPU检查通过。当前普通PPO的actor和critic都只选policy组；自有wrapper已经调用布局函数，check读取完整586列；官方PPO模板仍是另一条只读policy组的路线。裁剪放在拼接输出端，内部policy/history仍保留未裁剪值。
 
 当前文件检查和证据集中见[09审查](09_阶段审查.md)。
 

@@ -361,13 +361,13 @@ RoboMaster的类比需要先指定测量边界。官方[2026高校系列赛通�
 
 > 我想问，为啥“原生 RewardManager 自动调用它的 reset()”？？
 
-**A：** 本地源码明确串起三步：类项创建后被放入RewardManager._class_term_cfgs；环境_reset_idx调用reward_manager.reset；该方法遍历列表执行term_cfg.func.reset(env_ids=env_ids)。类项继承ManagerTermBase，因而可以由框架统一管理其状态。缓存跟随重置后的速度，避免跨回合差分。原代码和对象归属见[rewards.py补充问答](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md#补充问答)。
+**A：** 本地源码明确串起三步：类项创建后被放入RewardManager._class_term_cfgs；环境_reset_idx调用reward_manager.reset；该方法遍历列表执行term_cfg.func.reset(env_ids=env_ids)。类项继承ManagerTermBase，因而可以由框架统一管理其状态。缓存跟随重置后的速度，避免跨回合差分。原代码和对象归属见[rewards.py状态与reset说明](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md)。
 
 **Q：**
 
 > 以及，__call__干啥用了？？python的类名，在这里，是不是可以看作func就是构造函数__init__()？
 
-**A：** 类名指向类对象。配置func=类对象时尚未创建奖励实例；ManagerBase调用该类创建实例，过程中执行__init__，然后把实例存到管理器内部的term_cfg.func。之后func(env)调用同一实例的__call__，每策略步计算一次。类对象、初始化方法与实例是三个对象/阶段，不能把func与__init__画等号。[源码解释](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md#补充问答)给出逐步代码；Python语义见[官方__init__](https://docs.python.org/3.12/reference/datamodel.html#object.__init__)和[__call__](https://docs.python.org/3.12/reference/datamodel.html#object.__call__)。
+**A：** 类名指向类对象。配置func=类对象时尚未创建奖励实例；ManagerBase调用该类创建实例，过程中执行__init__，然后把实例存到管理器内部的term_cfg.func。之后func(env)调用同一实例的__call__，每策略步计算一次。类对象、初始化方法与实例是三个对象/阶段，不能把func与__init__画等号。[源码解释](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md)给出逐步代码；Python语义见[官方__init__](https://docs.python.org/3.12/reference/datamodel.html#object.__init__)和[__call__](https://docs.python.org/3.12/reference/datamodel.html#object.__call__)。
 
 **Q：**
 
@@ -375,7 +375,7 @@ RoboMaster的类比需要先指定测量边界。官方[2026高校系列赛通�
 
 **A：** 已用已安装Ruff插件CLI和项目配置复现B008。它关注默认参数里的函数调用只在定义时执行一次，返回对象会被多次调用共享。采用None默认值、if分支中按需构造即可，见对应源码解释；把形参直接改成必填会改变调用接口。该方案通过项目现有lint与CPU参数/选择检查，不要求关闭规则或忽略黄线。[Ruff官方B008说明](https://docs.astral.sh/ruff/rules/function-call-in-default-argument/)。
 
-此前追问的Python括号调用、登记对应哪句append，见[奖励源码末尾Q/A](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md#补充问答)；多个reset的对象归属与自定义历史用途见[环境源码末尾Q/A](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py.md#补充问答)。原问题保留；当前第10节合成代码已保存，其计分含义见下面的新问答。
+此前追问的Python括号调用、登记对应哪句append，见[奖励源码的类调用说明](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py.md)；多个reset的对象归属与自定义历史用途见[环境源码的step/reset说明](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py.md)。原问题保留；当前第10节合成代码已保存，其计分含义见下面的新问答。
 
 **Q：**
 

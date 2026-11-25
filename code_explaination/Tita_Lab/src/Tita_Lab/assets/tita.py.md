@@ -5,12 +5,18 @@
 源码目录：`/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/assets/`。
 源码文件：[tita.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/assets/tita.py)。
 
-更新：2026-10-23。资产IdealPD与Scene的TitaPD分别维护。用户在源USD关闭四处额外碰撞并报告恢复自碰撞后正常；当前源码已显式enabled_self_collisions=True。覆盖已修正，当前保留现有形状；精确box/cylinder仅列为可选对照。助手未修改用户源码/资产或运行模拟器。
+更新：2026-11-08；本轮只核对源码与文档，未重开USD或仿真。资产IdealPD与Scene的TitaPD分别维护。用户在源USD关闭四处额外碰撞并报告恢复自碰撞后正常；当前源码已显式enabled_self_collisions=True。覆盖已修正，当前保留现有形状；精确box/cylinder仅列为可选对照。助手未修改用户源码/资产或运行模拟器。
 
 ## 1. 当前代码
 
 ```python
+# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 import math
+
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import IdealPDActuatorCfg
 from isaaclab.assets.articulation import (
@@ -41,10 +47,10 @@ TITA_CFG = ArticulationCfg(
                 PhysxRigidBodyCfg(
                     linear_damping=0.0,
                     angular_damping=0.0,
-                    max_linear_velocity=1000.0, # [m/s]
+                    max_linear_velocity=1000.0,  # [m/s]
                     # 旧Gym使用rad/s，此处PhysX配置使用deg/s。
                     max_angular_velocity=math.degrees(1000.0),
-                    max_depenetration_velocity=1.0
+                    max_depenetration_velocity=1.0,
                 )
             ]
         },
@@ -57,7 +63,7 @@ TITA_CFG = ArticulationCfg(
             "joint_.*_leg_3": -1.5,
             "joint_.*_leg_4": 0.0,
         },
-        pos=(0.0, 0.0, 0.3),
+        pos=(0.0, 0.0, 0.45),
     ),
     actuators={
         "legs": IdealPDActuatorCfg(
@@ -94,7 +100,16 @@ TITA_CFG = ArticulationCfg(
 
 ## 3. 执行器怎样连接Actions
 
-IdealPD总力矩为Kp(q_des-q)+Kd(dq_des-dq)+tau_ff。当前腿收到位置目标，得到40(q_des-q)-dq；轮子收到Actions的5a力矩前馈，得到5a-0.5*dq。
+IdealPD根据目标与实际关节状态计算力矩：
+
+$
+\tau=K_p(q_{\mathrm{des}}-q)
++K_d(\dot q_{\mathrm{des}}-\dot q)+\tau_{\mathrm{ff}}.
+$
+
+q是关节角，单位rad；q_dot是角速度，单位rad/s；tau_ff是动作执行模块传来的前馈力矩，单位N·m。Kp将角度误差换算为力矩，Kd将速度误差换算为力矩。默认腿增益40/1，轮子增益0/.5：轮子不追踪旋转角度，但仍有速度阻尼与前馈力矩。
+
+init_state.pos目前是(0,0,.45)m，关节默认角仍为0/.8/−1.5/0。它是资产的根位置参考；RL重置还会组合环境地形原点及reset事件的偏移，不能仅凭这个z值推断所有采样姿态都不会穿透。
 
 actuator_effort_limit限制模型输出的总力矩，joint_effort_limit配置求解器侧上限。速度任务会在Scene覆盖为TitaPDActuator并接上startup因子；滤波、物理步延迟和startup随机因子均已接入。参数映射与完整公式见[03 Actions](../../../../../docs/migration/03_actions迁移.md)。
 

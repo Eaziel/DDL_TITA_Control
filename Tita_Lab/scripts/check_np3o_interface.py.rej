@@ -1,0 +1,23 @@
+--- Tita_Lab/scripts/check_np3o_interface.py
++++ Tita_Lab/scripts/check_np3o_interface.py
+@@ -218,7 +227,19 @@
+             f"epochs={num_learning_epochs} per_epoch={num_mini_batches}"
+         )
+ 
+-        check_value_update(value_networks=value_networks, storage=storage)
++        check_value_update(
++            value_networks=value_networks,
++            storage=storage,
++            run_metadata={
++                "task": "TitaLab-Velocity-Tita",
++                "seed": lab_env.cfg.seed,
++                "policy_step_dt_s": lab_env.step_dt,
++                "episode_length_s": lab_env.cfg.episode_length_s,
++                "gamma": gamma,
++                "gae_lambda": lam,
++                "cost_names": list(env.cost_names),
++            },
++        )
+ 
+     else:
+         print("[GAE] Skipped: rollout is incomplete.")

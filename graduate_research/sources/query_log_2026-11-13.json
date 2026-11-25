@@ -1,0 +1,269 @@
+{
+  "date": "2026-11-13",
+  "timezone": "Asia/Shanghai",
+  "review_type": "targeted narrative research for topic selection",
+  "discovery": "web search followed by primary-source retrieval and citation chaining",
+  "coverage_limit": "not a systematic search of WoS or Scopus; no exhaustive-coverage claim",
+  "batches": [
+    {
+      "record": "research_20261113_queries_1",
+      "request": [
+        {
+          "q": "site:clarivate.com \"quartile\" \"Q2\" \"Journal Citation Reports\""
+        },
+        {
+          "q": "site:fenqubiao.com \"分区\" \"Top\" \"大类\""
+        },
+        {
+          "q": "site:docs.nvidia.com jetson orin nano developer kit CAN transceiver SocketCAN"
+        },
+        {
+          "q": "site:nvidia.com Jetson Orin Nano 8GB developer kit specifications 2026"
+        }
+      ]
+    },
+    {
+      "record": "research_20261113_queries_2",
+      "request": [
+        {
+          "q": "site:clarivate.com \"Journal Citation Reports\" \"Q2\" \"quartile\""
+        },
+        {
+          "q": "site:fenqubiao.com 2026 分区表 Top 大类"
+        },
+        {
+          "q": "site:las.cas.cn 2025 期刊分区表 发布"
+        }
+      ]
+    },
+    {
+      "record": "ranking_title_queries",
+      "request": [
+        {
+          "q": "\"Neurocomputing\" \"2025\" \"2区\" site:edu.cn"
+        },
+        {
+          "q": "\"Nonlinear Dynamics\" \"2025\" \"2区\" site:edu.cn"
+        },
+        {
+          "q": "\"Control Engineering Practice\" \"2025\" \"2区\" site:edu.cn"
+        },
+        {
+          "q": "\"ISA TRANSACTIONS\" \"2025\" \"2区\" site:edu.cn"
+        }
+      ]
+    },
+    {
+      "record": "topic_search_1_request",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"wheeled biped\" \"uncertainty\" control 2025 2026 simulation"
+          },
+          {
+            "q": "\"legged locomotion\" \"uncertainty-aware\" \"2025\""
+          },
+          {
+            "q": "\"legged\" \"latency\" \"reinforcement learning\" \"2025\""
+          },
+          {
+            "q": "\"wheeled-legged\" \"Neurocomputing\""
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "topic_search_2_request",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"legged locomotion\" \"uncertainty\" \"reinforcement learning\" 2026 arxiv"
+          },
+          {
+            "q": "\"locomotion\" \"latency\" \"delay\" \"arxiv\" \"2025\""
+          },
+          {
+            "q": "\"Neurocomputing\" \"quadruped\" \"2025\" reinforcement"
+          },
+          {
+            "q": "\"Neurocomputing\" \"biped\" \"2026\" reinforcement"
+          }
+        ],
+        "open": [
+          {
+            "ref_id": "https://pure.qub.ac.uk/en/publications/hierarchical-nonlinear-mpc-and-super-twisting-sliding-mode-contro/"
+          },
+          {
+            "ref_id": "https://www.diag.uniroma1.it/oriolo/pub.html"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "narrow_search1_request",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"wheeled biped\" \"friction\" \"safe\" control barrier"
+          },
+          {
+            "q": "\"wheeled bipedal\" \"friction\" \"reinforcement\" slip"
+          },
+          {
+            "q": "\"wheeled biped\" \"reference governor\""
+          },
+          {
+            "q": "\"Neurocomputing\" \"Aims and scope\" neural networks reinforcement learning"
+          }
+        ],
+        "open": [
+          {
+            "ref_id": "https://onlinelibrary.wiley.com/doi/full/10.1002/rnc.70772"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2606.14270"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "ranking_anddelay_request",
+      "request": {
+        "search_query": [
+          {
+            "q": "site.las.cas.cn \"2026\" \"不再更新\" \"期刊\""
+          },
+          {
+            "q": "site.lib.tongji.edu.cn \"2026\" \"分区\""
+          },
+          {
+            "q": "\"Neurocomputing\" \"publishes articles describing recent fundamental contributions\" Elsevier"
+          },
+          {
+            "q": "\"wheeled\" \"biped\" \"time delay\" control 2025 2026"
+          }
+        ],
+        "open": [
+          {
+            "ref_id": "https://link.springer.com/journal/11071/aims-and-scope",
+            "lineno": 60
+          },
+          {
+            "ref_id": "https://www.isa.org/standards-and-publications/isa-publications/isa-transactions",
+            "lineno": 40
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "closest_final_request",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://journal.hep.com.cn/fme/EN/10.1007/s11465-025-0857-z"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2312.11460"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2308.09405"
+          }
+        ],
+        "search_query": [
+          {
+            "q": "\"safe\" \"wheeled biped\" reinforcement learning recoverability"
+          },
+          {
+            "q": "\"wheel-legged\" \"viability\" control"
+          },
+          {
+            "q": "\"wheeled bipedal\" \"control barrier\""
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "safety_closest_request",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"Shirwatkar\" \"safety\" \"locomotion\" policy"
+          },
+          {
+            "q": "legged locomotion safety filter reachability learned recovery 2025 2026"
+          },
+          {
+            "q": "\"wheeled biped\" \"slip\" \"estimation\" control"
+          },
+          {
+            "q": "\"Orin\" \"processor-in-the-loop\" robot control"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "status_andranking_request",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://link.springer.com/article/10.1007/s11465-025-0857-z"
+          },
+          {
+            "ref_id": "https://journal.hep.com.cn/fme/EN/10.1007/s11465-025-0856-0"
+          }
+        ],
+        "search_query": [
+          {
+            "q": "\"s11465-025-0857-z\" retraction correction"
+          },
+          {
+            "q": "site.journalcitationreports.zendesk.com \"Journal Impact Factor\" \"two\" \"citable\""
+          },
+          {
+            "q": "site.link.springer.com/journal/11071 \"nonlinear dynamics\" \"scope\" methodology"
+          },
+          {
+            "q": "\"Nonlinear Dynamics\" \"2025\" \"中科院2区\""
+          }
+        ],
+        "response_length": "long"
+      }
+    }
+  ],
+  "additional_queries_transcribed_from_this_turn": [
+    {
+      "q": "site.sciencedirect.com/journal/isa-transactions/about/aims-and-scope"
+    },
+    {
+      "q": "site.sciencedirect.com/journal/neurocomputing/about/aims-and-scope"
+    },
+    {
+      "q": "site.clarivate.com journal impact factor ESCI quartile SCIE 2024 unified rankings"
+    },
+    {
+      "q": "wheeled bipedal robot command governor friction uncertainty recovery control 2025 2026"
+    },
+    {
+      "q": "\"ISA Transactions\" \"2025\" \"中科院\" \"2区\" site:edu.cn"
+    },
+    {
+      "q": "\"Nonlinear Dynamics\" \"2025\" \"2区\" site:edu.cn"
+    },
+    {
+      "q": "\"中国科学院文献情报中心\" \"2026年起\" \"分区表\" site:las.cas.cn"
+    },
+    {
+      "q": "site.mathworks.com processor-in-the-loop simulation hardware-in-the-loop difference target processor simulated plant"
+    },
+    {
+      "q": "site.mathworks.com hardware-in-the-loop simulation real-time plant controller timing"
+    }
+  ],
+  "counts": "No hit or PRISMA totals inferred. This log contains the recoverable query records, not an assertion that every search or page open is listed."
+}

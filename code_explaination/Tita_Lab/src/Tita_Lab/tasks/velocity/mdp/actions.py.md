@@ -1,10 +1,23 @@
-# actions.py：动作怎样变成延迟后的关节目标
+# actions.py：8维动作怎样成为带延迟的关节目标
 
-**阅读目标：** 沿一份动作的变化读懂裁剪、FIR、缩放、目标历史与提交；区分策略步处理和物理步应用。
+内容纯AI生成，由人类要求生成，未经人类修改。源码核对：2026-11-03；本次补写第6节。
 
-源码：[actions.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/actions.py)。更新：2026-10-27。**重复copy_已由用户修正，当前计算体与下方版本一致；新venv实际FIR/action-rate复核通过。** 两处旧延迟笔误也已修，第6节保留重复更新问题的原因和修正。
+被解释文件：[mdp/actions.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/actions.py)。
+
+本文件接收策略输出的8个数，把前6个解释为腿关节的位置调整量，把后2个解释为轮子的力矩前馈。读完后应能沿一个数找到裁剪、两点滤波、单位换算、历史保存和延迟选择的实际存储位置；真正的PD力矩计算接着发生在 [actuators.py](../actuators.py.md)。
+
+本文按当前文件与本地 IsaacLab-main / Sim 6.2 接线解释。源码只读；数学与调用关系核对不等于重新运行仿真或验证训练效果。
+
+## 1. 当前完整源码
+
+下面是本次读取的完整源码，保留原注释，供后文逐段对照。
 
 ```python
+# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -53,12 +66,14 @@ class TitaJointAction(JointAction):
     def process_actions(self, actions: torch.Tensor) -> None:
         """Update filtered joint commands from policy actions."""
 
+        # 保存上个策略步的裁剪动作；shape为(N, J)，腿J=6、轮J=2。
         self.previous_clipped_actions.copy_(self.clipped_actions)
         self.clipped_actions.copy_(actions.clamp(-self.cfg.raw_clip, self.cfg.raw_clip))
 
         # c_t=clip(a_t, ±100)，u_t=0.2*c_(t-1)+0.8*c_t。
         # 保存的是上一裁剪动作c_(t-1)，因此是两点FIR（Finite Impulse Response，有限脉冲响应），
         # 不是递归EMA（Exponential Moving Average，指数移动平均）：u_t = α * u_{t-1} + (1-α) * c_t
+        # previous_weight是上一动作的权重，当前配置为0.2。
         previous_weight = self.cfg.previous_weight
         filtered = previous_weight * self.previous_clipped_actions + (1.0 - previous_weight) * self.clipped_actions
 
@@ -105,140 +120,227 @@ class TitaJointActionCfg(JointActionCfg):
     lag_timesteps: int = 1  # Number of stored targets; 1 gives zero latency.
 ```
 
-## 1. ActionManager把八列动作分给两个实例
+## 2. 先确定谁在调用这个类
 
-leg_position收到前六列，wheel_effort收到后两列。每组的raw_actions、processed_actions、裁剪参考和目标历史都属于自己的TitaJointAction实例，shape中的J分别为6和2。
+策略交给环境的 `actions` 是二维张量，形状为 `(N,8)`。张量是带形状的数值数组；这里第0维有N行，一行对应一个并行环境中的机器人，第1维有8列，一列对应一个关节动作。批量计算表示同一段计算同时作用于N行，行之间没有因为放在同一张量中而互相控制。
 
-cfg是这一个动作项的配置，里面的scale/command_type/lag_timesteps分别决定物理量映射、目标类型和保存数量。环境整份cfg属于另一个对象。
+当前动作列依次为左腿1/2/3、右腿1/2/3、左轮、右轮。`ActionManager` 根据配置项的声明顺序与维度拆分8列，创建两个 `TitaJointAction` 实例：
 
-## 2. process_actions每策略步调用一次
+| 配置项名 | 收到的张量 | `command_type` | 目标单位 |
+| --- | --- | --- | --- |
+| `leg_position` | `(N,6)` | `"position"` | rad，弧度 |
+| `wheel_effort` | `(N,2)` | `"effort"` | N·m，力矩 |
 
-先把此前裁剪动作复制到previous_clipped_actions，再将当前输入裁到±100。两点FIR为0.2×上一裁剪动作+0.8×当前裁剪动作。
+`TitaJointActionCfg` 保存参数，`class_type = TitaJointAction` 保存要构造的类。管理器据此执行类似 `cfg.class_type(cfg, env)` 的调用，得到具有自己缓存的实例。类不会因为写在文件里就自动运行。`.pyi` 导出配置名后，`env_cfg.py` 中的动作配置才把这个实现接入环境。
 
-父类process_actions把滤波结果变成processed_actions。腿使用默认角+scale×滤波动作，轮使用scale×滤波动作作为前馈。随后_raw_actions.copy_(actions)恢复原始输入，供观测读取；处理好的目标另有自己的存储。
+`@configclass` 是Lab提供的装饰器：装饰器接收下面定义的类并扩展其配置能力，例如初始化与复制。`cfg: TitaJointActionCfg` 是类型注解，用于表达属性应当是什么类型，本句没有创建新的配置实例。`Literal["position", "effort"]` 表达允许的字符串类型；实际运行的防错仍由构造函数中的 `if` 与 `raise ValueError` 完成。
 
-| 变量 | 内容 | 主要读取位置 |
-| --- | --- | --- |
-| raw_actions | 原始输入，(N,J) | 观测 |
-| clipped_actions | 本次裁剪输入 | FIR、动作变化惩罚 |
-| previous_clipped_actions | 上次裁剪输入 | FIR、动作变化惩罚 |
-| processed_actions | 已缩放/加默认角的目标 | 目标历史更新 |
-| _lag_buffer | (N,L,J)，由旧到新排列的目标 | apply_actions按编号选择 |
+## 3. 一个实例先建立哪些存储
 
-## 3. apply_actions每物理步调用一次
+### 3.1 `super()`调用同一个对象的父类实现
 
-当前策略周期包含四个物理步，所以同一processed_actions会加入历史四次。先移走最旧记录，再写入当前目标，最后每个环境按自己的_lag_indices选择。
+`class TitaJointAction(JointAction)` 声明继承。子类定义自己的 `__init__` 后，需要显式执行 `super().__init__(cfg, env)`，父类才会建立机器人引用、关节编号、缩放、偏移、原始动作和处理后动作等属性。
 
-例如三台机器人的编号为[0,2,1]，分别取buffer[0,0,:]、buffer[1,2,:]、buffer[2,1,:]。L=3时延迟分别为两个、零个、一个物理步，即5/0/2.5 ms。
+这里的 `super()` 是沿继承顺序查找方法的代理；父方法使用的 `self` 仍是当前这一份 `TitaJointAction` 实例。没有再创建一台独立的“父对象”。先执行父初始化，后面才可以读取 `self.raw_actions`。
 
-腿提交位置目标，轮提交力矩前馈，随后TitaPDActuator读取当前关节状态计算反馈并限矩。这里已完成目标提交，不再调用未实现的父类apply_actions。
+`raw_actions` 是父类的属性接口，读取后得到 `_raw_actions` 张量。`torch.zeros_like(self.raw_actions)` 创建形状、数据类型和设备相同、内容为零的独立张量。腿的形状是 `(N,6)`，轮的形状是 `(N,2)`。
 
-## 4. reset清什么、保留什么
+| 属性 | 在这一动作项中保存的内容 |
+| --- | --- |
+| `clipped_actions` | 当前策略步裁剪后的动作 |
+| `previous_clipped_actions` | 上一策略步裁剪后的动作 |
+| `_raw_actions` / `raw_actions` | 策略送进该动作项的原始输入 |
+| `_processed_actions` / `processed_actions` | 已换算为位置或力矩的当前目标 |
+| `_initial_command` | 腿默认角，或轮零前馈 |
+| `_lag_buffer` | 按时间从旧到新保存的若干份目标 |
 
-父类清原始动作，任务类恢复选中环境的目标历史：腿填默认角，轮填零前馈。裁剪/FIR参考与选择编号保持不变，沿用旧Gym的跨回合规则。
+`self._offset = ...clone()` 把腿的默认角复制成偏移。`.torch` 是Lab物理数据 `ProxyArray` 的Torch访问入口；`.clone()` 才在这里生成独立副本。关节状态变化不会把这份默认目标一起改掉。
 
-Sequence先转换成list，再用显式剩余维度索引(N,L,J)，避免tuple被解释为多轴索引。其他环境的历史不变。
-
-## 5. 导出、配置与验证
-
-.pyi公开TitaJointActionCfg及随机编号事件；ActionsCfg两项都设置lag_timesteps=3；环境在父构造前创建共享编号，startup原位抽样。完整例子见[12动作延迟](../../../../../../../docs/migration/12_动作延迟迁移.md)。
-
-早期候选/历史版本有CPU流程和Gym力矩对照；2026-10-27发现的重复更新已修，新venv当前代码CPU再次核查通过，见[模块结果](../../../../../../../docs/audits/2026-10-27_saved_stack_sim62/README.md)。用户新版短随机运行报告自行结束，日志未打印FIR/action-rate值，验证范围仍分开记录。
-
-## 6. 已修复：裁剪历史被重复更新（2026-10-27）
-
-缺陷版本的函数开头先执行两条copy_，在中间英文字符串后又执行同样两条。假设此前clipped_actions=0、当前输入10：第一次得到previous=0、current=10；第二次又得到previous=10、current=10。滤波变成0.2×10+0.8×10=10，动作变化平方变成(10−10)²=0。
-
-正确行为是每策略步仅推进一次这两份缓存，输出0.2×0+0.8×10=8，动作变化平方为(10−0)²=100。这里的100是原始惩罚，未乘权重或dt。本页开头的完整方法只包含一组copy_。
-
-新venv实际父类及奖励函数的[CPU证据](../../../../../../../docs/audits/2026-10-27_sim62_action_fir/README.md)：输入10→0，当前输出10→0、候选输出8→2；四环境六腿/两轮含裁剪边界下，候选目标与公式最大差0，原始输入保留，action-rate恢复动作差分。没有写源码或推进物理。
-
-## 补充问答
-
-**Q：**
-
-> super().func()到底是啥？他在代码的位置会影响啥？我之前学ros2只知道他会继承父类，但现在的代码，需要我深入了解这玩意到底是干啥的（我不太会问，你应该能洞察到我的真正疑惑吧？）。还有return super,都是啥啊？真的需要认真了解一下这些。
-
-**A：** 继承关系由`class TitaJointAction(JointAction)`声明。super()在这个关系中帮助查找实现；执行到super().func(...)时，实际调用找到的方法。
-
-在普通实例方法里，super()返回一个查找代理，按当前对象的MRO，从定义该方法的类之后继续寻找。当前单继承链是TitaJointAction→JointAction→ActionTerm→ManagerTermBase。调用super().process_actions(...)会找到JointAction的实现；super().apply_actions()先经过没有该实现的JointAction，最后找到ActionTerm的抽象方法体并抛异常。父类方法不会因为被继承就自动额外执行。
-
-父方法使用的self仍是同一个TitaJointAction对象，所以对self._raw_actions等属性的写入立即影响该实例。没有另建一份独立父对象。
-
-一个仅用于理解语法的例子：
+### 3.2 腿与轮共享的是延迟编号
 
 ```python
-class Parent:
-    def compute(self, x):
-        self.last_x = x
-        return 2 * x
-
-
-class Child(Parent):
-    def compute(self, x):
-        x += 1
-        result = super().compute(x)
-        return result + 3
-
-
-obj = Child()
-print(obj.compute(2))  # 9
-print(obj.last_x)      # 3
+self._lag_indices = env.action_lag_indices
+self._env_ids = torch.arange(self.num_envs, device=self.device)
 ```
 
-obj.compute(2)先选中Child.compute，x变3，父方法用同一obj记下last_x=3并返回6；子方法从调用处继续，把结果加3后返回9。父调用放在哪里，就在那个位置执行，返回后继续它后面的代码。
+第一句把已有张量的引用保存在属性中，不复制数值。环境的 `action_lag_indices`、腿的 `_lag_indices`、轮的 `_lag_indices` 指向同一份 `(N,)` 存储。第二句建立整数序列 `[0,1,...,N-1]`，后面用来逐行选择各机器人的历史。
 
-项目中的调用位置由数据依赖决定：
+初始化历史的代码：
 
 ```python
-super().__init__(cfg, env)
-self.clipped_actions = torch.zeros_like(self.raw_actions)
+self._initial_command.unsqueeze(1).repeat(1, cfg.lag_timesteps, 1)
 ```
 
-父初始化先创建raw_actions等对象，后一句才能按它的形状分配缓存。子类自己定义__init__后，Python不会另外替它执行父__init__，所以这里显式调用。
+`unsqueeze(1)` 在第1维插入长度1的轴，把 `(N,J)` 变成 `(N,1,J)`。J是这个动作项控制的关节数。`repeat(1,L,1)` 沿中间轴复制L份，得到 `(N,L,J)`；L即 `lag_timesteps`。例如一个腿目标 `[0.1,-0.2]` 保存3份后是 `[[0.1,-0.2],[0.1,-0.2],[0.1,-0.2]]`。这只是初始化时的重复值，此后各位置会依次保存不同时刻的目标。
+
+## 4. 每个策略步，先裁剪再滤波
+
+当前策略周期为0.01s，物理步为0.0025s。`process_actions()` 每个策略步执行一次，随后同一处理结果用于4个物理步。
+
+对一个动作分量，定义原始输入为 $a_t$，裁剪结果为 $c_t$，滤波结果为 $u_t$：
+
+$$
+c_t=\operatorname{clip}(a_t,-100,100),\qquad
+u_t=0.2c_{t-1}+0.8c_t.
+$$
+
+`clip` 表示超过上限取上限、低于下限取下限，区间内保留原值。代码里的 `clamp` 完成同样运算。滤波输出 $u_t$ 是两份裁剪动作的加权和。
+
+两条 `copy_` 的顺序直接实现“保存上次，再写这次”：
+
+```python
+self.previous_clipped_actions.copy_(self.clipped_actions)
+self.clipped_actions.copy_(actions.clamp(-self.cfg.raw_clip, self.cfg.raw_clip))
+```
+
+`copy_` 把数值写入已有张量，末尾下划线是Torch常见的原位修改命名。假设当前 `clipped_actions` 保存上次的0，新的输入为10：第一句让 `previous` 得到0，第二句让 `clipped` 得到10，滤波输出为8。下次输入0时，先得到 `previous=10`、`clipped=0`，滤波输出为2。
+
+两点FIR是有限脉冲响应滤波：这里只取两次裁剪动作的加权和。以采样角频率 $\Omega$ 表示变化快慢，其频率响应为：
+
+$$
+H(e^{i\Omega})=0.8+0.2e^{-i\Omega}.
+$$
+
+`i` 是虚数单位，$\Omega$ 单位为rad/采样。缓慢变化对应 $\Omega\approx0$，增益接近1；交替正负的最快变化对应 $\Omega=\pi$，增益为0.6，因此能减弱部分高频变化。它不会保证动作绝对平滑，也不限制每步变化必须小于某个固定数。
+
+## 5. 父类把滤波值换算成实际目标
 
 ```python
 super().process_actions(filtered)
 self._raw_actions.copy_(actions)
 ```
 
-父实现先把filtered写进同一实例的_raw_actions，并计算processed=raw*scale+offset；后一句再把raw改回原始策略输入。processed已经是运算结果，raw的后续覆盖不会回溯改变它。若倒过来，父方法会再次把raw覆盖为filtered，破坏保留原输入的约定。当前动作观测本身读取外层ActionManager.action；不要把它与term.raw_actions混为同一个缓存。
+本地 `JointAction.process_actions` 先保存输入，再计算仿射变换。仿射变换就是“乘比例，再加偏移”：
 
-TitaVelocityEnv的历史缓存则要先于super().__init__创建：父初始化内部调用self.load_managers，建立ObservationManager，后者调用mdp.proprio_history(self)探测维度。这里的self仍是同一个自定义环境，观测函数需要它的proprio_history已经存在。因此super初始化既可以在前，也可以在后，要看哪些数据先被谁读取。
+$$
+p_{t,j}=s_j u_{t,j}+o_j.
+$$
 
-| 写法 | 执行与返回 |
-| --- | --- |
-| super().func() | 调用找到的方法；结果未被这句保存，父方法对self的修改仍保留；后面的代码继续执行 |
-| return super().func() | 先调用并取得结果，然后退出当前方法，把结果交给当前调用者 |
-| value=super().func(); 后续计算; return value | 保留父结果，允许子方法继续加工后再返回 |
-| return super() | 返回查找代理，没有调用func |
-| return super | 返回内置super类本身，没有创建代理或调用func |
+对于腿，$o_j=q_{0,j}$ 是默认角，髋关节比例为0.25，其他腿关节为0.5，单位为rad/动作单位。若默认角为−1.5rad，当前滤波值为0.2、比例为0.5，则位置目标为−1.4rad。
 
-如果父方法隐式返回None，return super().func()也返回None；如果父方法抛异常，则没有正常返回值，异常向外传播。__init__通常写super().__init__(...)再继续初始化，按Python约定返回None。
+对于轮，偏移使用当前配置的0，比例为5N·m/动作单位，因此 $\tau^{ff}_{t,j}=5u_{t,j}$。这是前馈力矩，后续仍有轮速阻尼反馈。
 
-return只影响当前方法的返回，不会取消此前对对象或Tensor的修改。例如你当前apply_actions用setter写入目标即可，方法自然返回None；下一阶段scene.write_data_to_sim会继续读取这些已经写好的目标。
+父方法计算后，第二句把 `_raw_actions` 改回最初的策略输入。父方法已生成的 `processed_actions` 保存另一份运算结果；覆盖原始动作缓存不会倒过来重算目标。若把两句顺序颠倒，父方法就会在最后把原始缓存覆盖为滤波值。
 
-依据：[Python 3.12 super](https://docs.python.org/3.12/library/functions.html#super)、[return语句](https://docs.python.org/3.12/reference/simple_stmts.html#the-return-statement)、[本地JointAction](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/actions/joint_actions.py)、[ObservationManager维度探测](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/observation_manager.py)。
+没有变量接收 `super().process_actions(...)`，因为父方法的结果主要体现在对 `self` 属性的写入。函数可以通过修改对象产生效果，同时返回 `None`。`return super().某方法(...)` 则会把父方法返回值交给调用者，并立即结束当前方法。
 
-**Q：** 历史槽数是啥？？
+## 6. 控制延迟、三个历史位置与编号，怎样联系起来
 
-**A：** lag_timesteps表示保存最近几次物理步目标。当前3对应三个位置，从旧到新排列；选择哪个位置，决定使用两步前、一步前还是本次目标。具体数值见第9节和12迁移说明。
+### 6.1 先看为什么要让目标晚一点生效
 
-**Q：** 但是我不知道哪里的代码实现了，存t-2和t-1,以及t步的？
+真实控制链中，策略算出动作后，还要经过程序调度、通信和执行器处理，新的控制目标可能晚一点才被采用。本任务用“暂时继续采用旧目标”的方法模拟其中一种固定控制延迟。
 
-**A：** apply_actions中的两次赋值负责保存历史：
+例如某腿关节原来一直收到0.1rad的位置目标，现在策略给出的新目标经过滤波、缩放与默认角处理后变成0.3rad。无延迟时，本物理步就把0.3交给PD；有延迟时，先继续交0.1，过一段时间再交0.3。PD与物理引擎随后根据目标和实际状态计算力矩及运动，目标改成0.3并不让关节瞬间转到0.3。
+
+为了以后还能找到旧目标，程序保存最近几次的目标。这里保存的是控制目标，观测十帧历史由另一个对象ProprioHistory保存。
+
+### 6.2 “槽”就是数组里保存一份目标的位置
+
+当前配置 `lag_timesteps=3`，表示保存三份物理步目标，代码用L表示这个数量。先只看一台机器人、一个关节，数组可写成：
+
+```text
+位置编号：          0                  1                 2
+保存内容：   两个物理步前的目标   上一个物理步的目标   本物理步的目标
+```
+
+旧说明把每个位置称为slot或“槽”。它只是数组中的一个位置，没有额外的物理器件或新类型。编号0、1、2用于告诉索引操作“从哪个位置取值”；L=3说明数组有几个位置。
+
+实际 `_lag_buffer` 为 `(N,L,J)`：N台机器人，每台保存L份目标，每份有J个关节值。腿组J=6、轮组J=2。对一台机器人而言，一个位置保存的是该组全部关节的一份目标向量；前面的单关节例子只取其中一个数，便于观察时间变化。
+
+### 6.3 新目标每物理步写入一次，旧目标向前移
+
+对应源码：
 
 ```python
-# 丢掉最旧记录，后两份各向前移动一个位置。
 self._lag_buffer[:, :-1, :] = self._lag_buffer[:, 1:, :].clone()
-# 最后一个位置写入当前处理好的目标。
 self._lag_buffer[:, -1, :] = self.processed_actions
 ```
 
-假设写入本步之前是[u(t-3),u(t-2),u(t-1)]，第一行变为[u(t-2),u(t-1),u(t-1)]，第二行再变为[u(t-2),u(t-1),u(t)]。这些t表示物理步，间隔2.5 ms；策略每10 ms输出一次，目标会连续加入四次。
+三维索引依次选择环境、时间位置、关节。`:`取该维全部；`:-1`取除末尾以外的位置；`1:`从位置1取到末尾；`-1`取最后位置。第一句把后面两份记录移到前面，第二句将当前处理目标写到最后。`.clone()`先复制右侧，避免同一数组中重叠读写。
 
-不是每步重新抽编号：startup事件创建后抽一次0/1/2，各机器人可不同，后续物理步都按自己的固定编号取目标，reset也保留它。每步变化的是数组内的目标，物理继续运行，只是执行较早目标。
+仍用原来0.1rad、新目标0.3rad的例子。策略周期0.01s内有四个物理步，所以这四次写入采用相同的 `processed_actions=0.3`：
 
-## 已修复问题
+| 目标提交次数 | 更新后的三份目标 | 若固定取编号0 | 若固定取编号1 | 若固定取编号2 |
+| --- | --- | --- | --- | --- |
+| 新目标到来前 | `[0.1,0.1,0.1]` | 0.1 | 0.1 | 0.1 |
+| 第1次 | `[0.1,0.1,0.3]` | 0.1 | 0.1 | 0.3 |
+| 第2次 | `[0.1,0.3,0.3]` | 0.1 | 0.3 | 0.3 |
+| 第3次 | `[0.3,0.3,0.3]` | 0.3 | 0.3 | 0.3 |
+| 第4次 | `[0.3,0.3,0.3]` | 0.3 | 0.3 | 0.3 |
 
-早期版本曾多调用未实现的父类apply_actions，另有历史切片[:1]和process_actions方法名两处笔误。当前已由用户修复；问题来由见10、12章，不再把旧实现混进本页主线。
+每次提交相隔一个物理步，即2.5ms。从首次可提交新目标的第1次算起，编号2立刻得到新值；编号1晚一次，延迟2.5ms；编号0晚两次，延迟5ms。下一次策略更新时，同样继续移动历史，不会重新把三份都清为零。
+
+### 6.4 编号决定实际从历史中取哪份目标
+
+对应源码：
+
+```python
+delayed = self._lag_buffer[self._env_ids, self._lag_indices, :]
+```
+
+`_env_ids`列出机器人编号，`_lag_indices`给出每台机器人选择的历史位置。例如三台机器人的选择编号为 `[0,2,1]`，分别取 `buffer[0,0,:]`、`buffer[1,2,:]`、`buffer[2,1,:]`，返回 `(N,J)`。
+
+这里的高级索引按同一位置的两个编号配对：第0台取它的位置0，第1台取它的位置2，第2台取它的位置1。每台机器人分别选择，不把不同机器人的历史混在一起。
+
+选择编号用数学符号ℓ表示。当前每台机器人在startup时随机抽一次ℓ，腿与轮共享这个整数，之后持续按该编号读取。编号保持不变，历史内容每物理步移动，所以新的目标会在相应延迟后到达选中位置。
+
+一般公式为：
+
+$$
+\Delta t_\ell=(L-1-\ell)\,dt_{physics}.
+$$
+
+L−1是最新位置的编号；L−1−ℓ是选中记录距最新记录隔了多少个物理步。当前L=3、物理步2.5ms，便得到0/1/2号对应5/2.5/0ms。
+
+腿的setter将选中结果写入位置目标，轮的setter写入力矩前馈目标，随后执行器读取这些目标计算控制输出。真正实现控制延迟的是这套“保存旧目标、选择历史位置、提交目标”的代码。
+
+### 6.5 为什么随后还把编号写成一维观测
+
+执行器已经在上面采用选中的目标。观测代码还会另外读取这个延迟设置，向训练侧提供信息，帮助价值网络区分不同控制响应条件：
+
+$$
+z_{lag}=\frac{\ell}{\max(L-1,1)}.
+$$
+
+当前L=3时，ℓ=0/1/2分别得到z_lag=0/0.5/1。这个数占一列，因为每台机器人只需要一个共享编号，就能确定整台机器人的腿与轮采用哪种延迟。三种可能取值仍是一个标量；并未把三个位置的目标向量全部塞进这一列。
+
+| 控制实际使用的整数ℓ | 采用的记录 | 控制延迟 | 观测中的z_lag |
+| --- | --- | --- | --- |
+| 0 | 两个物理步前 | 5ms | 0 |
+| 1 | 上一个物理步 | 2.5ms | 0.5 |
+| 2 | 本物理步最新目标 | 0ms | 1 |
+
+把编号除以最大编号，是当前任务选择的数值表示方法。它将这一特征放到0到1的范围，仍保留三种设置的区别；物理延迟由动作代码中的整数索引产生，观测z_lag提供关于这项设置的信息。
+
+例如z_lag=0.5表示“这一台机器人选编号1”，对应2.5ms。数值0.5本身没有毫秒单位。critic也没有专门把0.5转换成毫秒的程序，它把这一列和其他观测一起输入网络，通过后续训练学习它与未来reward/cost的关系。
+
+这项被加入 `privileged_state` 组：三维机身线速度、左右轮接触两维、延迟设置一维，总数3+2+1=6。它是仿真已知的控制设置；观测组可以同时包含物理状态读数与这类参数。设置不同可能使后续响应不同，因此有理由把它提供给价值预测。这种设计的实际收益仍需要训练验证。
+
+### 6.6 从哪个文件追这几项数据
+
+| 工作 | 实际文件与对象 |
+| --- | --- |
+| 创建每台机器人一个的整数编号 | [tita_velocity_env.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py:42)创建 `action_lag_indices` |
+| startup随机抽编号 | [events.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py:79)的 `randomize_tita_action_lag` |
+| 保存目标、按编号执行 | 本文件 `TitaJointAction.apply_actions`，即上面第6.3—6.4节 |
+| 把编号换成一列观测 | [observations.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/observations.py:164)的 `TitaPrivilegedState.__call__` |
+| 读取这列进行价值预测 | [critic.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/learning/np3o/critic.py:71)取得 `obs[:,220:256]`，其中含完整六维组 |
+
+六维组的逐列拼接和为何供critic使用，继续读[observations.py第6节](observations.py.md#6-六维状态速度3列接触2列延迟编号1列)。
+
+## 7. reset恢复什么，哪些量继续保留
+
+`env_ids` 可为指定环境编号、序列、切片或 `None`。`Sequence` 是序列类型接口；把普通序列变为 `list`，可以避免元组在张量索引中被解释为多个维度。`slice(None)` 等价于选取所有行的 `:`。
+
+父类reset清选中机器人的原始动作。自定义部分将该机器人的全部目标历史填成默认腿角/零轮前馈，右侧 `(M,1,J)` 自动沿L维广播成 `(M,L,J)`。M是本次重置的机器人数。其他机器人历史不变。
+
+当前实现保留FIR的两份裁剪参考，也保留startup抽取的延迟编号。这是当前迁移规则。动作观测 `mdp.last_action` 读取外层 `ActionManager.action`；动作变化惩罚读取这里的两个裁剪缓存。读取者不同，不能把两份数据自动当成同一变量。
+
+读到这里，一个动作已经被解释成带延迟的物理目标。下一段力矩计算沿 [执行器说明](../actuators.py.md) 继续。
+
+## 源码与API依据
+
+- [Lab JointAction：缩放、偏移与reset](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/actions/joint_actions.py)
+- [Lab ActionManager：拆分动作与调用动作项](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/action_manager.py)
+- [环境step：处理一次动作、物理步内应用](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py)
+- [PyTorch Tensor索引与视图](https://docs.pytorch.org/docs/2.11/tensor_view.html)

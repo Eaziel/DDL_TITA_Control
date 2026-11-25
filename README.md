@@ -1,20 +1,22 @@
 # DDL TITA Control
 
-TITA 轮腿机器人的 Isaac Lab 学习与迁移工程。目标是在理解原任务计算方法的基础上，把本末科技的 Isaac Gym 环境与 NP3O 训练实现迁入现有 Lab 工程。
+TITA轮腿机器人的Isaac Lab学习与迁移工程：先理解原任务的控制、观测与训练计算，再接入Lab环境和训练模块。工程使用IsaacLab-main、IsaacSim6.2及lab3_sim62 venv。
 
-**当前状态（2026-10-28）：** 使用IsaacLab-main、Sim6.2和lab3_sim62 venv。环境、五组观测、六项cost、wrapper与actor/辅助损失已写入，完整NP3O尚未接通。新环境已有四环境短随机日志；轮子偶尔穿地仍待定位。
+**当前进度（2026-11-14核对）：** 环境、模型、rollout、GAE与小批量已接通；用户完成critic与PPO奖励策略各8次更新检查，并生成[固定单批critic拟合图](docs/audits/2026-11-14_critic_plot/README.md)。六类cost已于本日完成单批策略更新检查；持续训练runner及学习后任务评估尚未接通。
 
-| 目录或文件 | 内容 |
+| 入口 | 用途 |
 | --- | --- |
-| [Tita_Lab](Tita_Lab/) | Manager-based RL 外部工程，由用户维护源码 |
-| [TITA_non_RL](TITA_non_RL/) | 独立 USD 资产与非 RL 脚本，由用户维护源码 |
-| [文档入口](docs/README.md) | 当前阅读顺序、迁移说明和检查证据 |
-| [源码解释](code_explaination/README.md) | 按源码文件学习 Python、数学与数据流 |
-| [项目记忆](PROJECT_MEMORY.md) | 当前状态、关键约定与尚未验证的内容 |
-| [研究调研](graduate_research/README.md) | 论文原文、研究问题与验证计划，独立于迁移主线 |
+| [文档入口](docs/README.md) | 当前阅读路线及专题入口 |
+| [重要代码解释](docs/重要代码解释索引.md) | 按模块查Python、Torch、数学与数据流 |
+| [迁移映射](docs/migration/00_迁移映射索引.md) | 从Lab功能找到原Gym参数和行为 |
+| [项目记忆入口](PROJECT_MEMORY.md) | 按任务进入迁移状态、运行环境和独立专题 |
+| [协作与讲解（agent必读）](project_memory/协作与讲解.md) | 理解用户的意图、学习基础，以及怎样给代码和解释 |
+| [新助手接手](docs/AGENT_HANDOFF.md) | 项目目标、两条训练路线、当前调用链及数据约定 |
+| [研究调研](graduate_research/README.md) | 研究问题、论文证据与候选验证方案 |
+| [求职项目建议](career_planning/2026-11-08_TITA求职项目建设建议.md) | 职业方向的项目建设建议，尚非迁移实施计划 |
 
-当前先学习 [官方训练流程与 wrapper](docs/训练流程与Wrapper入门.md)，再读 [wrapper 源码解释](code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/env_wrapper.py.md) 和 [actor 源码解释](code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/actor.py.md)。本次仅完成[actor与环境联调](docs/migration/26_actor与环境联调.md)，然后暂停新增模块、阅读文档。源码改动由用户执行，具体见[检查清单](docs/当前代码检查与修改清单.md)。
+源码工程分别位于[Tita_Lab](Tita_Lab/)和[TITA_non_RL](TITA_non_RL/)，由用户维护。GAE和[小批量取数](docs/migration/32_更新前的小批量数据.md)已有实现与用户短检查；[critic更新检查](docs/migration/33_价值网络首次参数更新.md)已取得8次更新及参数变化的用户输出。策略奖励项检查和绘图也已有证据；六类cost约束策略也已完成单批检查，之后仍缺持续runner及训练配置。需要复用NP3O代码时选择独立实现，[来源调查](docs/migration/30_NP3O来源与接入边界.md)保留为参考，尚未选定依赖。
 
-参考实现：[DDTRobot/tita_rl](https://github.com/DDTRobot/tita_rl)。本地源码和证据路径见项目记忆；协作边界见 [AGENTS.md](AGENTS.md)。
+原任务参考：[DDTRobot/tita_rl](https://github.com/DDTRobot/tita_rl)。协作权限见[AGENTS.md](AGENTS.md)，安装和运行入口见[25](docs/migration/25_Lab_main与Sim62_入口和配置.md)。
 
-**本 README、docs/ 与 code_explaination/ 中的说明内容纯 AI 生成，由人类要求生成，未经人类修改。此声明不用于标记项目源码。**
+本README、docs与code_explaination中的说明内容纯AI生成，由人类要求生成，未经人类修改；此声明不用于标记项目源码。

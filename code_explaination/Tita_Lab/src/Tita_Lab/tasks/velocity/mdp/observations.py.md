@@ -1,34 +1,47 @@
-# mdp/observations.py：轮角屏蔽与历史取数
+# observations.py：机器人数据怎样成为33维观测、30维参数与6维状态
 
-**阅读目标：** 理解轮角处理、历史读取、30维随机参数与六维采样的张量来源、排列和缓存时机。
+内容纯AI生成，由人类要求生成，未经人类修改。源码核对：2026-11-03；本次补写第6节。
 
-源码目录：`Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/`。
-源码文件：[observations.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/observations.py)。
+被解释文件：[mdp/observations.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/observations.py)。
 
-更新：2026-10-21。两个函数及两个观测类均已保存；当前scan/dynamics与六维类的CPU检查通过，证据见docs/audits/2026-10-21_current_observations/。真实传感器数值和训练未验证。
+本文件提供四个观测入口：关节位置偏差、历史读取、30维动力学参数和6维额外状态。读完后应能把返回值中的每一组数字对应到物理量、存储对象与更新时机，并理解为什么有的观测用函数、有的需要保存状态的类。
 
-## 当前代码
+本文核对当前源码与本地 IsaacLab-main / Sim 6.2 调用关系；未代运行仿真或训练。
+
+## 1. 当前完整源码
 
 ```python
+# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
 import torch
 
-from isaaclab.managers import SceneEntityCfg
+from isaaclab.managers import ManagerTermBase, SceneEntityCfg
+
+from ..actuators import TitaPDActuator
+from .actions import TitaJointAction
+from .events import RandomizeTitaMaterial
 
 if TYPE_CHECKING:
     from isaaclab.assets import Articulation
     from isaaclab.envs import ManagerBasedRLEnv
+    from isaaclab.managers import ObservationTermCfg
+    from isaaclab.sensors import ContactSensor
 
     from ..tita_velocity_env import TitaVelocityEnv
 
+
 def joint_pos_rel_zero_wheels(
-        env: ManagerBasedRLEnv,
-        asset_cfg: SceneEntityCfg,
-        wheel_cfg: SceneEntityCfg,
-)->torch.Tensor:
+    env: ManagerBasedRLEnv,
+    asset_cfg: SceneEntityCfg,
+    wheel_cfg: SceneEntityCfg,
+) -> torch.Tensor:
     """Return joint position offsets [rad], with wheel entries zeroed."""
     # 从 Scene 取得机器人
     robot: Articulation = env.scene[asset_cfg.name]
@@ -39,41 +52,15 @@ def joint_pos_rel_zero_wheels(
     # 按指定的八关节顺序返回
     return joint_pos_rel[:, asset_cfg.joint_ids]
 
+
 # MDP 观测函数，把历史交给 ObservationManager
 def proprio_history(env: TitaVelocityEnv) -> torch.Tensor:
     """Return past proprioceptive frames in whole-frame order."""
 
     # 展开为长度10*33=330的向量
     return env.proprio_history.read().reshape(env.num_envs, -1)
-```
 
-## joint_pos_rel_zero_wheels：生成八维相对位置
 
-`env.scene[asset_cfg.name]` 取得场景中的robot对象。两个SceneEntityCfg都指向robot，但用途不同：asset_cfg指定输出八个关节及其顺序，wheel_cfg指定要屏蔽的两个轮子。管理器初始化时将名字解析成joint_ids。
-
-计算先对全部关节做 `q-q_default`，减法生成新张量；在这份新张量中按原生轮索引置零；最后按asset_cfg的顺序取列，返回 `(N,8)`。因此不会改写真实关节角、默认角或轮速。
-
-轮角指轮轴旋转关节角，单位rad。本任务按旧设计屏蔽相位/累计转角，保留轮速。后续ObservationManager才加位置噪声，因此最终两轮位置列仍可能有纯噪声。
-
-## proprio_history：读取已有十帧
-
-`env.proprio_history` 是环境持有的ProprioHistory对象，`read()` 返回缓存副本 `(N,10,33)`；reshape按整帧展开，返回 `(N,330)`。这个函数不重新取机器人状态，也不更新缓存。
-
-TYPE_CHECKING内的TitaVelocityEnv导入供类型检查；future annotations让运行时不立即求值这份类型注解，避免循环导入。这里的torch.Tensor注解声明返回张量对象，输出列数由函数实际返回值决定。
-
-## 怎样接入与验证
-
-[__init__.pyi](__init__.pyi.md) 导出两个函数；[env_cfg.py](../config/Tita/env_cfg.py.md) 配置轮角函数参数并登记history组；环境step负责每策略步推进一次缓存。当前这三部分均已写入，用户已完成4环境20零动作步；逐项数值及长期历史时序仍需真实验证。
-
-此前轮角函数做过独立CPU检查：非原生顺序、非零轮角、输出形状与原状态不变均通过。当前函数/导出与配置仅做静态核对，未实例化Isaac Lab。
-
-Gym公式、Lab接线及迁移理由见 [05 Observations](../../../../../../../docs/migration/05_observations迁移.md)。API对照：[标准joint_pos_rel](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/observations.py)、[SceneEntityCfg解析](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/manager_base.py)。
-
-## TitaDynamicsParameters输出30维随机动力学参数
-
-状态：2026-10-21，类已由用户写入并通过CPU检查。保留上述两个函数，新类位于同一模块。导入ManagerTermBase、TitaPDActuator、RandomizeTitaMaterial，并在TYPE_CHECKING导入ObservationTermCfg，完整接线见[13](../../../../../../../docs/migration/13_训练观测迁移.md)。
-
-```python
 class TitaDynamicsParameters(ManagerTermBase):
     """Randomized TITA dynamics parameters relative to the nominal robot."""
 
@@ -137,23 +124,8 @@ class TitaDynamicsParameters(ManagerTermBase):
             ),
             dim=-1,
         )
-```
 
-构造时，cfg.params中的SceneEntityCfg已被管理器解析为一个基座body_id和有明确顺序的joint_ids。当前初始化顺序为ObservationManager构造在startup之前，所以clone得到名义基座质量(N,)与局部COM(N,3)。clone使其不随物理属性更新而变化。
 
-材质配置的func已被EventManager替换为RandomizeTitaMaterial实例；读取其构造时选择的每环境系数，再移动到env.device。类不抽随机数、不写仿真。此依赖针对当前自定义材质事件，改随机化流程时需同步检查。
-
-__call__先作差，得到质量增量与局部COM增量。三次循环分别处理motor_strength、kp_factor、kd_factor；先按执行器局部索引写入底层关节列，再按任务joint_ids取列。返回cat生成独立(N,30)结果，顺序为1+3+1+1+8+8+8。
-
-类继承ManagerTermBase，ObservationManager负责创建、求值及调用reset。默认reset不修改名义值，所以跨回合保留基准，也不需要在环境里手动接线。初始化维度探测会调用一次__call__，此时质量/COM增量为零；startup之后正常读到实际增量。
-
-八环境原生CPU管理器与事件对照通过，包含关节重排、重复读取与部分reset；资产setter为替身，未运行PhysX。另六维观测也已实现并在本轮CPU流程检查通过；五组尚未接入训练消费。
-
-## TitaPrivilegedState输出六维速度、接触和延迟编号
-
-2026-10-21当前类和导入已保存，当前CPU检查通过；真实接触数值未验证。以下片段直接取自当前文件。
-
-```python
 class TitaPrivilegedState(ManagerTermBase):
     """Base velocity, filtered wheel contacts, and action-history slot features."""
 
@@ -165,7 +137,7 @@ class TitaPrivilegedState(ManagerTermBase):
         sensor_cfg: SceneEntityCfg = cfg.params["sensor_cfg"]
 
         if isinstance(sensor_cfg.body_ids, slice) or len(sensor_cfg.body_ids) != 2:
-             raise ValueError("Select exactly two wheel bodies in the required order.")
+            raise ValueError("Select exactly two wheel bodies in the required order.")
 
         self._robot: Articulation = env.scene[asset_cfg.name]
         self._sensor: ContactSensor = env.scene.sensors[sensor_cfg.name]
@@ -176,26 +148,22 @@ class TitaPrivilegedState(ManagerTermBase):
         self._lag_denominator = max(legs.cfg.lag_timesteps - 1, 1)
 
         self._linear_velocity = torch.zeros(self.num_envs, 3, device=self.device)
-        self._last_contacts = torch.zeros(
-            self.num_envs, 2, dtype=torch.bool, device=self.device
-        )
+        self._last_contacts = torch.zeros(self.num_envs, 2, dtype=torch.bool, device=self.device)
         self._filtered_contacts = torch.zeros_like(self._last_contacts)
 
         # Dimension probing and reset before the first policy step keep a cold sample.
         self._sample_step = env.common_step_counter
 
     def __call__(
-            self,
-            env: TitaVelocityEnv,
-            asset_cfg: SceneEntityCfg,
-            sensor_cfg: SceneEntityCfg,
+        self,
+        env: TitaVelocityEnv,
+        asset_cfg: SceneEntityCfg,
+        sensor_cfg: SceneEntityCfg,
     ) -> torch.Tensor:
         """Return six privileged features with one contact update per policy step."""
 
         if self._sample_step != env.common_step_counter:
-            forces_z = self._sensor.data.net_normal_forces_w.torch[
-                :, sensor_cfg.body_ids, 2
-            ]
+            forces_z = self._sensor.data.net_normal_forces_w.torch[:, sensor_cfg.body_ids, 2]
             contact = forces_z > 1.0
 
             # c_filtered(t) = c(t) OR c(t-1); samples are 10 ms apart.
@@ -206,10 +174,7 @@ class TitaPrivilegedState(ManagerTermBase):
             self._sample_step = env.common_step_counter
 
         # This encodes the history SLOT, not the physical delay duration.
-        lag_slot = (
-            env.action_lag_indices.to(dtype=torch.float32).unsqueeze(1)
-            / self._lag_denominator
-        )
+        lag_slot = env.action_lag_indices.to(dtype=torch.float32).unsqueeze(1) / self._lag_denominator
 
         return torch.cat(
             (
@@ -223,72 +188,237 @@ class TitaPrivilegedState(ManagerTermBase):
     # Inherited reset() preserves contact memory and the current sample, as in Gym.
 ```
 
-ObservationManager创建实例并进行一次维度探测，sample_step初始化为当前全局步号，因此探测不推进接触滤波。类每个新策略步读取机身COM线速度与两个轮体法向力Z，更新一次c_t OR c_(t-1)。参数SceneEntityCfg已解析轮体索引，配置明确左/右顺序。
+## 2. 一项观测怎样被管理器调用
 
-返回cat的新(N,6)张量。sample_step使环境重置前、推扰前、最终观测以及终止观测的多次读取共享同一采样。默认reset保留前次原始接触与本步缓存，对应旧自动重置行为；首次step前保持冷启动样本。
-
-完整配置、两个取样位置及CPU时序证据见[14](../../../../../../../docs/migration/14_特权状态与观测布局.md)。法向力与旧合接触力的信号差异、首次reset多一个零动作step的差异仍保留。
-
-## 补充问答（2026-10-21）
-
-**Q：** 我没理解你说的：依赖顺序仍然是：动作延迟 → 上条的地形/动力学参数 → 本条。
-
-**A：** 之前把建议开发顺序说成依赖顺序，范围说得过强。六维类读取动作模块提供的action_lag_indices及lag_timesteps，因此要先有这两个量；scan和dynamics没有依赖这个六维类。最后的586拼接需要五组都已经存在。
-
-**Q：** 我没动接触为啥要或滤波？有什么意义吗？
-
-**A：** 传感器先给出力，再用Fz>1 N得到布尔判断。OR只处理这个判断，不改物理接触或受力。当前与上一次原始判断任一为True，输出就True。连续三次原始值[True,False,False]输出[True,True,False]，可保留一次短暂掉到阈值以下的接触。代价是真离地时也可能延后一次策略采样才显示无接触。这是旧Gym已有的规则。
+当前 `env_cfg.py` 把函数或类放入 `ObsTerm(func=..., params=...)`。这句配置保存“调用谁、带哪些参数”；`ObservationManager` 才负责调用它。管理器把 `params` 字典展开成关键字实参，例如：
 
 ```python
-# (N,2)，当前策略步左右轮的原始接触判断。
-contact = forces_z > 1.0
-# 使用上一策略步的原始判断；不能改成与上一滤波结果OR，否则True可能一直保留。
-self._filtered_contacts.copy_(contact | self._last_contacts)
-self._last_contacts.copy_(contact)
+value = term_cfg.func(env, **term_cfg.params)
 ```
 
-**Q：** 关键变量你还是得注释啊，是变量的含义，比如_lag_denominator这些！
+若 `params={"asset_cfg": selection}`，展开后的含义就是 `func(env,asset_cfg=selection)`。`SceneEntityCfg` 是场景对象及关节/刚体选择的配置；管理器先根据名称解析编号，函数运行时直接使用 `joint_ids`、`body_ids` 取数据。
 
-**A：** 可给当前初始化语句补以下注释，不改变计算：
+无须保存上一时刻信息的计算适合普通函数。有名义质量、接触记忆等状态时，本文件用继承 `ManagerTermBase` 的类：初始化保存引用和缓存，之后由 `__call__` 返回观测。类对象起初放在 `func` 中，Lab构造管理器时会执行：
 
 ```python
-# 将保存目标的位置编号除以L-1，映射到[0,1]；L=1时除以1，避免零除。
+term_cfg.func = term_cfg.func(cfg=term_cfg, env=env)
+```
+
+赋值前右侧是类，调用是在创建实例；赋值后 `func` 保存实例，后面的 `func(env,...)` 会执行该实例的 `__call__`。`__call__` 是Python允许实例使用括号调用的特殊方法，与神经网络的 `forward` 约定分别由各自框架接线。
+
+管理器还会在准备观测时调用观测函数，读取输出形状。配置条目声明了计算，框架就有理由在第一次step之前执行它。历史缓存必须提前创建；接触状态也必须防止“探测维度的一次读取”被误算成一个新时刻。
+
+## 3. 关节相对位置：先计算偏差，再屏蔽轮角
+
+```python
+joint_pos_rel = robot.data.joint_pos.torch - robot.data.default_joint_pos.torch
+joint_pos_rel[:, wheel_cfg.joint_ids] = 0.0
+return joint_pos_rel[:, asset_cfg.joint_ids]
+```
+
+设当前角度为 $q_j$、默认角度为 $q_{0,j}$，`rel` 是relative，即相对默认值的差：
+
+$$
+q_j^{rel}=q_j-q_{0,j}.
+$$
+
+例如默认膝角−1.5rad，当前−1.4rad，偏差为+0.1rad。默认角没有使测量失去物理意义，它定义了零偏差的参考姿态。
+
+`robot.data.joint_pos` 是Lab对关节状态的数据接口，`.torch` 取Torch形式，通常为 `(N,J_all)`。N是并行环境数量，J_all是机器人全部关节数。减法得到新的结果张量，所以把轮子列设零不会把物理轮角改成零。
+
+轮子可以连续旋转，同一个接地运动状态可能对应相差多圈的角度；本任务沿用旧实现，去掉这种绝对轮角输入。轮速仍然保留。最后通过 `asset_cfg.joint_ids` 把列按任务要求排成左腿3个、右腿3个、左轮、右轮，共8列。
+
+随后观测管理器还可能加噪声。因此“轮角列在本函数输出时为零”与“policy最终轮角观测严格为零”不同：当前配置在返回值上加±0.01的均匀噪声，轮角列也会得到噪声值。
+
+完整policy33列由多个项共同组成：
+
+| 列范围，左闭右开 | 内容 | 当前缩放 |
+| --- | --- | --- |
+| `0:3` | 机身角速度 | 0.25 |
+| `3:6` | 机身坐标系中的重力方向 | 1 |
+| `6:9` | `[vx_cmd,vy_cmd,wz_cmd]` | `[2,2,0.25]` |
+| `9:17` | 本函数返回的8维位置偏差 | 1 |
+| `17:25` | 8维实际关节速度 | 0.05 |
+| `25:33` | 环境收到的8维原始动作 | 1 |
+
+左闭右开表示包括起始列、不包括结束列，例如9:17恰好8列。本文件不单独生成全部33列；其他项复用Lab已有观测函数。
+
+### 3.1 返回值之后，噪声和缩放怎样继续处理
+
+当前Lab顺序为函数结果、噪声、裁剪、缩放，然后按组拼接。本任务四项噪声在最终输入中的半宽为：角速度0.2、重力方向0.05、位置0.01、速度0.075。
+
+以角速度为例，配置原始噪声 $\epsilon\sim U(-0.8,0.8)$，缩放0.25后：
+
+$$
+y=0.25(\omega+\epsilon)
+=0.25\omega+\epsilon',\qquad \epsilon'\sim U(-0.2,0.2).
+$$
+
+这解释了配置为何使用0.8而非0.2。`enable_corruption=True` 使本组噪声配置生效；它本身不产生一个新噪声分布。这里corruption描述对观测的扰动处理，具体分布由每项的noise配置提供。
+
+扫描187维复用Lab `height_scan`：按当前配置，单点为 $5\operatorname{clip}(z_{ref}-0.4-z_{hit},-1,1)$。射线给出地面交点高度，函数把它转成相对高度输入。它不读取真实摄像机图片，也不由这里的缓存推算；射线起点抬高20m用于相交检测，不应再额外从结果中减20m。
+
+## 4. 历史入口只读已有十帧
+
+```python
+return env.proprio_history.read().reshape(env.num_envs, -1)
+```
+
+`read()`返回 `(N,10,33)` 副本。`reshape(N,-1)` 保留N行，把每一行内部的时间轴和特征轴展开；`-1`让Torch根据元素总数推算为330列。顺序是最旧帧完整33列、下一帧完整33列，直到最新历史帧。
+
+`reshape`不求和，不训练参数，也不删数。第n个机器人的第t帧第j个特征位于展开后的第 `33*t+j` 列。函数每次读取不会推进历史，推进在 [环境step](../tita_velocity_env.py.md) 开头显式完成。
+
+## 5. 动力学参数类先保存名义值，再读取随机后的差
+
+“名义值”是随机化前机器人原本的参数。构造 `TitaDynamicsParameters` 时，动作/事件等对象已建立，startup事件尚未执行物理随机化，因此本类保存：
+
+```python
+self._nominal_mass = self._asset.data.body_mass.torch[:, self._base_id].clone()
+self._nominal_com = self._asset.data.body_com_pos_b.torch[:, self._base_id].clone()
+```
+
+质量形状 `(N,)`，质心位置形状 `(N,3)`。必须复制名义数据，后续质量或质心改变时，参考值仍保持原样。每次调用再计算：
+
+$$
+\Delta m_n=m_n-m_{0,n},\qquad
+\Delta\boldsymbol c_n=\boldsymbol c_n-\boldsymbol c_{0,n}.
+$$
+
+质量单位kg，质心偏移单位m；`body_com_pos_b` 是相应刚体局部参考系中的质心位置，不是世界中机器人移动的位置。`self._base_id` 只选base_link，构造函数要求恰好一个机身刚体。源码把质量差变量拼为 `delta_mess`，该变量实际保存的数学量仍是 $\Delta m$。
+
+例如名义机身质量8kg、随机后9.2kg，则质量观测为1.2；质心从 `[0,0,0.03]` 变为 `[0.01,-0.02,0.04]`，偏移观测为 `[0.01,-0.02,0.01]`。
+
+### 5.1 材质数值从事件实例取得
+
+```python
+material = env.event_manager.get_term_cfg("randomize_material").func
+self._friction = material.friction_coeffs.to(self.device).unsqueeze(1)
+```
+
+事件配置中的 `func` 此时已经是 `RandomizeTitaMaterial` 实例。本类读取事件为每台机器人抽到的系数。`isinstance` 检查实际对象类型，防止拿到一个没有这些属性的其他事件实现。
+
+`.to(self.device)` 使这份张量与本观测的其他张量在同一设备；如果设备/类型已符合要求，`.to` 可以返回原张量。`unsqueeze(1)` 把每机器人一个值的 `(N,)` 变成一列 `(N,1)`。恢复系数同理。
+
+这里读取的是当前事件实现提供的随机化参数，startup会把它们写进机器人碰撞形状。若以后另写事件再次改变物理材质，不能假定本类会自动同步那个新来源；当前迁移只使用这套startup参数。
+
+### 5.2 三组8列因子，为什么先散到全部关节再重排
+
+执行器分腿和轮两组，每组因子按该组自己的关节顺序保存。观测却需要统一的8关节顺序，因此使用两次索引：
+
+```python
+values = torch.ones_like(self._asset.data.joint_pos.torch)
+for actuator in self._asset.actuators.values():
+    values[:, actuator.joint_indices] = getattr(actuator, name)
+factors.append(values[:, asset_cfg.joint_ids])
+```
+
+`actuators.values()`遍历字典中保存的执行器对象。`getattr(actuator,name)`根据字符串读属性，例如name为 `"kp_factor"` 就相当于 `actuator.kp_factor`。
+
+先创建全部关节列的1矩阵，把每个执行器的局部数据按其 `joint_indices` 填回整台机器人的关节编号，再按任务 `asset_cfg.joint_ids` 取得8列。这样不会把“执行器内部第0列”误当成“任务动作第0列”。
+
+外层循环依次处理 `motor_strength`、`kp_factor`、`kd_factor`，因此 `factors` 是包含三个 `(N,8)` 张量的Python列表。
+
+### 5.3 最后的cat精确得到30维
+
+$$
+d_n=[\Delta m_n,\Delta\boldsymbol c_n,\mu_n,e_n,
+\boldsymbol s_n,\boldsymbol f_{p,n},\boldsymbol f_{d,n}].
+$$
+
+$\mu$ 是摩擦系数，e是恢复系数，s是电机强度倍率，$f_p/f_d$ 分别是Kp/Kd倍率。数量为 $1+3+1+1+8+8+8=30$。
+
+`delta_mess.unsqueeze(1)` 把 `(N,)` 变成 `(N,1)`，其余各项已是二维。`*factors` 是可迭代对象展开语法，把列表中的三个张量依次放入传给cat的元组；没有执行矩阵乘法。`torch.cat(...,dim=-1)` 沿最后一维横向拼列，同一机器人的各项仍在同一行。
+
+## 6. 六维状态：速度3列、接触2列、延迟编号1列
+
+### 6.1 为什么在这里放一个延迟设置
+
+当前动作代码为了模拟控制目标晚一点生效，会保存最近三个物理步的目标，再按每台机器人固定的编号取一份执行。数组每个位置曾称为“槽”；编号0/1/2分别取两步前、一步前、当前的目标，对应5/2.5/0ms延迟。控制延迟怎样产生，先读[actions.py第6节](actions.py.md#6-控制延迟三个历史位置与编号怎样联系起来)，本节只解释它怎样成为观测。
+
+仿真知道这台机器人抽到了哪种延迟。把这个设置提供给critic，可以让价值预测考虑控制响应条件：两台机器人姿态、速度相近，动作的生效时刻仍可能因延迟不同而不同，后续reward/cost也可能不同。这里说明设计用途，不表示已证明预测提升。
+
+`privileged_state`是任务自己命名的观测组，包含机身运动、接触判断和延迟设置；其中的每一个数字不要求都来自独立物理传感器。当前高斯策略直接算动作时只取policy33与history330；critic会读取这6列及30维参数。辅助学习还可以按已有目标布局使用部分信息，具体取数由相应代码决定。
+
+### 6.2 六维到底是哪六个数
+
+| 本组第几列 | 内容 | 数量 |
+| --- | --- | --- |
+| 0、1、2 | 机身线速度vx、vy、vz，各乘2 | 3 |
+| 3、4 | 左、右轮滤波后的接触标记，各减0.5 | 2 |
+| 5 | 这台机器人的共享延迟编号，按下文除以最大编号 | 1 |
+
+所以6=3+2+1。左右腿和轮共用一个编号，延迟只占一列；三个可选编号并不使这一项变成三列。每行返回：
+
+$$
+p_n=[2v_x^b,2v_y^b,2v_z^b,
+\widetilde C_L-0.5,\widetilde C_R-0.5,
+i_n/\max(L-1,1)].
+$$
+
+`root_lin_vel_b` 在当前Lab中是根刚体质心线速度的机身坐标表达，乘2沿用观测缩放。轮接触判断来自当前世界坐标系法向力的z分量：
+
+$$
+C_{t,j}=\mathbf1\{F^w_{z,t,j}>1\mathrm N\},\qquad
+\widetilde C_{t,j}=C_{t,j}\lor C_{t-1,j}.
+$$
+
+$\lor$ 是逻辑OR，任一次为True就为True。`contact | self._last_contacts` 对布尔张量逐元素计算OR。随后把原始当前判断存入 `_last_contacts`，不是把滤波结果存回去。若原始接触序列是 `[True,False,False]`，滤波结果为 `[True,True,False]`，可以填住一个采样间隔的短暂失联；不会一直保持接触。
+
+`.float()`把False/True变成0.0/1.0，再减0.5得到−0.5/+0.5。接触两个采样相隔0.01s。这个短时逻辑滤波不改变物理接触，也不把所有物理子步做时间平均。
+
+### 6.3 整数编号怎样变成(N,1)的最后一列
+
+对应本文件的两处代码：
+
+```python
 self._lag_denominator = max(legs.cfg.lag_timesteps - 1, 1)
-# 已采样的策略步号；同一步再调用时，复用保存的速度与接触。
-self._sample_step = env.common_step_counter
 ```
-
-lag_timesteps=3时编号0/1/2除以2，得到0/0.5/1；对应真实延迟5/2.5/0 ms。这个特征编码的是选择编号。_linear_velocity保存本步机身系速度(N,3)，_last_contacts保存上一策略步原始接触(N,2)，_filtered_contacts保存当前OR输出(N,2)。
-
-**Q：** 为啥有时候是self device，有时候又是什么sim device，有时候还是device=cpu？
-
-**A：** device指定张量所在设备及相应张量运算执行设备。cpu表示主内存与CPU；cuda:0表示第0块GPU。这里ManagerTermBase.device返回env.device，后者返回env.sim.device。asset.device取机器人自己的设备，当前配置中与环境一致。cfg.sim.device来自配置，父环境构造之前还没有self.sim，因而历史与共享编号先用cfg里的值创建。
-
-材质事件这条PhysX属性读写路径使用CPU数据，和官方_Physx材质随机化实现一致。friction_coeffs.to(self.device)把用于观测计算的系数放到环境设备；转换结果由成员变量接住，原CPU系数仍保留。物理计算在GPU不意味着所有属性API都在GPU；应检查具体接口。设备名由哪个对象提供，与张量的(N,D)形状无关。一般张量计算不能把CPU和GPU数组直接混用，需要明确转换。[PyTorch设备文档](https://docs.pytorch.org/docs/2.14/tensor_attributes.html#torch-device)。
-
-**Q：** common_step_counter，这是啥？这玩意每一物理sim步+1吗？
-
-**A：** 它在ManagerBasedRLEnv.step中的四次物理调用之后加1，当前每10 ms加1，是所有并行环境共用的累计策略步号。各环境自己的episode_length_buf另计回合长度并在reset时清零；common_step_counter不随某个回合清零。
-
-**Q：** 我没懂最后的cat。拼接30和6d的内容，但还是稍微需要解释一下。
-
-**A：** 共有三个不同位置的拼接。动力学类先拼出30列；六维类先拼出6列；observation_layout最后取五组拼586列。动力学类里的cat本身不含那六列。
 
 ```python
-# 质量差原本是(N,)，增加列轴后为(N,1)，才能和其他二维数据横向拼。
-# factors保存三个(N,8)张量；*factors将它们逐个放入这个元组。
-return torch.cat(
-    (delta_mess.unsqueeze(1), delta_com, self._friction, self._restitution, *factors),
-    dim=-1,
-)
+lag_slot = env.action_lag_indices.to(dtype=torch.float32).unsqueeze(1) / self._lag_denominator
 ```
 
-当前源码变量拼作delta_mess，功能为质量差。上面各项列数依次为1、3、1、1、8、8、8，相加30。*factors等价于在这里写factors[0], factors[1], factors[2]，不是乘法。二维张量的dim=-1就是列轴，N行保持不变，每台机器人自己的数据排在同一行。六维类另一次cat的列数为3+2+1。[torch.cat文档](https://docs.pytorch.org/docs/2.14/generated/torch.cat.html)。
+`action_lag_indices`本来是每台机器人一个整数，形状(N,)。假设三台机器人的编号为 `[1,2,0]`，依次对应2.5、0、5ms控制延迟。
 
-**Q：** 我没懂两处self.observation_manager.compute_group("privileged_state")在干啥。
+`.to(dtype=torch.float32)`使整数成为浮点数，数值仍为 `[1.0,2.0,0.0]`。`.unsqueeze(1)`增加列轴，得到(N,1)的 `[[1.0],[2.0],[0.0]]`。当前L=3，分母max(3−1,1)=2，最后得到 `[[0.5],[1.0],[0.0]]`。每台机器人因此新增一个数，能与其他二维观测沿列拼接。
 
-**A：** 它要求管理器立刻调用本组state.func，也就是已经建立的TitaPrivilegedState对象。新策略步中，该对象把当下的速度与接触复制到自己的成员变量，记录_sample_step，再返回六列结果。两处提前调用的返回值虽然没有变量接收，成员变量的更新仍然发生。
+例如某台机器人三维线速度为 `[0.2,-0.1,0]`，左右轮滤波接触为 `[True,False]`，编号为1，则本组这一行是：
 
-环境_reset_idx开头先调用，再让父方法重置机器人与传感器；push函数先调用，再覆盖机器人速度。例如物理步结束速度为0.8 m/s，推扰准备改为-0.3 m/s，提前调用会保存0.8。最后统一计算观测时，因为策略步号未变，仍返回保存的0.8乘2，即1.6；没有第二次从机器人取速度。同一步已在reset前保存时，push前调用也复用已有样本。
+```text
+[0.4, -0.2, 0.0, 0.5, -0.5, 0.5]
+ └─速度×2──┘    └─接触─┘   └延迟编号÷2
+```
 
-没有reset或push的普通步，在最终计算观测时首次采样。本组没有噪声或原生历史项，两处调用只算这六列，不更新其他观测组，也不推进仿真。它保留旧Gym先取速度/接触，再改状态的顺序。此行为取决于自定义类中的_sample_step判断，不能推广成所有compute_group调用都自动缓存结果。
+最后的0.5表示编号1。除以2是把选择编号表示到0到1区间；它没有新增一次延迟，也没有把0.5作为位置目标交给PD。L=1时分母取1避免除零，这时唯一编号为0，对应零延迟。
+
+### 6.4 这一列怎样进入critic
+
+`torch.cat`把上述3列、2列、1列合成(N,6)，作为 `privileged_state`。打包函数将本组放在586列中的220:226，延迟值就在第225列；critic再用220:256一起取得这6列与后面的30维参数。
+
+critic把这项设置与其他特征共同用于价值预测。它通过训练学习不同输入与未来累计reward/cost的关系，输入中出现0.5不会自动触发任何“延迟0.5”的物理操作。真实的目标选择始终由actions.py使用原始整数编号完成。
+
+## 7. 同一策略步读多次，为什么只更新一次接触
+
+`common_step_counter` 每次父环境step完成物理推进后加1；4个物理步合计只加1。`_sample_step`保存本对象已经采样的策略步号：
+
+```python
+if self._sample_step != env.common_step_counter:
+    # 更新接触记忆和线速度
+    self._sample_step = env.common_step_counter
+```
+
+这让同一步中的第二次、第三次调用复用已有样本。否则重复调用会把“前一策略步接触”覆盖成“本步第一次读取的接触”，OR就失去原含义。
+
+初始化把 `_sample_step` 设为当前计数，同时速度与接触缓存为零，所以维度探测时返回冷启动样本，不抢先推进。类没有覆盖reset，继承的reset保留接触记忆与本步样本，这也是当前迁移规则。
+
+父环境会在reset后生成新观测，interval推扰也在最终观测前执行。为了沿用旧时序，自定义环境在reset改物理状态之前、推扰事件在改写速度之前，都调用一次 `compute_group("privileged_state")`。这次调用先保存刚完成物理推进的速度/接触；同一策略步最终再读时不会被reset或推扰后的值覆盖。两处调用分别保护不同的修改入口，依据是明确的调用顺序，不是因为compute这个名字有特殊能力。
+
+这样得到的整份观测存在有意保留的时序差别：刚reset后的policy可以是新姿态，而这6列仍是reset前保存的本步样本。本文描述当前Gym对齐实现；它没有声称所有列永远来自同一个物理瞬间。
+
+## 源码与API依据
+
+- [ObservationManager：维度探测与noise/clip/scale](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/observation_manager.py)
+- [ManagerBase：名称解析与类实例化](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/manager_base.py)
+- [本项目固定观测布局](../observation_layout.py.md)
+- [接触力的物理与索引解释](terminations.py.md)
+- [PyTorch cat](https://docs.pytorch.org/docs/2.11/generated/torch.cat.html)

@@ -245,7 +245,7 @@ randomize_tita_motor_factors在startup填入每组执行器的motor_strength、k
 
 原生质量/COM类、原生reset EventManager、全局timer以及任务材质/推扰函数的CPU结果见[09审查](09_阶段审查.md)。写入端使用Tensor/Warp替身，未推进物理。
 
-Gym：[创建参数处理](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:558)、[reset_idx](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:734)、[推扰](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1089)。Lab：[MDP events](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/events.py)、[EventManager](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/event_manager.py)。Torch/Warp接口详细问答见[events.py说明](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md#补充问答)。
+Gym：[创建参数处理](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:558)、[reset_idx](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:734)、[推扰](/home/eaziel/Downloads/tita_rl-master/envs/legged_robot.py:1089)。Lab：[MDP events](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/events.py)、[EventManager](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/event_manager.py)。Torch/Warp接口详细问答见[events.py说明](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md)。
 
 ## 补充问答
 
@@ -253,7 +253,7 @@ Gym：[创建参数处理](/home/eaziel/Downloads/tita_rl-master/envs/legged_rob
 
 **A：** 末尾_w表示world，世界坐标系。root_vel_w的线速度/角速度与net_normal_forces_w的力都沿世界坐标轴分解；机身相关接口的_b表示沿body坐标轴表达。世界轴不跟随机器人旋转，机身轴会跟随机器人旋转。
 
-例如假设世界+x向东、+y向北、机身+x为前方；机器人朝北前进1 m/s，同一速度在世界系为(0,1,0)，机身系为(1,0,0)。此前列出的wx/wy/wz是代写角速度ωx/ωy/ωz，和后缀_w的world不同。原生接口定义与变量命名解释见[events.py问答](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md#补充问答)。
+例如假设世界+x向东、+y向北、机身+x为前方；机器人朝北前进1 m/s，同一速度在世界系为(0,1,0)，机身系为(1,0,0)。此前列出的wx/wy/wz是代写角速度ωx/ωy/ωz，和后缀_w的world不同。原生接口定义与变量命名解释见[events.py问答](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md)。
 
 **Q：** 而且我没搞懂，为啥要robot.spawn.physics_material = terrain.physics_material.copy()给robot.spawn.physics_material？？这不就机器人和地面材质一样了吗？？
 

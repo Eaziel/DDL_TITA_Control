@@ -1,0 +1,191 @@
+Warning: Possible version incompatibility. Attempting to load omni::fabric::IStageReaderWriter with version v0.16 against v0.14.
+2026-10-31T16:19:49Z [3,321ms] [Warning] [rtx.hydra] RenderDelegate : Warning /rtx/hydra/readTransformsFromFabricInRenderDelegate and geometry streaming are enabled together but this can cause issues with dynamic objects not streaming correctly due to problems in the transform update.
+[4.764s] Simulation App Startup Complete
+[4.790s] app ready
+[ISAACLAB] KitLauncher initialization complete
+[INFO]: Base environment:
+        Environment device    : cuda:0
+        Environment seed      : 42
+        Physics step-size     : 0.0025
+        Rendering step-size   : 0.01
+        Environment step-size : 0.01
+[INFO] Generating terrains based on curriculum took Last: 0.670095 s
+[INFO]: Registered backend 'physx' for factory Articulation.
+[INFO]: Registered backend 'physx' for factory ContactSensor.
+[INFO]: Registered backend 'physx' for factory RayCaster.
+[INFO]: Physics scene prim path: /physicsScene
+[INFO]: Time taken for scene creation Last: 3.615033 s, Mean: 3.615033 s, Std: 0.000000 s, N: 1
+[INFO]: Scene manager: <class InteractiveScene>
+        Number of environments: 4
+        Environment spacing   : 4.0
+        Source prim name      : /World/envs/env_0
+        Global prim paths     : ['/World/ground']
+[INFO]: Simulation parameters for joints in /World/envs/env_[^/]+/Robot:
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                   Simulation Joint Information (Prim path: /World/envs/env_[^/]+/Robot)                                                    |
++-------+-------------------+-----------+---------+----------+-----------------+------------------+------------------+---------------------+-----------------+---------------+
+| Index | Name              | Stiffness | Damping | Armature | Static Friction | Dynamic Friction | Viscous Friction |   Position Limits   | Velocity Limits | Effort Limits |
++-------+-------------------+-----------+---------+----------+-----------------+------------------+------------------+---------------------+-----------------+---------------+
+|   0   | joint_left_leg_1  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-0.785, 0.785]   |      25.000     |     60.000    |
+|   1   | joint_right_leg_1 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-0.785, 0.785]   |      25.000     |     60.000    |
+|   2   | joint_left_leg_2  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-1.920, 3.491]   |      25.000     |     60.000    |
+|   3   | joint_right_leg_2 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-1.920, 3.491]   |      25.000     |     60.000    |
+|   4   | joint_left_leg_3  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-2.670, -0.698]  |      25.000     |     60.000    |
+|   5   | joint_right_leg_3 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |   [-2.670, -0.698]  |      25.000     |     60.000    |
+|   6   | joint_left_leg_4  |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       | [-1.0e+06, 1.0e+06] |      20.000     |     15.000    |
+|   7   | joint_right_leg_4 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       | [-1.0e+06, 1.0e+06] |      20.000     |     15.000    |
++-------+-------------------+-----------+---------+----------+-----------------+------------------+------------------+---------------------+-----------------+---------------+
+[INFO]: Read mesh prim: /World/ground/terrain/mesh with 1311032 vertices and 2560008 faces.
+[INFO]: Time taken for simulation start Last: 1.775888 s, Mean: 1.775888 s, Std: 0.000000 s, N: 1
+[INFO]: Command Manager: <CommandManager> contains 1 active terms.
++---------------------------------------------+
+|             Active Command Terms            |
++-------+---------------+---------------------+
+| Index | Name          |         Type        |
++-------+---------------+---------------------+
+|   0   | base_velocity | TitaVelocityCommand |
++-------+---------------+---------------------+
+
+[INFO]: Event Manager: <EventManager> contains 3 active terms.
++---------------------------------------+
+| Active Event Terms in Mode: 'startup' |
++--------+------------------------------+
+| Index  | Name                         |
++--------+------------------------------+
+|   0    | randomize_material           |
+|   1    | add_base_mass                |
+|   2    | base_com                     |
+|   3    | randomize_motors             |
+|   4    | randomize_action_lag         |
++--------+------------------------------+
++-------------------------------------+
+| Active Event Terms in Mode: 'reset' |
++--------+----------------------------+
+| Index  | Name                       |
++--------+----------------------------+
+|   0    | reset_robot_joints         |
+|   1    | reset_base                 |
++--------+----------------------------+
++----------------------------------------------+
+|    Active Event Terms in Mode: 'interval'    |
++-------+------------+-------------------------+
+| Index | Name       | Interval time range (s) |
++-------+------------+-------------------------+
+|   0   | push_robot |       (15.0, 15.0)      |
++-------+------------+-------------------------+
+
+[INFO]: Recorder Manager: <RecorderManager> contains 0 active terms.
++-----------------------+
+| Active Recorder Terms |
++------------+----------+
+|   Index    | Name     |
++------------+----------+
++------------+----------+
+
+[INFO]: Resolved joint names for the action term TitaJointAction: ['joint_left_leg_1', 'joint_left_leg_2', 'joint_left_leg_3', 'joint_right_leg_1', 'joint_right_leg_2', 'joint_right_leg_3'] [tensor([0, 2, 4, 1, 3, 5], device='cuda:0', dtype=torch.int32)]
+[INFO]: Resolved joint names for the action term TitaJointAction: ['joint_left_leg_4', 'joint_right_leg_4'] [tensor([6, 7], device='cuda:0', dtype=torch.int32)]
+[INFO]: Action Manager: <ActionManager> contains 2 active terms.
++----------------------------------+
+|  Active Action Terms (shape: 8)  |
++-------+--------------+-----------+
+| Index | Name         | Dimension |
++-------+--------------+-----------+
+|   0   | leg_position |         6 |
+|   1   | wheel_effort |         2 |
++-------+--------------+-----------+
+
+[INFO]: Observation Manager: <ObservationManager> contains 5 groups.
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (33,)) |
++-----------+----------------------------------+-------------+
+|   Index   | Name                             |    Shape    |
++-----------+----------------------------------+-------------+
+|     0     | base_ang_vel                     |     (3,)    |
+|     1     | projected_gravity                |     (3,)    |
+|     2     | velocity_commands                |     (3,)    |
+|     3     | joint_pos_rel                    |     (8,)    |
+|     4     | joint_vel                        |     (8,)    |
+|     5     | actions                          |     (8,)    |
++-----------+----------------------------------+-------------+
++--------------------------------------------------------------+
+| Active Observation Terms in Group: 'history' (shape: (330,)) |
++-----------------+-----------------------+--------------------+
+|      Index      | Name                  |       Shape        |
++-----------------+-----------------------+--------------------+
+|        0        | proprio               |       (330,)       |
++-----------------+-----------------------+--------------------+
++-----------------------------------------------------------+
+| Active Observation Terms in Group: 'scan' (shape: (187,)) |
++----------------+---------------------+--------------------+
+|     Index      | Name                |       Shape        |
++----------------+---------------------+--------------------+
+|       0        | heights             |       (187,)       |
++----------------+---------------------+--------------------+
++--------------------------------------------------------------+
+| Active Observation Terms in Group: 'dynamics' (shape: (30,)) |
++---------------+-----------------------------+----------------+
+|     Index     | Name                        |     Shape      |
++---------------+-----------------------------+----------------+
+|       0       | parameters                  |     (30,)      |
++---------------+-----------------------------+----------------+
++---------------------------------------------------------------------+
+| Active Observation Terms in Group: 'privileged_state' (shape: (6,)) |
++----------------------+----------------------+-----------------------+
+|        Index         | Name                 |         Shape         |
++----------------------+----------------------+-----------------------+
+|          0           | state                |          (6,)         |
++----------------------+----------------------+-----------------------+
+
+[INFO]: Termination Manager: <TerminationManager> contains 2 active terms.
++---------------------------------+
+|     Active Termination Terms    |
++-------+--------------+----------+
+| Index | Name         | Time Out |
++-------+--------------+----------+
+|   0   | time_out     |   True   |
+|   1   | base_contact |  False   |
++-------+--------------+----------+
+
+[INFO]: Reward Manager: <RewardManager> contains 10 active terms.
++-------------------------------------+
+|         Active Reward Terms         |
++-------+------------------+----------+
+| Index | Name             |   Weight |
++-------+------------------+----------+
+|   0   | tracking_lin_vel |      1.0 |
+|   1   | tracking_ang_vel |      0.5 |
+|   2   | ang_vel_xy       |    -0.05 |
+|   3   | orientation      |     -1.0 |
+|   4   | base_height      |     -1.0 |
+|   5   | action_rate      |    -0.01 |
+|   6   | collision        |     -1.0 |
+|   7   | powers           |   -2e-05 |
+|   8   | dof_acc          | -2.5e-07 |
+|   9   | termination      |   -200.0 |
++-------+------------------+----------+
+
+[INFO]: Curriculum Manager: <CurriculumManager> contains 1 active terms.
++-------------------------+
+| Active Curriculum Terms |
++-------+-----------------+
+| Index | Name            |
++-------+-----------------+
+|   0   | terrain_levels  |
++-------+-----------------+
+
+Creating window for environment.
+[INFO]: Completed setting up the environment...
+2026-10-31T16:19:56Z [10,445ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /Visuals/Command/velocity_current.
+2026-10-31T16:19:56Z [10,445ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /Visuals/Command/velocity_goal.
+2026-10-31T16:19:56Z [10,631ms] [Warning] [omni.usd] Encountered USD Warnings but USD Diagnostics are currently muted. To view USD Warnings, please set the '/persistent/app/usd/muteUsdDiagnostics' setting to false in Preferences page.
+2026-10-31T16:19:56Z [10,631ms] [Warning] [omni.fabric.plugin] Unsupported type encountered during VtValue extraction
+2026-10-31T16:19:56Z [10,631ms] [Warning] [omni.fabric.plugin] Attempting to set an invalid data source to array attribute
+
+2026-10-31T16:19:56Z [10,632ms] [Warning] [omni.fabric.plugin] Warning: attribute material:binding not found for path /Visuals/Command/velocity_current/proto0/Looks
+
+2026-10-31T16:19:56Z [10,775ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /Visuals/Command/velocity_current.
+2026-10-31T16:19:56Z [10,775ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /Visuals/Command/velocity_goal.
+[CHECK] obs=(4, 586) actions=(4, 8) costs=(4, 6)[POLICY] mean=(4, 8) std=(8,) log_prob=(4,) entropy=11.3515
+[CHECK] {'steps': 200, 'requested': 200, 'resets': 14, 'timeouts': 0}
+[INFO]: SimulationContext cleared
+[21.700s] Simulation App Shutting Down

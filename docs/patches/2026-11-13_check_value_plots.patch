@@ -1,0 +1,249 @@
+--- a/Tita_Lab/scripts/check_np3o_interface.py
++++ b/Tita_Lab/scripts/check_np3o_interface.py
+@@ -6,10 +6,19 @@
+ """Check the TITA actor and environment interface."""
+ 
+ import argparse
++import csv
++import json
++from datetime import datetime
++from importlib.metadata import version
++from pathlib import Path
+ from typing import TYPE_CHECKING, cast
+ 
+ import gymnasium as gym
+ import torch
++from matplotlib import rc_context
++from matplotlib.axes import Axes
++from matplotlib.backends.backend_agg import FigureCanvasAgg
++from matplotlib.figure import Figure
+ 
+ from isaaclab.app import add_launcher_args, launch_simulation
+ 
+@@ -209,7 +218,19 @@
+             f"epochs={num_learning_epochs} per_epoch={num_mini_batches}"
+         )
+ 
+-        check_value_update(value_networks=value_networks, storage=storage)
++        check_value_update(
++            value_networks=value_networks,
++            storage=storage,
++            run_metadata={
++                "task": "TitaLab-Velocity-Tita",
++                "seed": lab_env.cfg.seed,
++                "policy_step_dt_s": lab_env.step_dt,
++                "episode_length_s": lab_env.cfg.episode_length_s,
++                "gamma": gamma,
++                "gae_lambda": lam,
++                "cost_names": list(env.cost_names),
++            },
++        )
+ 
+     else:
+         print("[GAE] Skipped: rollout is incomplete.")
+@@ -219,9 +240,146 @@
+     print(f"[CHECK] {result}")
+     return result
+ 
++@torch.no_grad()
++def measure_value_fit(
++    value_networks: TitaValueNetworks,
++    storage: TitaRolloutStorage,
++    update: int,
++) -> dict[str, float]:
++    """Measure critic errors against the fixed full-rollout targets."""
++
++    was_training = value_networks.training
++    value_networks.eval()
++    predictions: tuple[torch.Tensor, torch.Tensor] = value_networks(
++        storage.observations.flatten(0, 1)
++    )
++    value_networks.train(was_training)
++    reward_values, cost_values = predictions
++
++    # 每次都在同一批T*N条经历上测量，目标在所有更新间保持不变。
++    reward_error: torch.Tensor = reward_values - storage.reward_returns.flatten(0, 1)
++    cost_error: torch.Tensor = cost_values - storage.cost_returns.flatten(0, 1)
++    row: dict[str, float] = {
++        "update": float(update),
++        "reward_mse": float(reward_error.square().mean().item()),
++        "cost_mse": float(cost_error.square().mean().item()),
++    }
++    # CSV另存每类cost的MSE；类别顺序在metadata.json中记录。
++    per_cost: list[float] = cost_error.square().mean(dim=0).cpu().tolist()
++    row.update({f"cost_{index}_mse": float(value) for index, value in enumerate(per_cost)})
++    return row
++
++
++@torch.no_grad()
++def save_value_plots(
++    value_networks: TitaValueNetworks,
++    storage: TitaRolloutStorage,
++    history: list[dict[str, float]],
++    run_metadata: dict[str, object],
++) -> Path:
++    """Save fixed-target fitting diagnostics and their source data."""
++
++    created_at = datetime.now().astimezone()
++    output_dir = (
++        Path(__file__).resolve().parents[1] / "logs" / "interface_checks"
++        / created_at.strftime("%Y%m%d_%H%M%S_%f")
++    )
++    output_dir.mkdir(parents=True, exist_ok=False)
++
++    with (output_dir / "value_metrics.csv").open("w", newline="", encoding="utf-8") as stream:
++        writer = csv.DictWriter(stream, fieldnames=list(history[0]))
++        writer.writeheader()
++        writer.writerows(history)
++
++    value_networks.eval()
++    predictions: tuple[torch.Tensor, torch.Tensor] = value_networks(
++        storage.observations.flatten(0, 1)
++    )
++    # 只把绘图所需的小数组传到CPU；不保存梯度图。
++    target: torch.Tensor = storage.reward_returns.flatten().detach().cpu()
++    before: torch.Tensor = storage.reward_values.flatten().detach().cpu()
++    after: torch.Tensor = predictions[0].flatten().detach().cpu()
++    with (output_dir / "reward_predictions.csv").open("w", newline="", encoding="utf-8") as stream:
++        writer = csv.writer(stream)
++        writer.writerow(["step_index", "env_id", "gae_target", "before", "after"])
++        for index in range(target.numel()):
++            writer.writerow([
++                index // storage.num_envs, index % storage.num_envs,
++                float(target[index].item()), float(before[index].item()), float(after[index].item()),
++            ])
++
++    metadata = dict(run_metadata)
++    metadata.update({
++        "created_at": created_at.isoformat(),
++        "num_envs": storage.num_envs,
++        "rollout_steps": storage.num_steps,
++        "samples": storage.num_steps * storage.num_envs,
++        "optimizer_steps": int(history[-1]["update"]),
++        "torch": str(torch.__version__),
++        "matplotlib": version("matplotlib"),
++        "metric_scope": "in-sample fitting to fixed GAE targets on one rollout",
++        "cost_mse_reduction": "mean over samples and all cost columns",
++    })
++    with (output_dir / "metadata.json").open("w", encoding="utf-8") as stream:
++        json.dump(metadata, stream, ensure_ascii=False, indent=2, allow_nan=False)
++
++    # Agg直接保存文件，不额外建立交互式绘图窗口。
++    with rc_context({"font.size": 9, "axes.titlesize": 10, "pdf.fonttype": 42}):
++        figure = Figure(figsize=(11.4, 3.5), layout="constrained")
++        FigureCanvasAgg(figure)
++        axes = figure.subplots(1, 3)
++        reward_ax: Axes = axes[0]
++        cost_ax: Axes = axes[1]
++        fit_ax: Axes = axes[2]
++        updates = [int(row["update"]) for row in history]
++
++        reward_ax.plot(
++            updates, [row["reward_mse"] for row in history],
++            color="#0072B2", marker="o", markersize=3, linewidth=1.4,
++        )
++        reward_ax.set(title="(a) Reward value fit", xlabel="Critic optimizer step", ylabel="Fixed-rollout MSE")
++        reward_ax.set_xticks(updates)
++        cost_ax.plot(
++            updates, [row["cost_mse"] for row in history],
++            color="#D55E00", marker="o", markersize=3, linewidth=1.4,
++        )
++        cost_ax.set(title="(b) Mean cost value fit", xlabel="Critic optimizer step", ylabel="Fixed-rollout MSE")
++        cost_ax.set_xticks(updates)
++
++        fit_ax.scatter(target.numpy(), before.numpy(), s=12, alpha=0.55, color="#999999", label="Before")
++        fit_ax.scatter(target.numpy(), after.numpy(), s=12, alpha=0.65, color="#0072B2", label="After")
++        bounds: torch.Tensor = torch.cat((target, before, after))
++        lower = float(bounds.min().item())
++        upper = float(bounds.max().item())
++        padding = 0.05 * max(upper - lower, 1e-6)
++        limits = (lower - padding, upper + padding)
++        fit_ax.plot(limits, limits, color="black", linestyle="--", linewidth=1.0, label="y = x")
++        fit_ax.set(
++            title="(c) Reward predictions", xlabel="Fixed GAE target", ylabel="Predicted reward value",
++            xlim=limits, ylim=limits,
++        )
++        fit_ax.set_aspect("equal", adjustable="box")
++        fit_ax.legend(frameon=False, fontsize=8)
++        for axis in (reward_ax, cost_ax, fit_ax):
++            axis.spines["top"].set_visible(False)
++            axis.spines["right"].set_visible(False)
++            axis.tick_params(direction="in")
++            axis.grid(alpha=0.18, linewidth=0.5)
++
++        figure.suptitle(
++            f"Single-rollout critic fitting | N={storage.num_envs}, T={storage.num_steps}"
++        )
++        figure.savefig(output_dir / "critic_fit.png", dpi=300)
++        figure.savefig(output_dir / "critic_fit.pdf")
++        figure.clear()
++    print(f"[PLOT] {output_dir}")
++    return output_dir
++
++
+ def check_value_update(
+         value_networks: TitaValueNetworks,
+         storage: TitaRolloutStorage,
++        run_metadata: dict[str, object],
+ ) -> None:
+     """Check critic optimization against fixed GAE return targets."""
+ 
+@@ -231,15 +389,18 @@
+ 
+     # 仅用于本次更新检查；同一个Adam在下面8次更新间保留内部状态。
+     optimizer = torch.optim.Adam(params=parameters, lr=3.0e-4)
++    num_mini_batches, num_learning_epochs = 4, 2
++    max_grad_norm = 1.0
+     value_networks.train()
+ 
+     reward_loss_sum: float = 0.0
+     cost_loss_sum: float = 0.0
+     update_count = 0
++    history: list[dict[str, float]] = [measure_value_fit(value_networks, storage, update=0)]
+ 
+     for batch in storage.mini_batch_generator(
+-        num_mini_batches=4,
+-        num_learning_epochs=2,
++        num_mini_batches=num_mini_batches,
++        num_learning_epochs=num_learning_epochs,
+     ):
+         # 必须重新前向计算，得到带梯度图的当前预测：(B,1)/(B,6)。
+         predictions: tuple[torch.Tensor, torch.Tensor] = value_networks(batch["observations"])
+@@ -256,7 +417,7 @@
+         optimizer.zero_grad(set_to_none=True) # 清除上次梯度，参数值不变。
+         loss.backward() # 自动计算各参数的梯度。
+         torch.nn.utils.clip_grad_norm_( # 限制梯度过大的情况。
+-            parameters=parameters, max_norm=1.0, error_if_nonfinite=True, 
++            parameters=parameters, max_norm=max_grad_norm, error_if_nonfinite=True, 
+         )
+         optimizer.step() # 根据梯度，实际修改参数。
+ 
+@@ -264,9 +425,10 @@
+         reward_loss_sum += float(reward_loss.item())
+         cost_loss_sum += float(cost_loss.item())
+         update_count += 1
++        history.append(measure_value_fit(value_networks, storage, update=update_count))
+ 
+     value_networks.eval()
+-    assert update_count == 8
++    assert update_count == num_mini_batches * num_learning_epochs
+     for parameter in parameters:
+         assert torch.isfinite(parameter).all(), "Non-finite critic parameter."
+ 
+@@ -282,6 +444,16 @@
+         f"cost_loss={cost_loss_sum / update_count:.6f} "
+         f"max_parameter_change={max_parameter_change:.3e}"
+     )
++
++    plot_metadata = dict(run_metadata)
++    plot_metadata.update({
++        "optimizer": "Adam",
++        "learning_rate": float(optimizer.param_groups[0]["lr"]),
++        "num_mini_batches": num_mini_batches,
++        "num_learning_epochs": num_learning_epochs,
++        "max_grad_norm": max_grad_norm,
++    })
++    save_value_plots(value_networks, storage, history, plot_metadata)
+ 
+ 
+ def main() -> None:

@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-13",
+  "sections": 15,
+  "python_blocks_parsed": 48,
+  "links": "valid",
+  "snapshot": "exact source match",
+  "math_examples": "four clipping values and zero-loss/nonzero-gradient example checked with standard-library math",
+  "current_pending_argument": "run_metadata at check_value_update caller",
+  "source_sha256": {
+    "Tita_Lab/scripts/check_np3o_interface.py": "e70eb432a5996ffeb7a29d2c3538320addbf513d24cbb6c193626203cf3d81cc",
+    "Tita_Lab/src/Tita_Lab/learning/np3o/rollout_storage.py": "f7d8aa5629e0bd911218a411931e98a2b1733bcb3741f782b0460438a8832b19"
+  },
+  "assistant_runtime": {
+    "torch": false,
+    "simulation": false,
+    "optimization": false,
+    "git": false
+  }
+}

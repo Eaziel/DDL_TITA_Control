@@ -1,0 +1,337 @@
+{
+  "date": "2026-11-13",
+  "scope": "CS methods narrative search; no robotics application search",
+  "tool": "web.run",
+  "note": "Queries include hypotheses about venues; query text is not publication evidence. Requests only, no claimed database hit counts.",
+  "requests": [
+    {
+      "id": "cs_search_1",
+      "request": {
+        "search_query": [
+          {
+            "q": "Gated DeltaNet ICLR 2025 Gated DeltaProduct 2026 official paper"
+          },
+          {
+            "q": "DINOv3 paper 2026 conference official"
+          },
+          {
+            "q": "SigLIP 2 paper ICML 2025 official"
+          },
+          {
+            "q": "FastVLM CVPR 2025 Apple official paper code"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "id": "cs_search_2",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"SigLIP 2\" ICML 2025",
+            "domains": [
+              "proceedings.mlr.press",
+              "icml.cc",
+              "arxiv.org"
+            ]
+          },
+          {
+            "q": "\"DINOv3\" 2026 accepted",
+            "domains": [
+              "openreview.net",
+              "iclr.cc",
+              "arxiv.org",
+              "github.com"
+            ]
+          },
+          {
+            "q": "\"From Sparse to Soft Mixtures of Experts\"",
+            "domains": [
+              "openreview.net",
+              "proceedings.iclr.cc",
+              "arxiv.org"
+            ]
+          },
+          {
+            "q": "\"Learning to (Learn at Test Time)\"",
+            "domains": [
+              "proceedings.mlr.press",
+              "proceedings.iclr.cc",
+              "openreview.net",
+              "arxiv.org"
+            ]
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "id": "cs_search_3",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"Gated Attention for Large Language Models\" NeurIPS 2025",
+            "domains": [
+              "neurips.cc",
+              "papers.nips.cc",
+              "arxiv.org",
+              "github.com"
+            ]
+          },
+          {
+            "q": "\"Mean Flows for One-step Generative Modeling\"",
+            "domains": [
+              "neurips.cc",
+              "papers.nips.cc",
+              "arxiv.org",
+              "github.com"
+            ]
+          },
+          {
+            "q": "\"Muon is Scalable for LLM Training\"",
+            "domains": [
+              "openreview.net",
+              "neurips.cc",
+              "proceedings.mlr.press",
+              "arxiv.org",
+              "github.com"
+            ]
+          },
+          {
+            "q": "\"Switch Transformers\" \"Simple and Efficient Sparsity\"",
+            "domains": [
+              "jmlr.org",
+              "arxiv.org",
+              "github.com"
+            ]
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "id": "cs_search_4",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"DeltaProduct\" conference 2025 2026",
+            "domains": [
+              "openreview.net",
+              "proceedings.mlr.press",
+              "proceedings.neurips.cc"
+            ]
+          },
+          {
+            "q": "\"mHC\" \"Manifold-Constrained Hyper-Connections\"",
+            "domains": [
+              "arxiv.org",
+              "github.com"
+            ]
+          },
+          {
+            "q": "\"Mamba-2\" \"Transformers are SSMs\" ICML 2024",
+            "domains": [
+              "proceedings.mlr.press",
+              "github.com",
+              "arxiv.org"
+            ]
+          },
+          {
+            "q": "\"I-JEPA\" \"Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture\"",
+            "domains": [
+              "openaccess.thecvf.com",
+              "github.com"
+            ]
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "id": "cs_search_5",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"Sigmoid Loss for Language Image Pre-Training\"",
+            "domains": [
+              "openaccess.thecvf.com",
+              "github.com"
+            ]
+          },
+          {
+            "q": "\"MeanFlow\" \"official\" code",
+            "domains": [
+              "github.com",
+              "arxiv.org"
+            ]
+          },
+          {
+            "q": "\"From Sparse to Soft Mixtures of Experts\" code google",
+            "domains": [
+              "github.com",
+              "arxiv.org",
+              "openreview.net"
+            ]
+          },
+          {
+            "q": "\"ttt-lm\" \"RNNs with Expressive Hidden States\"",
+            "domains": [
+              "github.com",
+              "proceedings.mlr.press"
+            ]
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "id": "cs_search_6",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"Mean Flows for One-step Generative Modeling\" github official MeanFlow"
+          },
+          {
+            "q": "\"DeltaProduct\" \"ICLR\" 2026 2025"
+          }
+        ],
+        "response_length": "short"
+      }
+    },
+    {
+      "id": "cs_search_7",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"Gated DeltaNet-2\" \"NeurIPS 2026\" site:neurips.cc"
+          },
+          {
+            "q": "\"Gated DeltaNet-2\" site:openreview.net"
+          },
+          {
+            "q": "\"Scientific Agent Skills\" \"2609.00065\""
+          }
+        ],
+        "response_length": "short"
+      }
+    },
+    {
+      "id": "cs_primary_methods_1",
+      "request": {
+        "find": [
+          {
+            "ref_id": "turn118academia12",
+            "pattern": "github"
+          },
+          {
+            "ref_id": "turn122view1",
+            "pattern": "github"
+          },
+          {
+            "ref_id": "turn122view3",
+            "pattern": "Gram"
+          },
+          {
+            "ref_id": "turn122view0",
+            "pattern": "3.1 Formulation"
+          }
+        ],
+        "open": [
+          {
+            "ref_id": "https://arxiv.org/html/2605.22791"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2502.10297"
+          },
+          {
+            "ref_id": "https://arxiv.org/abs/2502.14786"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "id": "cs_methods_read_5",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://arxiv.org/html/2301.08243"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2303.15343"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2407.04620"
+          }
+        ],
+        "response_length": "short"
+      }
+    },
+    {
+      "id": "cs_methods_read_6",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://blog.neurips.cc/2025/11/26/announcing-the-neurips-2025-best-paper-awards/"
+          },
+          {
+            "ref_id": "turn130view0",
+            "lineno": 115
+          },
+          {
+            "ref_id": "turn123view0",
+            "lineno": 154
+          }
+        ],
+        "find": [
+          {
+            "ref_id": "turn130view2",
+            "pattern": "2.1"
+          }
+        ],
+        "response_length": "short"
+      }
+    },
+    {
+      "id": "cs_read_meta_final",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://arxiv.org/abs/2609.00065"
+          },
+          {
+            "ref_id": "https://dev.neurips.cc/Downloads/2026"
+          }
+        ],
+        "find": [
+          {
+            "ref_id": "turn122view3",
+            "pattern": "4.1 Gram"
+          },
+          {
+            "ref_id": "turn123view0",
+            "pattern": "Decoupling erase"
+          }
+        ],
+        "response_length": "short"
+      }
+    },
+    {
+      "id": "cs_read_last",
+      "request": {
+        "find": [
+          {
+            "ref_id": "turn131view0",
+            "pattern": "Gated Attention"
+          },
+          {
+            "ref_id": "turn130view0",
+            "pattern": "Loss."
+          }
+        ],
+        "response_length": "short"
+      }
+    }
+  ]
+}

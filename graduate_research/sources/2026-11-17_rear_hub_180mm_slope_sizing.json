@@ -1,0 +1,177 @@
+{
+  "date": "2026-11-17",
+  "scope": "Rear-hub sizing arithmetic: 180mm wheels, no simulation or specific motor verification",
+  "assumptions": {
+    "total_mass_kg": 30,
+    "wheel_diameter_m": 0.18,
+    "rear_drive_count": 2,
+    "left_right_equal": true,
+    "rated_torque_is_wheel_output": true,
+    "bipedal_mode_all_normal_load_on_rear_driven_wheels": true,
+    "terrain_Crr_values_are_engineering_scenarios_not_measured_for_tires": true,
+    "omits_wheel_rotational_inertia_and_balance_dynamic_and_yaw_scrub_and_contact_transients": true
+  },
+  "torque_cases": [
+    {
+      "scenario": "干燥硬实路面示例",
+      "Crr_assumed_not_measured": 0.02,
+      "angles": [
+        {
+          "degrees": 0,
+          "per_rear_torque_Nm": 0.26487,
+          "mu_min_all_normal_on_driven": 0.02
+        },
+        {
+          "degrees": 15,
+          "per_rear_torque_Nm": 3.683514797424419,
+          "mu_min_all_normal_on_driven": 0.2879491924311227
+        },
+        {
+          "degrees": 20,
+          "per_rear_torque_Nm": 4.778440152601058,
+          "mu_min_all_normal_on_driven": 0.38397023426620236
+        },
+        {
+          "degrees": 30,
+          "per_rear_torque_Nm": 6.8511341487003845,
+          "mu_min_all_normal_on_driven": 0.5973502691896257
+        }
+      ]
+    },
+    {
+      "scenario": "压实土路示例",
+      "Crr_assumed_not_measured": 0.05,
+      "angles": [
+        {
+          "degrees": 0,
+          "per_rear_torque_Nm": 0.6621750000000001,
+          "mu_min_all_normal_on_driven": 0.05
+        },
+        {
+          "degrees": 15,
+          "per_rear_torque_Nm": 4.067281957838198,
+          "mu_min_all_normal_on_driven": 0.3179491924311227
+        },
+        {
+          "degrees": 20,
+          "per_rear_torque_Nm": 5.151784729302403,
+          "mu_min_all_normal_on_driven": 0.41397023426620233
+        },
+        {
+          "degrees": 30,
+          "per_rear_torque_Nm": 7.19521037175096,
+          "mu_min_all_normal_on_driven": 0.6273502691896258
+        }
+      ]
+    },
+    {
+      "scenario": "短草地示例",
+      "Crr_assumed_not_measured": 0.08,
+      "angles": [
+        {
+          "degrees": 0,
+          "per_rear_torque_Nm": 1.05948,
+          "mu_min_all_normal_on_driven": 0.08
+        },
+        {
+          "degrees": 15,
+          "per_rear_torque_Nm": 4.451049118251976,
+          "mu_min_all_normal_on_driven": 0.3479491924311227
+        },
+        {
+          "degrees": 20,
+          "per_rear_torque_Nm": 5.525129306003747,
+          "mu_min_all_normal_on_driven": 0.44397023426620236
+        },
+        {
+          "degrees": 30,
+          "per_rear_torque_Nm": 7.539286594801537,
+          "mu_min_all_normal_on_driven": 0.6573502691896257
+        }
+      ]
+    },
+    {
+      "scenario": "松散碎石示例",
+      "Crr_assumed_not_measured": 0.1,
+      "angles": [
+        {
+          "degrees": 0,
+          "per_rear_torque_Nm": 1.3243500000000001,
+          "mu_min_all_normal_on_driven": 0.1
+        },
+        {
+          "degrees": 15,
+          "per_rear_torque_Nm": 4.706893891861161,
+          "mu_min_all_normal_on_driven": 0.3679491924311227
+        },
+        {
+          "degrees": 20,
+          "per_rear_torque_Nm": 5.774025690471311,
+          "mu_min_all_normal_on_driven": 0.4639702342662023
+        },
+        {
+          "degrees": 30,
+          "per_rear_torque_Nm": 7.768670743501921,
+          "mu_min_all_normal_on_driven": 0.6773502691896257
+        }
+      ]
+    }
+  ],
+  "startup": [
+    {
+      "degrees": 15,
+      "steady_Nm": 4.067281957838197,
+      "with_body_acceleration_1m_s2_Nm": 5.417281957838196,
+      "mu_for_steady": 0.3179491924311227,
+      "mu_for_acceleration_1m_s2": 0.42348193253408734
+    },
+    {
+      "degrees": 20,
+      "steady_Nm": 5.151784729302403,
+      "with_body_acceleration_1m_s2_Nm": 6.501784729302402,
+      "mu_for_steady": 0.41397023426620233,
+      "mu_for_acceleration_1m_s2": 0.5224491101556938
+    },
+    {
+      "degrees": 30,
+      "steady_Nm": 7.19521037175096,
+      "with_body_acceleration_1m_s2_Nm": 8.54521037175096,
+      "mu_for_steady": 0.6273502691896258,
+      "mu_for_acceleration_1m_s2": 0.745056746088632
+    }
+  ],
+  "rigid_step_gravity_moment_example": [
+    {
+      "step_m": 0.01,
+      "wheel_load_N_assumed": 147.15,
+      "gravity_moment_about_corner_Nm": 6.067149928096387
+    },
+    {
+      "step_m": 0.02,
+      "wheel_load_N_assumed": 147.15,
+      "gravity_moment_about_corner_Nm": 8.324061028128037
+    },
+    {
+      "step_m": 0.03,
+      "wheel_load_N_assumed": 147.15,
+      "gravity_moment_about_corner_Nm": 9.871122086672823
+    },
+    {
+      "step_m": 0.04,
+      "wheel_load_N_assumed": 147.15,
+      "gravity_moment_about_corner_Nm": 11.01169768927571
+    }
+  ],
+  "rated_candidates_Nm": [
+    3,
+    6,
+    9.6
+  ],
+  "sources": {
+    "industrial_Vulkollan_traction": "https://vulkoprin.be/en/techcorner/aandrijfkarcht/",
+    "PU_friction_depends_on_compound": "https://gallaghercorp.com/polyurethane-coefficient-of-friction/",
+    "RC_rubber_material_example": "https://www.injora.com/products/injora-1-3-70-27mm-swamp-claw-tires-silicone-rubber-inserts-combo-4",
+    "soil_mechanics": "https://ntrs.nasa.gov/api/citations/20220010732/downloads/Terramechanics_white_paper.pdf",
+    "step_dynamics": "https://www.hmc.edu/lair/publications/2007/wilhelm_iros_2007.pdf"
+  }
+}

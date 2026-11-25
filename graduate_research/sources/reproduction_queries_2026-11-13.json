@@ -1,0 +1,133 @@
+{
+  "date": "2026-11-13",
+  "purpose": "Select published papers and inspect author/community implementations for replication; no preset thesis direction",
+  "method": "targeted web discovery, primary publication metadata and GitHub source inspection",
+  "coverage": "Not exhaustive. No local training or replay. No WoS/Scopus full database search.",
+  "requests": [
+    {
+      "record": "repro_search_1",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"Hybrid Internal Model\" ICRA 2024 HIMLoco github"
+          },
+          {
+            "q": "\"Learning Legged Locomotion with Penalty-based Constraints\" github"
+          },
+          {
+            "q": "\"wheel-legged\" \"Isaac Lab\" paper github reinforcement learning"
+          },
+          {
+            "q": "\"wheeled biped\" \"control\" github MPC Ascento"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "repro_search_2",
+      "request": {
+        "search_query": [
+          {
+            "q": "HIMLoco IsaacLab implementation github"
+          },
+          {
+            "q": "\"Learning Legged Locomotion\" \"Penalty-based\" \"github.com\""
+          },
+          {
+            "q": "\"Learning to Run\" \"Wheel\" \"Constraints as Terminations\" Flamingo github paper"
+          },
+          {
+            "q": "\"wheel-legged\" reinforcement learning \"github\" \"IEEE\" 2025 2026"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "repro_search_3",
+      "request": {
+        "search_query": [
+          {
+            "q": "\"CaT\" \"Constraints as Terminations\" github IROS 2024"
+          },
+          {
+            "q": "\"Reinforcement Learning for Blind Stair Climbing\" github"
+          },
+          {
+            "q": "\"Walk These Ways\" CoRL 2022 github pretrained"
+          },
+          {
+            "q": "\"DreamWaQ\" github code official"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "repro_search_4",
+      "request": {
+        "search_query": [
+          {
+            "q": "DIAL MPC paper github conference 2025"
+          },
+          {
+            "q": "\"Wheel-Legged-Gym\" paper"
+          },
+          {
+            "q": "\"Isaac-RL-Two-wheel-Legged-Bot\" paper"
+          },
+          {
+            "q": "\"HIMLoco\" \"IsaacZH\" \"success\""
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "repro_search_5",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://arxiv.org/abs/2409.15610"
+          },
+          {
+            "ref_id": "https://lecar-lab.github.io/dial-mpc/"
+          }
+        ],
+        "search_query": [
+          {
+            "q": "\"Full-Order Sampling-Based MPC\" \"2025\" conference"
+          },
+          {
+            "q": "\"Learned Perceptive Forward Dynamics Model\" github RSS 2025"
+          },
+          {
+            "q": "\"HIMLoco-IsaacLab复现\" datawhalechina github"
+          }
+        ],
+        "response_length": "long"
+      }
+    },
+    {
+      "record": "repro_primary_1",
+      "request": {
+        "open": [
+          {
+            "ref_id": "https://proceedings.mlr.press/v205/margolis23a.html"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2403.18765"
+          },
+          {
+            "ref_id": "https://arxiv.org/html/2409.15610"
+          },
+          {
+            "ref_id": "https://arxiv.org/abs/2310.00982"
+          }
+        ],
+        "response_length": "long"
+      }
+    }
+  ]
+}

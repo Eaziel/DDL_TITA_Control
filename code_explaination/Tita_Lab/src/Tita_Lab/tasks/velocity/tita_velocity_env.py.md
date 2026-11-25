@@ -1,10 +1,38 @@
-# tita_velocity_env.py：安排历史、采样和奖励合成的时机
+# tita_velocity_env.py：一次step怎样安排动作、历史、奖励、cost与reset
 
-**阅读目标：** 理解自定义环境只补哪些调用时机：历史更新、奖励最终合成、reset前保存cost与六维状态，以及reset后清相应缓存。
+内容纯AI生成，由人类要求生成，未经人类修改。源码核对：2026-11-02。
 
-源码：[tita_velocity_env.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py)。更新：2026-10-23。以下为本次建议的清理后类（不是已写入快照）；移除临时打印/断言，保留全部历史、奖励、cost与reset接线。当前源码已删RESET/CONTACT/COST打印，首步VIEW及cost断言仍在；导入省略，历史原文保留在末尾折叠区。
+被解释文件：[tita_velocity_env.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/tita_velocity_env.py)。
+
+本文件在Lab通用环境上增加TITA需要的调用顺序。读完应能跟随一次step区分策略时间与物理时间，知道父类完成哪些工作、自定义代码补哪几处，以及各类reset由谁明确调用。第2节先建立完整顺序，再沿源码逐段解释。
+
+本文解释当前文件及本地 IsaacLab-main / Sim 6.2 调用顺序。只读检查与用户已有200步日志分别陈述，不把它们当成完整训练或接触物理验证。
+
+## 1. 当前完整源码
 
 ```python
+# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+import torch
+
+from isaaclab.envs import ManagerBasedRLEnv, VecEnvStepReturn
+
+from .cost_manager import TitaCostManager
+from .mdp.observation_history import ProprioHistory
+
+if TYPE_CHECKING:
+    from .config.Tita.env_cfg import VelocityEnvCfg
+
+
 class TitaVelocityEnv(ManagerBasedRLEnv):
     """TITA environment with observation history and constraint costs."""
 
@@ -23,7 +51,7 @@ class TitaVelocityEnv(ManagerBasedRLEnv):
             history_length=10,
             device=cfg.sim.device,
         )
-        # 腿轮共享的动作延迟编号，shape=(N,)，由startup事件采样。
+        # Shared history-slot indices, shape (N,); sampled by a startup event.
         self.action_lag_indices = torch.zeros(cfg.scene.num_envs, dtype=torch.long, device=cfg.sim.device)
 
         super().__init__(cfg=cfg, render_mode=render_mode, **kwargs)
@@ -54,6 +82,12 @@ class TitaVelocityEnv(ManagerBasedRLEnv):
         # clone让本次返回的矩阵不被下一步覆盖，形状(N, 6)。
         extras["costs"] = self.cost_manager.compute().clone()
 
+        # 检查本步返回的cost：每台机器人六项，数值有限且非负。
+        costs = extras["costs"]
+        assert costs.shape == (self.num_envs, 6)
+        assert torch.isfinite(costs).all(), "Non-finite cost detected."
+        assert (costs >= 0.0).all(), "Negative cost detected."
+
         return obs, reward, terminated, time_outs, extras
 
     def _reset_idx(
@@ -65,7 +99,7 @@ class TitaVelocityEnv(ManagerBasedRLEnv):
         # 重置物理状态前，保留刚结束这一步的六维观测样本。
         self.observation_manager.compute_group("privileged_state")
 
-        # 父类修改姿态、关节速度和传感器数据前，保存刚结束的一步。
+        # 保存失败瞬间的cost，供本步step返回。
         self.cost_manager.compute()
 
         super()._reset_idx(env_ids)
@@ -75,123 +109,139 @@ class TitaVelocityEnv(ManagerBasedRLEnv):
         self.extras["log"].update(self.cost_manager.reset(env_ids))
 ```
 
-## 1. 初始化先准备两份数据
+## 2. 一次step在训练闭环里的位置
 
-proprio_history持有(N,10,33)的policy历史，action_lag_indices持有(N,)的腿轮共享选择编号。它们在super().__init__之前建立，因为父类建立观测/动作管理器时就会读取它们。
+当前包装关系是：A为真正的 `TitaVelocityEnv`，B为 `gym.make()`返回的Gymnasium接口层，C为项目的 `TitaNP3OEnvWrapper`。训练或检查循环调用C.step，C调用B.step，最终进入本文件A.step。包装不会复制出三套物理机器人。
 
-随后父类建立Scene、动作、观测、事件等通用对象。本类保留这套框架，只增加任务需要的调用时机。
+一次策略step接收 `(N,8)` 动作，推进4个0.0025s物理步，因此策略周期0.01s。N台机器人批量推进；N不把每台机器人的时间变成N倍。回合上限20s对应最多2000个策略步。
 
-## 2. step开头先处理旧policy
+当前主要调用顺序如下，表中的每一行都对应自定义环境或父类step里的实际调用：
 
-此时obs_buf["policy"]还是上次返回的观测。read_then_push保存它，父类再推进四次物理步、计算奖励、处理结束环境并生成新观测。返回的history因此包含过去十帧，当前policy单独返回。
+| 顺序 | 执行者与操作 | 数据意义 |
+| --- | --- | --- |
+| 1 | 本类更新ProprioHistory | 把上次返回的policy帧放进过去历史 |
+| 2 | 父类ActionManager.process_action | 拆分8列、裁剪/FIR/缩放，一次 |
+| 3 | 父类物理循环4轮 | 动作项apply写延迟目标，执行器计算力矩、Sim推进、Scene更新 |
+| 4 | 父类更新计数器 | 每环境回合步数+1，公共策略步号+1 |
+| 5 | TerminationManager、RewardManager | 计算本步结束条件与原始加权奖励 |
+| 6 | 若有结束行，调用本类_reset_idx | 先保存6维状态和cost，再执行父reset |
+| 7 | CommandManager、interval事件 | 更新下一份命令，必要时推扰 |
+| 8 | ObservationManager | 生成将返回的新观测，已重置行取新回合状态 |
+| 9 | 本类恢复旧TITA总奖励规则 | 普通项合计夹零，加失败项 |
+| 10 | 本类读取/保存cost | 本步只计算一次，clone后放extras |
+| 11 | wrapper整理数据 | 五组观测拼586，cost独立返回 |
 
-## 3. 父类step返回后形成最终奖励
+表格省略记录器/GUI手动reset等分支，常规失败/超时路径可据此逐步阅读。具体代码以本地父类为准，不能用旧Lab的循环顺序代替。
 
-父类已得到十项的加权时间积分。_step_reward中的termination列保存未乘step_dt的本步贡献，乘0.01恢复失败分数；从总分减去它，对其余合计夹零，再加回失败分数。reward.copy_更新原奖励缓冲。
+## 3. 初始化为何一部分在super前，一部分在后
 
-例如普通合计-0.3、失败分数-2，结果为0-2=-2。这个位置依赖本地_step_reward内部字段；以后启用父类record_post_step记录时还需核对记录发生的先后。
+先创建 `ProprioHistory(N,33,10,device)` 与 `(N,)` 的 `action_lag_indices`，然后调用父构造函数。
 
-## 4. reset先保留本步六维样本，再重置其他对象
+父构造会建立Scene、ActionManager、ObservationManager等对象。动作项构造时引用共享延迟编号；观测管理器准备历史项时会调用 `mdp.proprio_history(env)`探测输出形状。因此这两份对象必须先存在。父构造中的self仍指当前子类实例，任何对这些属性的访问都会来到这一实例上。
 
-compute_group先要求六维观测对象保存速度/接触，父类再重置Scene、事件和各管理器，最后显式清ProprioHistory对应行。六维对象按common_step_counter识别同一步，后续观测复用已保存样本。
+`super().__init__(cfg=cfg,render_mode=render_mode,**kwargs)`沿继承顺序调用父方法；`**kwargs`把收到的额外关键字参数继续传递，不是把cfg转换成字典。
 
-奖励类reset由RewardManager分发，动作类reset由ActionManager分发，历史缓存reset由这里明确调用。方法同名不会使任意对象自动加入某个管理器。
+父构造结束后机器人与物理数据已经建立，才创建 `TitaCostManager(self.cfg.costs,self)`，解析cost需要的关节、轮体和有状态类。它是项目额外管理器，所以父框架不会凭名字自动添加其step/reset调用，本类在下面明确接线。
 
-当前代码的原生step/reset CPU流程检查通过；物理状态/setter为替身，真实训练未运行。证据见[当前检查](../../../../../../docs/audits/2026-10-21_current_observations/README.md)。
+## 4. step开头：当前动作使用的新观测，怎样变成下一次的历史
 
-## 5. 独立cost的调用需要保留
+此时 `self.obs_buf["policy"]`仍是上次reset/step返回的帧 $x_t$。本类把它放进历史，然后才 `super().step(action)`推进物理。父类最后返回新当前帧 $x_{t+1}$，历史末尾是 $x_t$。
 
-初始化在父类完成后构造TitaCostManager；step返回前把compute结果clone到extras["costs"]。发生reset时，父类改变物理状态前先compute，父类reset后调用cost_manager.reset收集回合统计并重置需要差分的内部状态。这些调用属于迁移功能，不随诊断打印删除。
+`read_then_push`返回旧历史，但这里没用变量接收；它同时修改了 `self.proprio_history`内部存储，这个修改就是环境需要的效果。Python函数返回值与对象修改可以同时存在，忽略返回值不等于函数没运行。
 
-## 6. 本次临时诊断已经完成用途
+历史有开局填充和选中行reset规则，详见 [历史缓存](mdp/observation_history.py.md)。父框架的观测getter可以多次读取缓存，而step只推进一次，从而把“读数据”和“时间前进”分开。
 
-2026-10-23先由[接触日志](../../../../../../docs/audits/2026-10-23_reset_contacts/result.json)定位自碰撞路径，再发现USD比旧URDF多出左右leg_1/leg_2四处碰撞。用户现已在USD关闭四处并报告重新开启自碰撞后现象正常；静态结果见[修正后状态](../../../../../../docs/audits/2026-10-23_collision_model/after_user_usd_edit.json)。新运行未附完整日志，不能宣称训练成功。
-
-当前VIEW/RESET/CONTACT/COST打印与Scene.base_contact_debug均已删除，正式钩子保留；每步cost断言仍在。上方完整类是清理参考，省略了这些断言，不冒充当前逐字源码。可选box方案当前跳过，取舍见[19](../../../../../../docs/migration/19_碰撞模型对齐与诊断清理.md)。
-
-## 补充问答
-
-问题保留用户原句；回答按对应代码整理。
-
-**Q：**
-
-> 我没搞懂。为啥会调用这个？
-
-**A：** 你问的是父类初始化时为何会执行mdp.proprio_history。ObservationsCfg.HistoryCfg把函数交给ObsTerm.func，ObservationManager准备该项时执行func(当前环境, **params)，根据返回张量.shape确定维度。这个回调需要读取self.proprio_history，所以缓存创建在super之前。带真实调用语句及self归属的详细解释见[05末尾问答](../../../../../../docs/migration/05_observations迁移.md#补充问答)。
-
-**Q：**
-
-> 还有reset,我记得obs hist也写了reset。有这么多reset，我没搞懂啊，我还记得reset是lab的方法，我们重写了是吗？是环境重置的时候，会自动调用所有被登记的reset？这个代码框架有点大，说实话我都忘了obs hist文件里头的内容拿来干啥了。
-
-**A：** 当前自定义环境写的是：
+## 5. 父step计算完后，为什么还要改总奖励
 
 ```python
-def _reset_idx(self, env_ids):
-    super()._reset_idx(env_ids)
-    self.proprio_history.reset(env_ids)
+termination_index = self.reward_manager.active_terms.index("termination")
+termination_reward = self.reward_manager._step_reward[:, termination_index] * self.step_dt
+ordinary_reward = reward - termination_reward
+reward.copy_(ordinary_reward.clamp_min(0.0) + termination_reward)
 ```
 
-第一行调用父环境的_reset_idx，进入Lab现有的场景、Event和manager重置流程；第二行显式调用自定义历史对象的reset。这两个调用处理不同对象的状态。
+`active_terms`是管理器的奖励项名列表，`.index("termination")`查失败项在哪一列。该名称必须与配置一致。`_step_reward`是本地RewardManager内部字段，当前保存每项“原始值×权重”，尚未乘dt，所以读取后要乘0.01恢复本步失败贡献。
 
-| 方法 | 是否重写基类 | 清理什么 | 谁调用它 |
-| --- | --- | --- | --- |
-| TitaVelocityEnv._reset_idx | 重写ManagerBasedRLEnv._reset_idx | 协调父类流程，再清历史 | 官方公开reset或step的结束处理 |
-| JointAccelerationPenalty.reset | 重写ManagerTermBase.reset | 选中环境的上一关节速度参考 | RewardManager的类项循环 |
-| ProprioHistory.reset | 普通自定义方法；此类不继承Lab基类 | 选中环境的十帧观测缓存 | 上述self.proprio_history.reset(env_ids) |
+令普通项加权后本步合计为 $R_{ordinary}$、失败贡献为 $R_{fail}$，父类总分为两者之和；本类最终要：
 
-父环境中真正调用其他对象的方法是：
+$$
+R=\max(R_{ordinary},0)+R_{fail}.
+$$
 
-```python
-self.observation_manager.reset(env_ids)
-self.action_manager.reset(env_ids)
-self.reward_manager.reset(env_ids)
-```
+例如普通项−0.3、失败项−2，最终−2；普通项+0.5且失败−2，最终−1.5。普通项包括正跟踪奖励与负惩罚，并非“所有叫penalty的函数以外的项”。先把它们合计，再夹零。
 
-这里只摘与当前问题直接相关的调用，实际还包含Scene、Event、命令等。RewardManager随后遍历自己保存的类项配置，调用奖励实例.reset；ObservationManager清理自己管理的类项、延迟和原生历史。当前ProprioHistory既未继承ManagerTermBase，也未作为类项登记进manager；它靠子类代码的第二行明确接线。没有一个全局机制会因为方法名叫reset就自动调用。
+`reward.copy_`写回父类那份奖励缓冲，维持调用者与 `self.reward_buf`指向同一份更新后数值。它不会修改各项回合统计；父RewardManager早已按各项贡献累计日志。因此日志各项之和未必等于夹零后训练实际收到的总分。
 
-Lab公开reset()和每步自动结束都会进入self._reset_idx，Python方法分派选中子类的重写；子类用super明确保留父类流程。本项目没有重写环境的公开reset方法。源码：[公开reset入口](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_env.py)、[step入口](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py)、[父类依次重置manager](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py)。
+这里依赖 `_step_reward`内部字段，而非一个跨版本稳定的公开取值保证；以后本地Lab改变该字段含义，需重新核对。当前实现与本地源码对应，不据此新增兼容代码。
 
-ProprioHistory用于保存过去十帧、每帧33维的自身观测。环境对象持有一个(N,10,33)缓存；step更新，mdp.proprio_history读取并展平为(N,330)，ObservationManager把它放到obs["history"]中。history提供旧TITA后续历史编码网络需要的时间窗口；当前生成的普通PPO仍只读policy，模型消费history尚未迁移。
-
-两份跨步状态都要按同一env_ids处理，但内容不同：奖励缓存同步为重置后的关节速度，以免跨回合计算加速度；历史缓存清零，以免新回合读到旧回合轨迹。单个环境结束只清它对应的行，其他并行环境继续保留各自数据。
-
-**Q：**
-
-> 现在是新的step的问题。我没搞懂什么叫普通项？为啥要 * step_dt？active_terms指的就是在rewardcfg里写的项？
-> 还有为啥要这个计算公式啊，你说的旧gym的那个，他为啥这样搞？
-
-**A：** 普通项在当前合成中指除termination以外的9项，含负权重惩罚。active_terms是管理器收集的奖励项名字列表，当前index("termination")为9，对应(N,10)缓存的第9列。父类reward已经累计raw*weight*step_dt；缓存保存的是raw*weight，所以从缓存取失败贡献时才乘step_dt恢复本步分数。接着用reward-termination_reward拆出普通合计，只夹这部分再加回失败贡献。
-
-旧配置注释称夹普通合计是为避免过早结束问题。其训练动机可理解为减少“继续运行总在扣分、结束回合省掉后续扣分”的倾向，失败项后加则保留失败扣分。它是奖励设计选择，PPO允许负奖励；夹到0也会让原本不同的负合计获得相同即时分数。详细的1 s时间缩放示例、缓存单位及三种合成数值见[08末尾本题Q/A](../../../../../../docs/migration/08_rewards迁移.md#补充问答)。当前源码已保存，只读检查不代表真实环境运行。
-
-**Q：** 我没懂两处self.observation_manager.compute_group("privileged_state")在干啥。
-
-**A：** 这里的一处在_reset_idx的父调用之前。compute_group会调用六维观测对象，把本步速度/接触存入对象的成员，再由父方法重置机器人。返回张量没有接收，但成员变量已更新，最后统一观测读取仍使用同一步样本。第二处在events.py的推扰写速度之前；两处不是每步都各执行一次，它们只在对应事件发生时提前取数。完整变量例子见mdp/observations.py.md的同题问答。
-
-**Q：** compute函数屡次出现，这玩意到底是干啥的？
-
-对应运行语句例如：
+## 6. cost的返回先解决“失败那一步不能丢”
 
 ```python
-self.curriculum_manager.compute(env_ids=env_ids)
 extras["costs"] = self.cost_manager.compute().clone()
 ```
 
-**A：** compute意思是“计算”，是开发者起的普通方法名，不是Python提供的特殊方法。先看点号左边的对象：RewardManager.compute汇总奖励并累计回合统计；ObservationManager.compute组装观测；CurriculumManager.compute执行课程项并保存课程状态；TitaCostManager.compute算出或复用本步(N,6)cost。
+`extras`是附加信息字典，原生五项返回值仍是观测、奖励、失败、超时、extras；本类把六列cost放在字典里，不把原生返回协议直接改成六项。wrapper才把它整理成NP3O的独立cost返回值。
 
-本地CurriculumManager.compute的关键代码是：
+无reset时，此处首次compute，用当前公共步号计算六列并累计；有reset时，`_reset_idx`已在重置前计算，本次compute只取同一步缓存。`.clone()`确保下一步覆盖manager缓冲时，上一次返回的cost仍保留数值。
 
-```python
-for name, term_cfg in zip(self._term_names, self._term_cfgs):
-    state = term_cfg.func(self._env, env_ids, **term_cfg.params)
-    self._curriculum_state[name] = state
-```
+后面三个assert分别检查shape `(N,6)`、所有值有限、所有值非负。`torch.isfinite`逐元素判断非NaN/非无穷，`.all()`把全部判断AND成一个布尔标量；它们是运行防错，不证明六项公式或物理接触一定正确。细节见 [check脚本](../../../../scripts/check_np3o_interface.py.md)。
 
-当前只有terrain_levels项，所以会调用登记的terrain_levels_vel。该函数读取机器人位置和速度命令，调用TerrainImporter修改等级与env_origins，并返回平均等级；管理器将这个返回值保存供日志读取。CurriculumManager.compute自身没有return语句，Python返回None；调用它的目的包含更新内部状态，不必有接收变量。
+## 7. _reset_idx中父方法前后各保存什么
 
-什么时候执行由调用点决定，函数名不会自动决定时机：原生环境在reset前明确调用课程compute；本项目显式在step末尾与reset前调用cost compute。cost用_last_step避免同一个策略步重复计算和累加，因此第二次调用可直接返回已保存的cost_buf。[原生调用点](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py)、[课程compute实现](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/curriculum_manager.py)。
+### 7.1 父reset前保存刚完成物理推进的样本
+
+先 `compute_group("privileged_state")`保存本步线速度和接触；该组按公共步号每步只采样一次。再 `cost_manager.compute()`保存本步失败/超限代价。此时物理状态尚未被reset事件改写。
+
+两份缓存服务不同返回数据：6维样本在下一份打包观测中，cost矩阵作为这一转移的代价返回。它们都不能等机器人回到初始姿态后才首次采样。
+
+### 7.2 父reset完成通用流程
+
+`super()._reset_idx(env_ids)`先更新所选环境的地形课程、重置Scene内部状态、执行reset事件，写入新位姿与关节状态；再按顺序重置观测、动作、奖励、课程、命令、事件和结束管理器等，并把回合步数清零。
+
+地形课程的“升级/降级”改变所选地形难度行与下一回合原点，不是改变策略网络级别，也不是保证每个新地形更容易。此处只是说明它在reset里的调用位置，地形参数沿 [terrain_cfg.py](terrain_cfg.py.md) 阅读。
+
+父类不会搜索整个进程里所有名为reset的方法。它对已经持有的管理器逐个调用；管理器再根据自己保存的项调用类实例reset。
+
+### 7.3 父reset之后处理项目自己的状态
+
+`self.proprio_history.reset(env_ids)`只清所选行历史。`self.cost_manager.reset(env_ids)`先报告旧回合累计、清累计，并把加速度cost的速度参考更新成刚重置后的速度。返回的统计用 `self.extras["log"].update(...)`合入父类刚建立的日志。
+
+不能把cost.reset提前到父reset之前，否则差分参考可能仍是旧回合末速度，且父类后续建立新日志时可能覆盖提前写的内容。方法的位置由数据依赖决定，不是统一要求super永远放在第一行。
+
+## 8. 把所有reset按对象归属列清楚
+
+| 要清/更新的数据 | 谁持有 | 明确调用者 |
+| --- | --- | --- |
+| 机器人初始物理状态 | Scene/Articulation | 父reset中的reset事件 |
+| 动作原始缓存、延迟目标历史 | TitaJointAction | ActionManager.reset |
+| 奖励加速度参考 | JointAccelerationPenalty | RewardManager.reset |
+| 十帧观测 | ProprioHistory | 本类_reset_idx |
+| cost回合累计与cost加速度参考 | TitaCostManager/JointAccelerationCost | 本类调用cost_manager.reset，再由manager分发 |
+| 6维状态的接触记忆 | TitaPrivilegedState | 继承的reset保留，按现有Gym时序处理 |
+| policy/critic权重 | 神经网络对象 | 本文件不重置、不训练 |
+
+`reset`可以表示不同对象各自的初始化操作。同名方法的关系来自明确调用链，不是全局同名广播。
+
+## 9. 返回时，新观测与本步奖励可能跨回合
+
+父环境在同一次step内自动reset结束行，然后计算最终观测。因此该行返回的观测可已属于新回合，但terminated/time_outs仍标记刚结束的旧回合，奖励与cost也对应旧回合最后一步。
+
+6维额外状态另有上文的预采样保留规则。训练存储之后必须按dones、timeouts及最终观测约定处理回报，不能见到新姿态就把上一回合的失败忽略。当前wrapper/check已能传递与检查这些接口，完整NP3O存储与更新仍未实现。
+
+用户11月2日提供的4环境200步输出验证了接口形状与有限值检查未中断，见[证据](../../../../../../docs/audits/2026-11-02_value_networks/README.md)。这不是本轮助手再次运行，也不能覆盖轮接触物理、15秒推扰、20秒回合或训练收敛。
+
+## 源码与API依据
+
+- [Lab ManagerBasedRLEnv：step与_reset_idx](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py)
+- [Lab ManagerBasedEnv：初始化与管理器建立](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_env.py)
+- [Lab RewardManager：_step_reward的当前含义](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)
+- [本项目cost管理器](cost_manager.py.md)
+- [本项目观测采样](mdp/observations.py.md)
+
 
 ## 历史原文（折叠）
+
+以下仅保留当时要求归档的原文。旧路径、旧行号及“当前”措辞均属于当时状态，部分链接已失效；学习现有实现以本页上方2026-11-02正文为准。
 
 <details>
 <summary>此前创建/重置说明及已修复的缩进问题（历史原文）</summary>

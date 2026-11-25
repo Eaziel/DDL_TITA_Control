@@ -1,0 +1,216 @@
+{
+  "date": "2026-11-17",
+  "scope": "Geometry comparison with 4.5kg per leg; illustrative static contact arithmetic only",
+  "inputs": {
+    "upper_kg": 0.5,
+    "upper_cg_midpoint": true,
+    "lower_nonhub_kg": 0.85,
+    "lower_nonhub_cg_midpoint": true,
+    "hub_kg": 3.15,
+    "body_kg": [
+      20,
+      30
+    ],
+    "cg_fore_aft_for_knee_m": [
+      -0.03,
+      0,
+      0.03
+    ],
+    "roll_zero_reference": "leg1 axis horizontal; HIP forward axis",
+    "roll_model_body_cg_centered": true,
+    "wheel_camber_contact_offset_ignored": true,
+    "axial_mount_offsets_zero": true,
+    "front_aux_motor_centers_lumped_at_hip": true
+  },
+  "geometry": [
+    {
+      "L1_m": 0.2,
+      "L2_m": 0.26,
+      "height_m": 0.25,
+      "20": {
+        "min_Nm": 16.719079381780855,
+        "max_Nm": 21.27933923060617
+      },
+      "30": {
+        "min_Nm": 24.774250178366923,
+        "max_Nm": 31.460186564419452
+      }
+    },
+    {
+      "L1_m": 0.2,
+      "L2_m": 0.26,
+      "height_m": 0.3,
+      "20": {
+        "min_Nm": 15.352899512097084,
+        "max_Nm": 19.46810924996704
+      },
+      "30": {
+        "min_Nm": 22.709111687909513,
+        "max_Nm": 28.751466865290876
+      }
+    },
+    {
+      "L1_m": 0.2,
+      "L2_m": 0.26,
+      "height_m": 0.32,
+      "20": {
+        "min_Nm": 14.567456637081472,
+        "max_Nm": 18.557183221762177
+      },
+      "30": {
+        "min_Nm": 21.535878292657998,
+        "max_Nm": 27.397951369869716
+      }
+    },
+    {
+      "L1_m": 0.16,
+      "L2_m": 0.3,
+      "height_m": 0.25,
+      "20": {
+        "min_Nm": 12.954550012550973,
+        "max_Nm": 19.010974052995056
+      },
+      "30": {
+        "min_Nm": 19.262524679249253,
+        "max_Nm": 28.295835776871048
+      }
+    },
+    {
+      "L1_m": 0.14,
+      "L2_m": 0.32,
+      "height_m": 0.25,
+      "20": {
+        "min_Nm": 9.948510901622344,
+        "max_Nm": 16.70484394646989
+      },
+      "30": {
+        "min_Nm": 14.804289017641775,
+        "max_Nm": 24.95770600663037
+      }
+    },
+    {
+      "L1_m": 0.14,
+      "L2_m": 0.32,
+      "height_m": 0.32,
+      "20": {
+        "min_Nm": 11.030157483884247,
+        "max_Nm": 16.455978594031407
+      },
+      "30": {
+        "min_Nm": 16.36316856258514,
+        "max_Nm": 24.446471629976124
+      }
+    },
+    {
+      "L1_m": 0.2,
+      "L2_m": 0.26,
+      "height_m": 0.4,
+      "20": {
+        "min_Nm": 9.636464865390709,
+        "max_Nm": 13.291895856998533
+      },
+      "30": {
+        "min_Nm": 14.222913640152422,
+        "max_Nm": 19.607244978563795
+      }
+    }
+  ],
+  "roll": [
+    {
+      "body_kg": 20,
+      "hip_degree": 0,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.0,
+      "hip_Nm": 0.0,
+      "knee_Nm": 19.14859579931555
+    },
+    {
+      "body_kg": 20,
+      "hip_degree": 15,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.06698729810778067,
+      "hip_Nm": 7.0629382849384434,
+      "knee_Nm": 18.27139135315058
+    },
+    {
+      "body_kg": 20,
+      "hip_degree": 20,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.09099255856655059,
+      "hip_Nm": 9.58591564893404,
+      "knee_Nm": 17.58051776642163
+    },
+    {
+      "body_kg": 20,
+      "hip_degree": 25,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.11657691453874965,
+      "hip_Nm": 12.268423923410618,
+      "knee_Nm": 16.679814386477823
+    },
+    {
+      "body_kg": 20,
+      "hip_degree": 30,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.14433756729740643,
+      "hip_Nm": 15.171579449040195,
+      "knee_Nm": 15.556977784403825
+    },
+    {
+      "body_kg": 20,
+      "hip_degree": 45,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.24999999999999997,
+      "hip_Nm": 26.16608181618455,
+      "knee_Nm": 10.555827806556298
+    },
+    {
+      "body_kg": 30,
+      "hip_degree": 0,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.0,
+      "hip_Nm": 0.0,
+      "knee_Nm": 28.355368604125186
+    },
+    {
+      "body_kg": 30,
+      "hip_degree": 15,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.06698729810778067,
+      "hip_Nm": 10.344258424679893,
+      "knee_Nm": 27.047259638116866
+    },
+    {
+      "body_kg": 30,
+      "hip_degree": 20,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.09099255856655059,
+      "hip_Nm": 14.043552598956769,
+      "knee_Nm": 26.01796339478402
+    },
+    {
+      "body_kg": 30,
+      "hip_degree": 25,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.11657691453874965,
+      "hip_Nm": 17.980114510529454,
+      "knee_Nm": 24.677241072174194
+    },
+    {
+      "body_kg": 30,
+      "hip_degree": 30,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.14433756729740643,
+      "hip_Nm": 22.244425434113367,
+      "knee_Nm": 23.007631873088798
+    },
+    {
+      "body_kg": 30,
+      "hip_degree": 45,
+      "height_m": 0.25,
+      "wheel_lateral_m": 0.24999999999999997,
+      "hip_Nm": 38.423039203947134,
+      "knee_Nm": 15.591065613505183
+    }
+  ]
+}

@@ -1,0 +1,282 @@
+{
+  "date": "2026-11-17",
+  "scope": "Preliminary geometry recommendation with actuator ratings fixed; no simulation or product verification",
+  "mass_assumptions": {
+    "body_kg_cases": [
+      20,
+      16.7
+    ],
+    "leg_kg": 4.5,
+    "upper_kg": 0.5,
+    "lower_nonhub_kg": 0.85,
+    "rear_hub_kg": 3.15,
+    "nonhub_cg_midpoint": true,
+    "body_fore_aft_cg_mm": [
+      -30,
+      0,
+      30
+    ],
+    "front_pair_original_kg": 6.3,
+    "front_pair_hypothetical_target_kg": 3.0
+  },
+  "current_user_actuator_preference_Nm": {
+    "HIP_rated": 12,
+    "HIP_peak": 40,
+    "leg1_rated": 20,
+    "leg1_peak": 40,
+    "leg2_rated": 20,
+    "leg2_peak": 40
+  },
+  "rows": [
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 220.0,
+      "min_knee_Nm": 11.311368635614551,
+      "max_knee_Nm": 14.961376979311105
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 250.0,
+      "min_knee_Nm": 9.945468731778385,
+      "max_knee_Nm": 13.461523614506959
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 270.0,
+      "min_knee_Nm": 8.770656784401146,
+      "max_knee_Nm": 12.220216790443185
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 300.0,
+      "min_knee_Nm": 6.405909148142713,
+      "max_knee_Nm": 9.778803590612577
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 220.0,
+      "min_knee_Nm": 9.528310308834588,
+      "max_knee_Nm": 12.621307176267564
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 250.0,
+      "min_knee_Nm": 8.381800854763819,
+      "max_knee_Nm": 11.356696504963788
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 270.0,
+      "min_knee_Nm": 7.393765892140133,
+      "max_knee_Nm": 10.309939931642507
+    },
+    {
+      "L1_mm": 160.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 300.0,
+      "min_knee_Nm": 5.402771918590763,
+      "max_knee_Nm": 8.251162367145023
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 220.0,
+      "min_knee_Nm": 12.93289257690876,
+      "max_knee_Nm": 16.211178431256595
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 250.0,
+      "min_knee_Nm": 11.647593816127442,
+      "max_knee_Nm": 14.873092487596939
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 270.0,
+      "min_knee_Nm": 10.588848024595668,
+      "max_knee_Nm": 13.788147802818415
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 20,
+      "h_mm": 300.0,
+      "min_knee_Nm": 8.581925252458147,
+      "max_knee_Nm": 11.751024490612796
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 220.0,
+      "min_knee_Nm": 10.899260963673859,
+      "max_knee_Nm": 13.687845362242559
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 250.0,
+      "min_knee_Nm": 9.819612145738782,
+      "max_knee_Nm": 12.556176880113341
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 270.0,
+      "min_knee_Nm": 8.928781729144244,
+      "max_knee_Nm": 11.639510180468895
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 180.0,
+      "body_kg": 16.7,
+      "h_mm": 300.0,
+      "min_knee_Nm": 7.238500845293241,
+      "max_knee_Nm": 9.919431204372962
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 20,
+      "h_mm": 220.0,
+      "min_knee_Nm": 13.843526048013794,
+      "max_knee_Nm": 17.5913424011119
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 20,
+      "h_mm": 250.0,
+      "min_knee_Nm": 12.768670670950065,
+      "max_knee_Nm": 16.361587190349947
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 20,
+      "h_mm": 270.0,
+      "min_knee_Nm": 11.868271572731604,
+      "max_knee_Nm": 15.384210227595698
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 20,
+      "h_mm": 300.0,
+      "min_knee_Nm": 10.178088812359459,
+      "max_knee_Nm": 13.605204266864327
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 16.7,
+      "h_mm": 220.0,
+      "min_knee_Nm": 11.656798631641099,
+      "max_knee_Nm": 14.838575084048234
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 16.7,
+      "h_mm": 250.0,
+      "min_knee_Nm": 10.757318920607387,
+      "max_knee_Nm": 13.802145883295807
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 16.7,
+      "h_mm": 270.0,
+      "min_knee_Nm": 10.001496764947928,
+      "max_knee_Nm": 12.978135984069361
+    },
+    {
+      "L1_mm": 180.0,
+      "L2_mm": 200.0,
+      "body_kg": 16.7,
+      "h_mm": 300.0,
+      "min_knee_Nm": 8.580165857760829,
+      "max_knee_Nm": 11.478015157647453
+    }
+  ],
+  "roll_examples": [
+    {
+      "body_kg": 20,
+      "hip_deg": 15,
+      "hip_Nm": 6.9641221464566385,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 66.98729810778067
+    },
+    {
+      "body_kg": 20,
+      "hip_deg": 20,
+      "hip_Nm": 9.458760257158115,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 90.99255856655058
+    },
+    {
+      "body_kg": 20,
+      "hip_deg": 30,
+      "hip_Nm": 14.999831235638228,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 144.33756729740642
+    },
+    {
+      "body_kg": 20,
+      "hip_deg": 45,
+      "hip_Nm": 25.96681370965892,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 249.99999999999997
+    },
+    {
+      "body_kg": 16.7,
+      "hip_deg": 15,
+      "hip_Nm": 5.881043672568888,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 66.98729810778067
+    },
+    {
+      "body_kg": 16.7,
+      "hip_deg": 20,
+      "hip_Nm": 7.9873728098896954,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 90.99255856655058
+    },
+    {
+      "body_kg": 16.7,
+      "hip_deg": 30,
+      "hip_Nm": 12.665063807667224,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 144.33756729740642
+    },
+    {
+      "body_kg": 16.7,
+      "hip_deg": 45,
+      "hip_Nm": 21.920367291663077,
+      "vertical_h_mm": 250,
+      "rear_lateral_mm": 249.99999999999997
+    }
+  ]
+}

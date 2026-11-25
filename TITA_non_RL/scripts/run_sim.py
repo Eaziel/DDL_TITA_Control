@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import argparse
+from typing import TYPE_CHECKING
 
 from isaaclab.app import add_launcher_args, launch_simulation
 from isaaclab.utils import instantiate
@@ -24,11 +25,12 @@ import torch
 import warp as wp
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import AssetBaseCfg
-from isaaclab.assets.articulation import (
-    ArticulationCfg,
-    BaseArticulation,  # BaseArticulation：与其他后端（如Newton Mjwarp）共用的基类
-)
-from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
+from isaaclab.assets.articulation import ArticulationCfg
+from isaaclab.scene import InteractiveSceneCfg
+
+if TYPE_CHECKING:
+    from isaaclab.assets.articulation import BaseArticulation
+    from isaaclab.scene import InteractiveScene
 from isaaclab_physx.sim.spawners.materials import PhysxRigidBodyMaterialCfg
 
 # from isaaclab_newton.physics import NewtonCfg, MJWarpSolverCfg
@@ -106,7 +108,7 @@ class TITARobotSceneCfg(InteractiveSceneCfg):
     tita_robot = TITA_HWBR_CFG.replace(prim_path="{ENV_REGEX_NS}/TITA_Robot")
 
 
-def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
+def run_simulator(sim: sim_utils.SimulationContext, scene: "InteractiveScene"):
     sim_dt = sim.get_physics_dt()
 
     robot: BaseArticulation = scene[

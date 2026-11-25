@@ -1,15 +1,39 @@
-# mdp/rewards.py：任务特有的奖励计算
+# rewards.py：物理量怎样计算成每步奖励
 
-**阅读目标：** 读懂额外奖励函数怎样取接触/力矩数据，怎样用跨步速度计算加速度，及管理器为何调用类实例。
+内容纯AI生成，由人类要求生成，未经人类修改。源码核对：2026-11-02。
 
-源码目录：`Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/`。
-源码文件：[rewards.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py)。
+被解释文件：[mdp/rewards.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/rewards.py)。
 
-更新：2026-10-20。功率、加速度缓存及原生奖励管理器CPU检查通过；未推进物理。
+本文件生成自定义奖励项的原始数值，管理器再乘权重与策略周期，环境最后按旧TITA规则合成总分。读完应能解释接触计数、机械功率、动作变化和加速度分别在惩罚什么，以及带记忆的奖励类为何需要reset。
 
-## 1. 当前已有函数
+本文核对当前源码与本地 IsaacLab-main / Sim 6.2 调用关系；未代运行仿真或训练。
+
+## 1. 当前完整源码
 
 ```python
+# Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+import torch
+
+from isaaclab.managers import ManagerTermBase, RewardTermCfg, SceneEntityCfg
+from isaaclab.utils.math import wrap_to_pi
+
+from .actions import TitaJointAction
+
+if TYPE_CHECKING:
+    from isaaclab.assets import Articulation
+    from isaaclab.envs import ManagerBasedRLEnv
+    from isaaclab.sensors import ContactSensor
+
+
 def joint_pos_target_l2(env: ManagerBasedRLEnv, target: float, asset_cfg: SceneEntityCfg) -> torch.Tensor:
     """Penalize joint position deviation from a target value."""
     # extract the used quantities (to enable type-hinting)
@@ -18,17 +42,12 @@ def joint_pos_target_l2(env: ManagerBasedRLEnv, target: float, asset_cfg: SceneE
     joint_pos = wrap_to_pi(asset.data.joint_pos.torch[:, asset_cfg.joint_ids])
     # compute the reward
     return torch.sum(torch.square(joint_pos - target), dim=1)
-```
 
-该函数按asset_cfg选择关节位置、将角度wrap到(-pi,pi)，再计算相对target的平方误差和。本轮保留它；现有TITA奖励主要复用官方MDP函数，不需要把官方实现全部复制到这里。
 
-## 2. 当前已保存的接触计数函数
-
-```python
 def undesired_contacts_current(
-        env: ManagerBasedRLEnv,
-        threshold: float,
-        sensor_cfg: SceneEntityCfg,
+    env: ManagerBasedRLEnv,
+    threshold: float,
+    sensor_cfg: SceneEntityCfg,
 ) -> torch.Tensor:
     """Count selected bodies exceeding the current normal contact-force threshold."""
 
@@ -40,63 +59,15 @@ def undesired_contacts_current(
 
     # (N, B_selected, 3) -> (N, B_selected) -> (N,)
     force_magnitudes = torch.linalg.vector_norm(
-        selected_forces_w, dim=-1,
+        selected_forces_w,
+        dim=-1,
     )
     return torch.sum(
-        (force_magnitudes > threshold).float(), dim=1,
+        (force_magnitudes > threshold).float(),
+        dim=1,
     )
-```
 
-env是运行时环境对象；sensor_cfg由RewardsCfg的params传入。sensor_cfg.name选择scene.sensors中的contact_forces；body_names在配置解析阶段转成该传感器的body_ids。函数调用时直接用这些索引筛身体，不假定其顺序与关节顺序一致。
 
-| 代码与对象 | 张量形状/类型 | 本步意义 |
-| --- | --- | --- |
-| contact_sensor.data.net_normal_forces_w.torch | (N,B_all,3)，float | 每个传感器身体的世界系聚合法向力 |
-| forces_w[:,sensor_cfg.body_ids,:] | (N,B_selected,3) | 当前配置选择左右leg_3，B_selected=2 |
-| vector_norm(...,dim=-1) | (N,2) | 对每个身体的xyz向量求力模，单位N |
-| force_magnitudes>threshold | (N,2)，bool | 每个身体是否严格超过0.1 N |
-| .float()再sum(dim=1) | (N,)，float | 每个环境超阈值的身体数量，0/1/2 |
-
-最后一维为xyz，所以dim=-1计算单个身体的力模；计数时dim=1才把同一环境的多个身体合起来。函数不修改传感器数据，也不保存跨步状态。
-
-## 3. 怎样进入奖励流程
-
-```python
-    collision = RewTerm(
-        func=mdp.undesired_contacts_current,
-        weight=-1.0,
-        params={
-            "sensor_cfg": SceneEntityCfg(
-                "contact_forces", body_names=["left_leg_3", "right_leg_3"]
-            ),
-            "threshold": 0.1,
-        },
-    )
-```
-
-配置与mdp/__init__.pyi导出均已保存。RewardManager随后以func(env,**params)调用它，再乘weight与step_dt。返回2表示两条腿均超阈值，当前贡献为2*(-1)*0.01=-0.02。函数返回原始非负计数，配置决定惩罚权重。
-
-## 4. 与现有接触计算怎样对应
-
-旧Gym的_reward_collision同样读取当前力、严格比较0.1 N并按身体计数；Lab通用undesired_contacts取历史窗口最大值。Scene已有3次历史，因此补当前帧函数可避免把历史接触当作本次接触继续计数。
-
-终止函数illegal_contact_current最后用any，输出“有没有身体触发”的布尔值；本函数最后用sum，输出触发身体数量。它们分别服务结束条件和奖励统计，选择的身体及阈值也由各自cfg给出。
-
-Lab当前PhysX读数为法向力，旧Gym张量为合接触力；本轮对齐统计计算，不宣称实际力向量相同。聚合读数也未按碰撞对象过滤。函数CPU对照包含仅轮子受力、0/1/2条腿、阈值边界和历史反例；真实身体绑定与动力学尚待验证。
-
-完整Gym计算、Lab代码与输入差异见[08 Rewards](../../../../../../../docs/migration/08_rewards迁移.md)。公开名称登记见[__init__.pyi说明](__init__.pyi.md)。
-
-## 5. 当前明确读取的力接口
-
-```python
-    forces_w = contact_sensor.data.net_normal_forces_w.torch
-```
-
-当前源码已经使用上述入口。该属性返回每个身体的世界系聚合法向力；本地net_forces_w兼容getter会先警告后转到这里。最新保存函数在CPU替身上得到[0,1,2,0,1,0]且无兼容警告；未运行真实传感器。
-
-## 6. 已保存：带符号机械功率
-
-```python
 def joint_power_signed(
     env: ManagerBasedRLEnv,
     asset_cfg: SceneEntityCfg | None = None,
@@ -104,30 +75,28 @@ def joint_power_signed(
     """Sum signed actuator mechanical power over the selected joints."""
     if asset_cfg is None:
         asset_cfg = SceneEntityCfg("robot")
-        
+
     asset: Articulation = env.scene[asset_cfg.name]
     torques = asset.actuators.applied_effort.torch[:, asset_cfg.joint_ids]
     joint_vel = asset.data.joint_vel.torch[:, asset_cfg.joint_ids]
     return torch.sum(torques * joint_vel, dim=1)
-```
 
-None默认值允许配置不传asset_cfg；只有未传入时才构造robot的默认选择，显式传入的配置保留。当前用户已保存这个版本；此前必填参数错误与Ruff B008处理经过见末尾原问题Q/A。函数输出逐环境的带符号关节机械功率(N,)，限幅后力矩与同一关节的速度相乘再求和，不包含电气损耗模型。
 
-历史None方案通过Ruff及原生管理器CPU空参数/显式选关节检查，当前文件AST核对通过；真实任务未运行。完整来源与单位见[08功率说明](../../../../../../../docs/migration/08_rewards迁移.md#4-功率是怎样的物理量)。
+def action_rate_clipped_l2(env: ManagerBasedRLEnv) -> torch.Tensor:
+    """按旧Gym的裁剪动作，计算每个环境相邻策略步的变化平方和。"""
+    penalty = torch.zeros(env.num_envs, device=env.device)
+    for name in ("leg_position", "wheel_effort"):
+        term = env.action_manager.get_term(name)
+        if not isinstance(term, TitaJointAction):
+            raise TypeError("Clipped action-rate requires TitaJointAction terms.")
 
-## 7. 已保存：持有上一策略步速度的奖励项类
+        # 分别得到(N,6)/(N,2)的差值，再对关节维求和，结果均为(N,)。
+        delta = term.clipped_actions - term.previous_clipped_actions
+        penalty += torch.sum(torch.square(delta), dim=1)
 
-当前文件已有以下相关导入：
+    return penalty
 
-```python
-from collections.abc import Sequence
 
-from isaaclab.managers import ManagerTermBase, RewardTermCfg, SceneEntityCfg
-```
-
-当前保存的类为：
-
-```python
 class JointAccelerationPenalty(ManagerTermBase):
     """Penalize joint acceleration estimated between policy steps."""
 
@@ -152,167 +121,145 @@ class JointAccelerationPenalty(ManagerTermBase):
         self._previous_joint_vel[env_ids, :] = self._robot.data.joint_vel.torch[env_ids, :]
 ```
 
-类继承ManagerTermBase，属于一个奖励条目。RewardsCfg.func提供类，原生RewardManager创建并持有它。__init__保存robot引用并用zeros_like分配独立(N,8)速度缓存；__call__让实例能像函数一样被调用，每策略步返回(N,)的加速度平方和；reset由管理器按结束环境调用。
+## 2. 先把一项原始值、加权贡献与总奖励分开
 
-__call__中joint_vel是资产当前数据视图。相减和平方生成新结果；在penalty计算完后copy_将当前值复制进已有缓存。这样下一次物理数据变化不会改写前次参考；若直接把_previous_joint_vel赋成joint_vel，两者会引用同一份变化的数据。
+本文件每个奖励函数返回 `(N,)`，一台机器人一个数。记第i项原始值为 $f_i(s_t,a_t)$，配置权重为 $w_i$，策略周期为 $\Delta t=0.01s$，Lab默认贡献为：
 
-这里的分母env.step_dt为0.01 s。原生joint_acc按物理步更新，本项主动保存策略边界速度，对应旧last_dof_vel/self.dt。旧last-current与这里current-last在平方后相同。
+$$
+r_{i,t}=\Delta t\,w_i f_i(s_t,a_t),\qquad
+r_t^{Lab}=\sum_i r_{i,t}.
+$$
 
-reset接受None、slice、Tensor或Sequence。全量None转slice(None)，然后[env_ids,:]只覆盖对应环境的全部关节。原生重置Events先写机器人状态，RewardManager再重置该项；因此缓存取重置后的速度，当前任务为0。部分重置不触及其他环境。
+例如某惩罚函数返回4、权重−0.05，本步贡献为−0.002。函数名字叫reward不要求函数自己返回正收益：平方误差通常非负，负权重把它变成扣分。
 
-该类每策略步只应由RewardManager调用一次；后续奖励裁剪须复用已经得到的贡献。当前保存类的CPU检查已覆盖连续策略步、缓存无别名、部分重置和原生全量slice重置。当前用户已在env_ids注解中补上slice。
+乘dt使按时间累计的量在改变控制频率时仍能保留相近积分口径。对连续评分率 $g(t)$，$\sum_t g_t\Delta t$ 是时间积分的离散近似。具体权重仍是任务设计参数；碰撞和失败这样的离散事件也沿用了框架的dt缩放，不要把其数值自动解释成自然物理定律。
 
-## 8. 已保存的配置与导出
+本地 `RewardManager._step_reward[:,i]` 保存 $w_if_i$，总奖励与回合累计才乘dt。自定义环境需要从这一内部列取出termination项，再乘0.01，详见 [环境说明](../tita_velocity_env.py.md)。
 
-```python
-    powers = RewTerm(
-        func=mdp.joint_power_signed,
-        weight=-2.0e-5,
-    )
+## 3. 默认复用项如何提供主要任务目标
 
-    dof_acc = RewTerm(
-        func=mdp.JointAccelerationPenalty,
-        weight=-2.5e-7,
-    )
-```
+速度跟踪等普通项直接复用Lab。当前配置包含平移/转向跟踪、横向角速度、机身倾斜、离地高度，以及本文件的动作变化、碰撞、功率和加速度等项。
 
-两项已位于RewardsCfg内termination之前，__init__.pyi也已登记两个名称及导入。实际dof_acc代码已显式写func=，见[导出说明](__init__.pyi.md)。完整Gym公式、物理意义、步长和CPU验证见[08第8—9节](../../../../../../../docs/migration/08_rewards迁移.md#4-功率是怎样的物理量)。单项计算由管理器完成；当前最终奖励合成已接入现有step，历史推进保留。
+平移跟踪评分为：
 
-## 动作变化惩罚读取裁剪动作
+$$
+f_{track}=\exp\left(-\frac{\|\boldsymbol v^{cmd}_{xy}-\boldsymbol v^b_{xy}\|_2^2}{\sigma^2}\right),
+\qquad \sigma=0.5.
+$$
 
-action_rate_clipped_l2及配套动作缓存均已保存，读取两组动作项的clipped_actions与previous_clipped_actions，返回各关节平方差之和(N,)。完整缓存数据流见[actions.py说明](actions.py.md)；公式与管理器的早期CPU证据见09。
+$\exp(x)=e^x$；误差为零时评分为1，误差变大时趋近0。这里std是控制误差评分宽度的参数，与 `policy.std` 的动作采样标准差分别属于两项计算。转向评分只比较命令第三列和实际z角速度。
 
-## 补充问答
+本文件主要补足不能直接照搬默认口径的项。以下按数据走向理解每一项。
 
-**Q：**
+## 4. 关节位置偏差平方：`joint_pos_target_l2`
 
-> `float()` 没有代码提示。
+先读选中关节角，`wrap_to_pi` 把相差整圈的角折回主区间，再减同一个标量target，平方并沿关节列相加：
 
-**A：** 此处是torch.Tensor.float方法，等价于.to(torch.float32)。阈值比较得到(N,2)的bool张量，转换把True/False变为1.0/0.0，形状与设备保留；随后sum(dim=1)得到每环境的浮点计数。布尔张量直接sum也能计数，但默认产生整数结果。本地Torch 2.11的类型存根有float方法，CPU转换核对通过。用户随后报告给force_magnitudes添加: torch.Tensor后补全恢复，并要求忽略此问题；不继续检查或修改Pylance设置。
+$$
+f_{pos,n}=\sum_{j\in\mathcal J}
+\big(\operatorname{wrap}(q_{n,j})-q^{target}\big)^2.
+$$
 
-```python
-mask = torch.tensor([[True, False], [True, True], [False, False]])
-mask.float()               # [[1., 0.], [1., 1.], [0., 0.]]，float32
-mask.float().sum(dim=1)   # [1., 2., 0.]
-```
+`l2` 在该函数中表示平方误差和，没有再开平方。`torch.square(x)`逐元素平方，`torch.sum(...,dim=1)`把 `(N,J)` 沿关节维变成 `(N,)`。例如偏差 `[0.1,-0.2]`，返回0.05。
 
-依据：[PyTorch 2.11 Tensor.float](https://docs.pytorch.org/docs/2.11/generated/torch.Tensor.float.html)。接触读数为何归到轮子或小腿、软件传感器如何创建，见[02 Scene末尾原问题问答](../../../../../../../docs/migration/02_scene迁移.md#补充问答)。PPO与动作变化惩罚的关系见[08末尾原问题问答](../../../../../../../docs/migration/08_rewards迁移.md#补充问答)。
+`SceneEntityCfg` 的 `joint_ids` 是管理器根据关节名解析的编号，函数不按名字逐个搜索。当前 `RewardsCfg` 没有启用本函数对应项；函数存在和被配置使用是两件需要分别核实的事实。
 
-2026-10-18用户追加的“观测连续与action_rate”“P=Fv/P=UI”“RoboMaster电功率限制”三个原问题及完整回答，同样归在[08末尾Q/A](../../../../../../../docs/migration/08_rewards迁移.md#补充问答)。其中joint_power_signed只计算关节tau*dq；静止出力仍可能通电发热，当前IdealPD没有电气/损耗模型，不能由该指标推断电池输入或保证不超功率上限。加速度类与功率None接口均已保存，电功率模型仍未实现。
+## 5. 小腿接触计数：`undesired_contacts_current`
 
-**Q：**
-
-> 我想问，为啥“原生 RewardManager 自动调用它的 reset()”？？
-
-**A：** 由框架中的显式调用链负责。首先，奖励管理器识别已经创建好的类项实例：
+传感器读取 `(N,B_all,3)` 的世界系聚合法向接触力，选择左右小腿 `left_leg_3/right_leg_3` 后为 `(N,2,3)`。`vector_norm(...,dim=-1)` 得到每个小腿的合力大小 `(N,2)`。
 
 ```python
-if isinstance(term_cfg.func, ManagerTermBase):
-    self._class_term_cfgs.append(term_cfg)
+return torch.sum((force_magnitudes > threshold).float(), dim=1)
 ```
 
-term_cfg.func此时是JointAccelerationPenalty实例；继承ManagerTermBase使它满足判断，被登记进管理器的类项列表。环境重置指定环境时执行：
+比较产生布尔值，`.float()`把False/True变成0/1，再对两条小腿求和。结果为0、1或2，表示本步超阈值的小腿数，不是接触点数，也不是力的总大小。当前threshold=0.1N、weight=−1，一条小腿超阈值，本步扣0.01。
+
+“聚合法向力”和w坐标的完整推导见 [接触与终止说明](terminations.py.md)。本项没有筛选碰撞对方；地面或其他物体造成的小腿法向接触均可能计入。它读取当前字段，不沿传感器三帧历史取最大值。
+
+## 6. 机械功率：`joint_power_signed`
+
+函数读取执行器限幅后的驱动力矩与实际关节角速度，并计算：
+
+$$
+P_n=\sum_j\tau^{applied}_{n,j}\dot q_{n,j}.
+$$
+
+旋转机械做功满足 $\mathrm dW=\tau\,\mathrm dq$，除以时间得到 $P=\tau\dot q$。这里q单位rad，角速度rad/s，力矩N·m，功率单位W。rad在量纲上无量纲，但表达角度时仍保留rad说明数值意义。
+
+`torques * joint_vel` 是逐元素乘法，同一行同一关节相乘；随后 `sum(dim=1)` 把关节功率相加。它没有进行矩阵乘法，也没有先取绝对值。
+
+例如两关节力矩 `[2,-1]`、角速度 `[3,4]`，各自功率 `[6,-4]`W，总和2W。正功率表示驱动力矩沿运动方向输出机械能，负功率表示驱动力矩抵抗运动。不同关节正负会抵消；当前函数保留这一带符号口径。若功率和为负，配合负权重甚至会产生正贡献，这一结果直接来自当前公式。
+
+本项没有电压、电流、绕组损耗、驱动器损耗、电机效率或再生回收模型。不能据此把结果当作整机输入电功率，更不能直接用于RoboMaster式整机电功率上限验证。机械功率积分可表达机械功，但转换成实际耗电仍需要额外模型与实测参数。
+
+`asset_cfg=None`时才在函数内部创建 `SceneEntityCfg("robot")`，默认选择整机。显式传入选择时则使用选中关节。本地 `asset.actuators.applied_effort` 是执行器输出的限幅后驱动力矩，不是把接触约束、被动结构等全部广义力合并后的总力矩。
+
+## 7. 相邻动作变化：`action_rate_clipped_l2`
+
+当前读取两个自定义动作项已经保存的裁剪缓存，计算：
+
+$$
+f_{rate,n}=\sum_{j=1}^{8}(c_{t,n,j}-c_{t-1,n,j})^2.
+$$
+
+$c_t$ 是原始动作裁剪到±100后的结果，尚未FIR、缩放、延迟或PD。两个动作项分别提供6列与2列；循环把两组平方和加到 `(N,)` 的 `penalty`。
+
+本函数没有除以dt，因此名称中的rate在当前代码中表示相邻动作变化惩罚，不是严格数值微分 $\mathrm da/\mathrm dt$。例如一个动作从0变到0.5、其余不变，原始惩罚为0.25，乘权重−0.01和dt后为−0.000025。
+
+环境状态通常随时间连续变化，惩罚相邻动作大幅变化可以鼓励控制指令变化较小；碰撞、重置、命令切换与噪声仍可能使输入突变，所以连续物理过程不构成“动作必然平滑”的证明。
+
+PPO的近端约束比较的是更新前后策略在同一批数据上的概率分布。这里比较同一机器人相邻时间的两个动作值。一个限制学习更新幅度，一个为环境中的动作时间变化评分，二者评价的对象和时间索引不同。FIR又是直接改变执行的目标；奖励惩罚只通过未来训练影响策略偏好。
+
+`isinstance(term,TitaJointAction)`保证拿到的对象具有这些缓存，失败抛 `TypeError`。属性名相近不保证任意默认动作项都能替换进来。
+
+## 8. 加速度惩罚为什么需要一个类
+
+### 8.1 差分需要记住上一次速度
+
+`JointAccelerationPenalty` 保存 `_previous_joint_vel`，形状与全机关节速度相同。每策略步末计算：
+
+$$
+\widehat{\ddot q}_{t,n,j}
+=\frac{\dot q_{t,n,j}-\dot q_{t-1,n,j}}{0.01},\qquad
+f_{acc,n}=\sum_j\widehat{\ddot q}_{t,n,j}^{\,2}.
+$$
+
+“估计”表示用两个离散时刻的差替代连续导数。当前口径是0.01秒策略步差分，不是0.0025秒物理步差分。若某关节速度1.0→1.2rad/s，加速度估计20rad/s²，平方贡献400。
+
+函数先计算，再 `self._previous_joint_vel.copy_(joint_vel)` 保存这次速度。若先复制，速度差就会变成零。`copy_`不会让前面已经计算出的平方和跟着消失。
+
+### 8.2 类、实例和`__call__`怎样接线
+
+配置 `func=mdp.JointAccelerationPenalty` 提供类。Lab先构造实例，再把实例存回 `term_cfg.func`。之后管理器的 `term_cfg.func(env)` 调用实例 `__call__`，返回原始惩罚；并不是每个step重新执行构造函数。
+
+这个类不是神经网络层，缓存也不是可学习权重。`__call__`是Python调用协议；Torch的nn.Module另外把实例调用接到forward。看到括号调用，应先确定对象属于哪一类。
+
+### 8.3 谁调用reset，为什么在机器人重置之后
+
+父环境先执行reset事件，写入新关节位置与速度，之后 `RewardManager.reset(env_ids)` 遍历其登记的类奖励实例，调用这些实例的 `reset`。本类因此将被重置行的速度参考改成新状态：
 
 ```python
-info = self.reward_manager.reset(env_ids)
+self._previous_joint_vel[env_ids, :] = self._robot.data.joint_vel.torch[env_ids, :]
 ```
 
-RewardManager.reset内部再执行：
+这样下一步比较的是“新回合上一步速度”与新速度，避免用上一回合末速度差分。`env_ids=None`时转换为 `slice(None)` 选择全部行。历史缓存、cost类有各自的reset路径；Python不会因为方法同名就遍历所有对象。
 
-```python
-for term_cfg in self._class_term_cfgs:
-    term_cfg.func.reset(env_ids=env_ids)
-```
+## 9. 这些项最后怎样进入训练奖励
 
-此处func持有的是实例，因此调用到你写的reset。该方法把选中环境的_previous_joint_vel同步成重置后的关节速度，避免把上个回合终点当作新回合的差分参考；其余并行环境保留自己的缓存。父类先执行reset Event写入机器人状态，再重置奖励管理器，时序正好满足这项需求。
+配置权重决定正负与大小，RewardManager先得到各项之和。`TitaVelocityEnv.step` 再实现：
 
-源码：[登记类项](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)、[环境调用](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/manager_based_rl_env.py)、[管理器遍历reset](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)。普通函数没有被登记进这个列表，ManagerTermBase的默认reset为空操作；有状态的自定义类重写它来同步自己的状态。
+$$
+r_t=\max\left(0,\sum_{i\ne termination}\Delta t\,w_if_{i,t}\right)
++\Delta t\,w_{termination}f_{termination,t}.
+$$
 
-**Q：**
+先把普通项合计夹到非负，再加失败项；没有把每个负项分别清零。例如普通合计−0.3、失败项−2，最终是−2。当前失败权重−200、dt0.01，所以失败一次的贡献是−2，而非−200。
 
-> 以及，__call__干啥用了？？python的类名，在这里，是不是可以看作func就是构造函数__init__()？
+回报是训练端把许多步奖励按折扣累计得到的量，reward critic学习估计这类未来回报。本文只描述环境本步原始项和最终奖励；当前短检查尚未进行这一步学习。
 
-**A：** 先看同一个类在两个时刻的调用：
+## 源码与API依据
 
-```python
-term_class = mdp.JointAccelerationPenalty  # 保存类对象，不创建实例
-term = term_class(cfg=term_cfg, env=env)   # 创建实例，执行初始化__init__
-values = term(env)                       # 调用已有实例，执行__call__
-term.reset(env_ids=env_ids)               # 显式调用该实例的reset方法
-```
-
-类对象可以被调用来创建实例。__init__初始化该实例，并不返回奖励值；严格说对象的创建由__new__负责。实例实现__call__以后也能写成term(env)，该调用执行type(term).__call__(term, env)，不会重新创建实例或再次执行__init__。于是同一对象可以保留跨步速度缓存：第一次调用算分并存当前速度，第二次继续利用这份缓存。
-
-Lab实际创建类项的语句是：
-
-```python
-if inspect.isclass(term_cfg.func):
-    term_cfg.func = term_cfg.func(cfg=term_cfg, env=self._env)
-```
-
-右边先以类对象创建实例，左边再把实例写回管理器内部的配置副本。ManagerBase会deepcopy配置，因此不要理解成用户最初的RewardsCfg对象也必然被同样改写。
-
-随后每个策略步计算奖励：
-
-```python
-value = term_cfg.func(self._env, **term_cfg.params) * term_cfg.weight * dt
-```
-
-函数型条目直接运行函数；类项运行已有实例的__call__。两者都返回(N,)指标，管理器随后统一乘权重和时间。这就是func这个字段能接普通函数，也能接JointAccelerationPenalty类的原因。此前省略func=的写法只是把该类作为第一位置参数传入；当前用户已显式写func=。
-
-源码：[创建类实例](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/manager_base.py)、[每步调用](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)、[配置字段](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/manager_term_cfg.py)。语言语义：[Python __init__](https://docs.python.org/3.12/reference/datamodel.html#object.__init__)、[Python __call__](https://docs.python.org/3.12/reference/datamodel.html#object.__call__)。
-
-**Q：**
-
-> 我没搞懂啊，__call__这个方法也是python给类的内置方法吗？因为有代码提示。
-> 到底为啥会调用call啊？？你给的这句看起来就普普通通啊，而且之前func传的不是类吗？
-
-**A：** __call__是Python规定的特殊方法名。Python见到“实例后面加括号”，会查找实例类型上的__call__来执行。一个最小例子：
-
-```python
-class Twice:
-    def __call__(self, x):
-        return 2 * x
-
-obj = Twice()  # 调用类，创建实例
-obj(3)         # 调用实例，进入Twice.__call__，结果为6
-```
-
-对这个例子，obj(3)相当于Twice.__call__(obj,3)。不用显式写出方法名，括号本身就触发调用协议。普通实例若自身的类和父类都不提供__call__，则不能这样调用；Python的object基类本身也没有该实现。[Python官方调用协议](https://docs.python.org/3.12/reference/datamodel.html#object.__call__)。
-
-当前ManagerTermBase已经定义__call__占位方法，默认抛NotImplementedError；JointAccelerationPenalty重写它，所以编辑器也能从继承关系提供提示。依据：[本地基类](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/manager_base.py)。
-
-func只是一个字段名，当前持有的对象决定括号含义：
-
-```python
-term_cfg.func = mdp.JointAccelerationPenalty   # 当前持有类对象
-term_cfg.func = term_cfg.func(cfg=term_cfg, env=env)  # 创建实例，改为持有实例
-value = term_cfg.func(env)                    # 调用这个实例的__call__
-```
-
-管理器实际把实例放在内部配置副本，之后不会每步重新构造。在最后一行中，__call__的self是奖励实例，env是传入的环境对象。变量名func不会强制值必须是普通函数。
-
-**Q：**
-
-> 我感觉你可以很清晰的讲一些东西，就是说，什么叫“登记”之类的，肯定有一句代码能对应上？
-
-**A：** 这里登记具体就是把配置对象引用存进管理器的列表，方便之后遍历；不是Python关键字。本地原代码：
-
-```python
-self._term_names.append(term_name)
-self._term_cfgs.append(term_cfg)
-if isinstance(term_cfg.func, ManagerTermBase):
-    self._class_term_cfgs.append(term_cfg)
-```
-
-_term_cfgs保存所有奖励条目的配置，compute遍历它们计算；_class_term_cfgs额外保存类项配置，reset遍历它们调用实例的reset。对类项，同一配置对象可被两个列表引用，配置的func持有同一个奖励实例。源码：[保存与分类](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)、[计算循环](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)、[重置循环](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)。
-
-观察项也有对应的保存语句self._group_obs_term_cfgs[group_name].append(term_cfg)，见[ObservationManager](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/observation_manager.py)。当前保存进去的是mdp.proprio_history这个观测函数；ProprioHistory缓存对象由环境另行持有，其reset调用链见[环境说明末尾Q/A](../tita_velocity_env.py.md#补充问答)。框架不会扫描整个程序去寻找所有名字为reset的方法。
-
-**Q：**
-
-> 因为ruff插件警告让我写到函数体里，我不想看到黄下划线。
-
-**A：** 用插件自带Ruff和本工程pyproject.toml复现后，之前默认值SceneEntityCfg("robot")触发B008；第6节None+if版本通过现有全部lint规则。默认值表达式在定义函数时执行一次，因此Ruff提示共享默认对象；None分支在每次未传参数的调用中创建默认配置。关键是保留形参的= None，并且只有None时才构造，不覆盖显式传入的选择。[官方B008](https://docs.astral.sh/ruff/rules/function-call-in-default-argument/)。
-
-当前空params和显式asset_cfg选joint_ids=[0]均通过原生管理器参数准备/compute的CPU替身检查，功率分别[2,-6,0] W与[8,-6,0] W。测试只运行临时副本，未修改源码、未导入真实任务或运行仿真。证据：`/tmp/tita_call_reset_ruff_20261019_hr1anlng/result.json`。
+- [RewardManager：调用、weight与dt、类reset](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/reward_manager.py)
+- [Lab默认速度/姿态奖励](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/envs/mdp/rewards.py)
+- [ManagerBase：类变成实例](/home/eaziel/IsaacLab-main/source/isaaclab/isaaclab/managers/manager_base.py)
+- [PyTorch sum](https://docs.pytorch.org/docs/2.11/generated/torch.sum.html)

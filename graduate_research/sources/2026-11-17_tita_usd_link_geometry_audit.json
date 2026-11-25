@@ -1,0 +1,446 @@
+{
+  "date": "2026-11-17",
+  "scope": "Read-only composed USD inspection with pxr; no SimulationApp, stage mutation, save, or runtime dynamics",
+  "path": "D:\\BaiduSyncdisk\\1ACrutial_Files\\Ubuntu_2404_projects\\isaaclab_ws\\Tita_HWBR\\Tita_Lab\\src\\Tita_Lab\\assets\\data\\robots\\tita\\usd\\tita.usd",
+  "sha256_before": "e2cd3e54cc9ae9ed5c8d2898da630bd9d3af3da383993d6f97fc76a5cc8cd7f1",
+  "sha256_after": "e2cd3e54cc9ae9ed5c8d2898da630bd9d3af3da383993d6f97fc76a5cc8cd7f1",
+  "meters_per_unit": 1.0,
+  "kilograms_per_unit": 1.0,
+  "up_axis": "Z",
+  "layers": [
+    "D:\\BaiduSyncdisk\\1ACrutial_Files\\Ubuntu_2404_projects\\isaaclab_ws\\Tita_HWBR\\Tita_Lab\\src\\Tita_Lab\\assets\\data\\robots\\tita\\usd\\tita.usd"
+  ],
+  "variant_sets": [],
+  "joints": {
+    "joint_left_leg_1": {
+      "prim": "/TITARobot/Physics/joint_left_leg_1",
+      "body0": "/TITARobot/Geometry/base_link",
+      "body1": "/TITARobot/Geometry/base_link/left_leg_1",
+      "local_pos0": [
+        0.0,
+        0.08950000256299973,
+        0.0
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        0.0,
+        0.08950000256299973,
+        0.0
+      ],
+      "world_axis": [
+        0.9999999999863434,
+        3.695485700061507e-06,
+        -3.6954857001170183e-06
+      ],
+      "anchor0_anchor1_gap_m": 2.562999729116555e-09,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 60.0
+    },
+    "joint_left_leg_2": {
+      "prim": "/TITARobot/Physics/joint_left_leg_2",
+      "body0": "/TITARobot/Geometry/base_link/left_leg_1",
+      "body1": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2",
+      "local_pos0": [
+        0.14259999990463257,
+        0.0,
+        -5.293955920339377e-23
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        -5.269762604842578e-07,
+        0.23209999990365884,
+        6.491584043743618e-13
+      ],
+      "world_axis": [
+        -7.39098505674766e-06,
+        0.9999999999658584,
+        -3.6954674911742456e-06
+      ],
+      "anchor0_anchor1_gap_m": 9.536743617098614e-11,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 60.0
+    },
+    "joint_left_leg_3": {
+      "prim": "/TITARobot/Physics/joint_left_leg_3",
+      "body0": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2",
+      "body1": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3",
+      "local_pos0": [
+        0.20000000298023224,
+        -2.117582368135751e-22,
+        5.551115123125783e-17
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        -1.2660697700737853e-06,
+        0.23209926090005445,
+        -0.20000000297685178
+      ],
+      "world_axis": [
+        -7.39098505674766e-06,
+        0.9999999999658584,
+        -3.6954674911187345e-06
+      ],
+      "anchor0_anchor1_gap_m": 2.9802322277078167e-09,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 60.0
+    },
+    "joint_left_leg_4": {
+      "prim": "/TITARobot/Physics/joint_left_leg_4",
+      "body0": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3",
+      "body1": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_4",
+      "local_pos0": [
+        0.20000000298023224,
+        2.117582368135751e-22,
+        0.05139999836683273
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        -2.385059888143647e-06,
+        0.2834985201661714,
+        -0.40000019292114347
+      ],
+      "world_axis": [
+        -7.39098505674766e-06,
+        0.9999999999658584,
+        -3.6954674911187345e-06
+      ],
+      "anchor0_anchor1_gap_m": 3.3983848064088704e-09,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 15.0
+    },
+    "joint_right_leg_1": {
+      "prim": "/TITARobot/Physics/joint_right_leg_1",
+      "body0": "/TITARobot/Geometry/base_link",
+      "body1": "/TITARobot/Geometry/base_link/right_leg_1",
+      "local_pos0": [
+        0.0,
+        -0.08950000256299973,
+        0.0
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        0.0,
+        -0.08950000256299973,
+        0.0
+      ],
+      "world_axis": [
+        0.9999999999863434,
+        3.695485700061507e-06,
+        -3.6954857001170183e-06
+      ],
+      "anchor0_anchor1_gap_m": 2.562999729116555e-09,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 60.0
+    },
+    "joint_right_leg_2": {
+      "prim": "/TITARobot/Physics/joint_right_leg_2",
+      "body0": "/TITARobot/Geometry/base_link/right_leg_1",
+      "body1": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2",
+      "local_pos0": [
+        -0.14259999990463257,
+        0.0,
+        5.293955920339377e-23
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        5.269762604842578e-07,
+        -0.23209999990365884,
+        -6.491584043743618e-13
+      ],
+      "world_axis": [
+        -7.39098505674766e-06,
+        0.9999999999658584,
+        -3.6954674911742456e-06
+      ],
+      "anchor0_anchor1_gap_m": 9.536743617098614e-11,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 60.0
+    },
+    "joint_right_leg_3": {
+      "prim": "/TITARobot/Physics/joint_right_leg_3",
+      "body0": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2",
+      "body1": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3",
+      "local_pos0": [
+        0.20000000298023224,
+        0.0,
+        -8.326672684688674e-17
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        -2.1211724840041084e-07,
+        -0.23210073909799825,
+        -0.20000000297815007
+      ],
+      "world_axis": [
+        -7.39098505674766e-06,
+        0.9999999999658584,
+        -3.6954674911187345e-06
+      ],
+      "anchor0_anchor1_gap_m": 2.9802322277083304e-09,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 60.0
+    },
+    "joint_right_leg_4": {
+      "prim": "/TITARobot/Physics/joint_right_leg_4",
+      "body0": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3",
+      "body1": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_4",
+      "local_pos0": [
+        0.20000000298023224,
+        2.117582368135751e-22,
+        -0.05139999836683273
+      ],
+      "local_pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "world_anchor_m": [
+        -5.713141267780437e-07,
+        -0.2835014765620369,
+        -0.39999981302839577
+      ],
+      "world_axis": [
+        -7.39098505674766e-06,
+        0.9999999999658584,
+        -3.6954674911187345e-06
+      ],
+      "anchor0_anchor1_gap_m": 3.3983848281015186e-09,
+      "drive_type": "force",
+      "drive_max_torque_Nm": 15.0
+    }
+  },
+  "bodies": [
+    {
+      "prim": "/TITARobot/Geometry/base_link",
+      "mass_kg": 13.199999809265137,
+      "mass_authored": true,
+      "local_com": [
+        0.020452000200748444,
+        3.545700110407779e-06,
+        0.018710000440478325
+      ],
+      "world_com_m": [
+        0.020452000200748444,
+        3.545700110407779e-06,
+        0.018710000440478325
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/left_leg_1",
+      "mass_kg": 2.063999891281128,
+      "mass_authored": true,
+      "local_com": [
+        0.0016024999786168337,
+        5.0252998335054144e-05,
+        0.0006380000268109143
+      ],
+      "world_com_m": [
+        0.0006379942904956826,
+        0.09110250233632632,
+        5.025064062203031e-05
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2",
+      "mass_kg": 3.098400115966797,
+      "mass_authored": true,
+      "local_com": [
+        0.021763000637292862,
+        0.001906899968162179,
+        -0.0278680007904768
+      ],
+      "world_com_m": [
+        -0.0019073013968418716,
+        0.20423190469060204,
+        -0.021762890604116604
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3",
+      "mass_kg": 0.5724400281906128,
+      "mass_authored": true,
+      "local_com": [
+        0.09534800052642822,
+        0.011698000133037567,
+        0.001838000025600195
+      ],
+      "world_com_m": [
+        -0.011699632142464252,
+        0.2339368221079779,
+        -0.29534796408411623
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/left_leg_1/left_leg_2/left_leg_3/left_leg_4",
+      "mass_kg": 1.5094000101089478,
+      "mass_authored": true,
+      "local_com": [
+        -2.266999899802613e-06,
+        -1.6471000208184705e-06,
+        -0.0009561600163578987
+      ],
+      "world_com_m": [
+        -7.308845264215817e-07,
+        0.2825423618035757,
+        -0.3999979194136461
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/right_leg_1",
+      "mass_kg": 2.063999891281128,
+      "mass_authored": true,
+      "local_com": [
+        -0.0016024999786168337,
+        5.0252998335054144e-05,
+        0.0006380099803209305
+      ],
+      "world_com_m": [
+        0.0006380160880372095,
+        -0.09110249762084867,
+        5.025064057065713e-05
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2",
+      "mass_kg": 3.0987000465393066,
+      "mass_authored": true,
+      "local_com": [
+        0.021763000637292862,
+        0.0019064999651163816,
+        0.027873000130057335
+      ],
+      "world_com_m": [
+        -0.0019062594221792661,
+        -0.20422709438586306,
+        -0.021763096595949955
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3",
+      "mass_kg": 0.5724400281906128,
+      "mass_authored": true,
+      "local_com": [
+        0.09534800052642822,
+        0.011698000133037567,
+        -0.001838000025600195
+      ],
+      "world_com_m": [
+        -0.01169855102068113,
+        -0.23393917794114957,
+        -0.29534795050087587
+      ]
+    },
+    {
+      "prim": "/TITARobot/Geometry/base_link/right_leg_1/right_leg_2/right_leg_3/right_leg_4",
+      "mass_kg": 1.5094000101089478,
+      "mass_authored": true,
+      "local_com": [
+        -2.3797999801900005e-06,
+        -1.5854000139370328e-06,
+        0.0009559500031173229
+      ],
+      "world_com_m": [
+        1.0070292924743516e-06,
+        -0.2825455281715962,
+        -0.3999974337867183
+      ]
+    }
+  ],
+  "mass_sum_kg": 27.688779830932617,
+  "measurements": [
+    {
+      "side": "left",
+      "measurement": "HIP to upper-leg joint",
+      "center_distance_m": 0.14259999734163284,
+      "distance_perpendicular_to_latter_axis_m": 7.452569545333308e-07,
+      "signed_axial_offset_m": 0.14259999733968542,
+      "axis_parallel_abs_dot": 3.695485700164118e-06
+    },
+    {
+      "side": "left",
+      "measurement": "upper-leg joint to knee",
+      "center_distance_m": 0.20000000298023188,
+      "distance_perpendicular_to_latter_axis_m": 0.2000000029802319,
+      "signed_axial_offset_m": 9.536748715875375e-11,
+      "axis_parallel_abs_dot": 1.0
+    },
+    {
+      "side": "left",
+      "measurement": "knee to rear-wheel joint",
+      "center_distance_m": 0.20649929741311568,
+      "distance_perpendicular_to_latter_axis_m": 0.2,
+      "signed_axial_offset_m": 0.05139999836683268,
+      "axis_parallel_abs_dot": 1.0
+    },
+    {
+      "side": "right",
+      "measurement": "HIP to upper-leg joint",
+      "center_distance_m": 0.14259999734163284,
+      "distance_perpendicular_to_latter_axis_m": 7.452569545333308e-07,
+      "signed_axial_offset_m": -0.14259999733968542,
+      "axis_parallel_abs_dot": 3.695485700164118e-06
+    },
+    {
+      "side": "right",
+      "measurement": "upper-leg joint to knee",
+      "center_distance_m": 0.20000000298023257,
+      "distance_perpendicular_to_latter_axis_m": 0.2000000029802326,
+      "signed_axial_offset_m": -9.536752395852366e-11,
+      "axis_parallel_abs_dot": 1.0
+    },
+    {
+      "side": "right",
+      "measurement": "knee to rear-wheel joint",
+      "center_distance_m": 0.20649929741311568,
+      "distance_perpendicular_to_latter_axis_m": 0.2,
+      "signed_axial_offset_m": -0.05139999836683265,
+      "axis_parallel_abs_dot": 1.0
+    }
+  ],
+  "upper_leg_com_to_axis": [
+    {
+      "body": "left_leg_2",
+      "mass_kg": 3.098400115966797,
+      "com_radius_to_upper_joint_axis_m": 0.02184638332144178
+    },
+    {
+      "body": "right_leg_2",
+      "mass_kg": 3.0987000465393066,
+      "com_radius_to_upper_joint_axis_m": 0.021846348410107692
+    }
+  ],
+  "runtime_asset_config_readonly": {
+    "path": "D:\\BaiduSyncdisk\\1ACrutial_Files\\Ubuntu_2404_projects\\isaaclab_ws\\Tita_HWBR\\Tita_Lab\\src\\Tita_Lab\\assets\\tita.py",
+    "leg_effort_limits_Nm": 60,
+    "wheel_effort_limits_Nm": 15,
+    "note": "configuration read only; no runtime was launched"
+  }
+}

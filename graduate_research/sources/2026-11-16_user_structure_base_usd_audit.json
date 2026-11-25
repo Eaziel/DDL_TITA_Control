@@ -1,0 +1,228 @@
+{
+  "date": "2026-11-16",
+  "scope": "Static composed-USD inspection; no simulation, asset edits, or new wheels.",
+  "source": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/usd/robot.usd",
+  "sha256": "b52bbfa48a2962e3a0109f6b0762bd02ae33305baf424d2613f0041e2f2a8c4f",
+  "up_axis": "Z",
+  "meters_per_unit": 1.0,
+  "default_prim": "",
+  "layers": [
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/usd/robot.usd",
+      "sha256": "b52bbfa48a2962e3a0109f6b0762bd02ae33305baf424d2613f0041e2f2a8c4f"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/upper_leg/upper_leg.usd",
+      "sha256": "00642d93c0b783cdc059cfcc515df07f7f37d98a8511910714f038ea56086ac0"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/right_hip_link/right_hip_link.usd",
+      "sha256": "57afea6736b828c0d16185bded672032db7fceabc52db874d3f7e52b09aae471"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/right_wheel/right_wheel.usd",
+      "sha256": "a08e6dca7186d2b6bb3429a3f86eaac3bb70c72ae174b6156d0a80313b578794"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/lower_leg/lower_leg.usd",
+      "sha256": "b0d1153d2ab60842617abe1be9e71c23d35d1a0087e89783c4bfda1748f2ffb5"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/left_wheel/left_wheel.usd",
+      "sha256": "8d1f4ceb7742821d7f75df7d171a89a640837546b25c98086e203036426a22b2"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/body/body.usd",
+      "sha256": "88f7fd7cee4a5db2fc067e5ba591ec8487c8cb5db4b0e9253031096048922bab"
+    },
+    {
+      "path": "/mnt/D/BaiduSyncdisk/1ACrutial_Files/Files/My_Robot_Projs/2026_10_11_wheel_legged_rbt/exported meshes/left_hip_link/left_hip_link.usd",
+      "sha256": "49a03d57db0ba285698b0ce2f83004a3108a518339ae0e8916b4700afe72c6da"
+    }
+  ],
+  "variants": [],
+  "joints": [
+    {
+      "prim": "/wheel_legged_robot/joints/left_hip_joint",
+      "body0": "/wheel_legged_robot/body",
+      "body1": "/wheel_legged_robot/left_hip_link",
+      "local_axis": "Y",
+      "world_axis_saved_pose": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        -0.155,
+        0.0,
+        0.679549064501412
+      ],
+      "lower_deg": -90.0,
+      "upper_deg": 90.0
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/right_hip_joint",
+      "body0": "/wheel_legged_robot/body",
+      "body1": "/wheel_legged_robot/right_hip_link",
+      "local_axis": "Y",
+      "world_axis_saved_pose": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        0.155,
+        0.0,
+        0.679549064501412
+      ],
+      "lower_deg": -90.0,
+      "upper_deg": 90.0
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/left_upper_leg_joint",
+      "body0": "/wheel_legged_robot/left_hip_link",
+      "body1": "/wheel_legged_robot/left_upper_leg",
+      "local_axis": "X",
+      "world_axis_saved_pose": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        -0.25,
+        0.0,
+        0.6795490645014114
+      ],
+      "lower_deg": -180.0,
+      "upper_deg": 180.0
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/right_upper_leg_joint",
+      "body0": "/wheel_legged_robot/right_hip_link",
+      "body1": "/wheel_legged_robot/right_upper_leg",
+      "local_axis": "X",
+      "world_axis_saved_pose": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        0.25,
+        0.0,
+        0.6795490645014114
+      ],
+      "lower_deg": -180.0,
+      "upper_deg": 180.0
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/left_lower_leg_joint",
+      "body0": "/wheel_legged_robot/left_upper_leg",
+      "body1": "/wheel_legged_robot/left_lower_leg",
+      "local_axis": "X",
+      "world_axis_saved_pose": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        -0.28,
+        0.0,
+        0.4595490645014114
+      ],
+      "lower_deg": -180.0,
+      "upper_deg": 180.0
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/right_lower_leg_joint",
+      "body0": "/wheel_legged_robot/right_upper_leg",
+      "body1": "/wheel_legged_robot/right_lower_leg",
+      "local_axis": "X",
+      "world_axis_saved_pose": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        0.28,
+        0.0,
+        0.4595490645014114
+      ],
+      "lower_deg": -180.0,
+      "upper_deg": 180.0
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/left_wheel_joint",
+      "body0": "/wheel_legged_robot/left_lower_leg",
+      "body1": "/wheel_legged_robot/left_wheel",
+      "local_axis": "X",
+      "world_axis_saved_pose": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        -0.29500000000000004,
+        0.0,
+        0.23954906450141197
+      ],
+      "lower_deg": "-inf",
+      "upper_deg": "inf"
+    },
+    {
+      "prim": "/wheel_legged_robot/joints/right_wheel_joint",
+      "body0": "/wheel_legged_robot/right_lower_leg",
+      "body1": "/wheel_legged_robot/right_wheel",
+      "local_axis": "X",
+      "world_axis_saved_pose": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "anchor_world_m_saved_pose": [
+        0.29500000000000004,
+        0.0,
+        0.23954906450141197
+      ],
+      "lower_deg": "-inf",
+      "upper_deg": "inf"
+    }
+  ],
+  "rigid_bodies": [
+    {
+      "prim": "/wheel_legged_robot/body",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/left_wheel",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/right_wheel",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/right_lower_leg",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/left_lower_leg",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/right_hip_link",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/left_hip_link",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/left_upper_leg",
+      "mass_authored": false
+    },
+    {
+      "prim": "/wheel_legged_robot/right_upper_leg",
+      "mass_authored": false
+    }
+  ]
+}

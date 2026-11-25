@@ -137,9 +137,7 @@ robot.soft_joint_pos_limit_factor = 0.9
 
 ## 6. 本次终点与后续接线
 
-本次只有三个可调用的计算函数，以及位置软范围配置。它们尚未由环境每步调用，CLI不会因此自动出现cost表。
-
-剩余三项是关节加速度超额、轮接触力过大、轮子侧向碰撞。收齐后再统一定义cost配置、六列输出及reset前采集时机。不能在super().step返回后直接重读机器人算结束步cost，因为部分环境已经重置。
+本章介绍其中三个关节判断与位置软范围。另三项和六列收集、reset前采集已经在16—18章接通；当前check也已将六项cost存入rollout并计算各自GAE。单独定义函数不会自动执行，实际调用由环境创建的TitaCostManager组织。不能在super().step返回后直接重读机器人算结束步cost，因为部分环境已经重置。
 
 另一个接线约定：旧class_to_dict使用dir(obj)，所以实际六列按名称排序为acc_smoothness、dof_vel_limits、feet_contact_forces、pos_limit、stumble、torque_limit，和类正文书写顺序不同。最终收集时显式固定这个顺序，并使k、d保持一致。
 

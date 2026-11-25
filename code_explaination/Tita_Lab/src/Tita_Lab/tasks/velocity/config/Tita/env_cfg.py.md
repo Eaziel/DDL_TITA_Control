@@ -2,14 +2,14 @@
 
 **阅读目标：** 理解cfg如何选择运行时对象和参数，最终让环境拥有机器人、传感器与各管理器；按配置字段追到实际计算。
 
-源码：[env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py)。整理：2026-10-26。下面按当前保存文件讲配置职责；代码节选不包含所有导入。
+源码：[env_cfg.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/config/Tita/env_cfg.py)。整理：2026-10-26；顶层配置与当前接线核对：2026-11-08。下面按当前保存文件讲配置职责；代码节选不包含所有导入。
 
 ## 1. 总配置把各模块交给环境
 
 ```python
 @configclass
 class VelocityEnvCfg(ManagerBasedRLEnvCfg):
-    """Configuration for the cart-pole environment."""
+    """Configuration for the Tita environment."""
 
     # Scene settings
     scene: VelocitySceneCfg = VelocitySceneCfg(num_envs=4096, env_spacing=4.0)
@@ -37,8 +37,8 @@ class VelocityEnvCfg(ManagerBasedRLEnvCfg):
                 origin_type="asset",  # 相机位置以机器人实际位置为参考。
                 origin_env_index=0,  # 跟随第0个环境。
                 origin_track_path="robot",  # 对应Scene中的robot，即scene["robot"]。
-                eye=(1.5, 1.5, 1.0),  # 相机相对机器人的位置偏移，单位m。
-                lookat=(0.0, 0.0, 0.0),  # 注视机器人自身所在位置。
+                eye=(-2.5, 0.0, 1.0),  # 相机相对机器人的位置偏移，单位m。
+                lookat=(0.0, 0.0, -0.1),  # 注视机器人自身所在位置。
             )
         ]
         # simulation settings
@@ -106,7 +106,7 @@ privileged_state: PrivilegedStateCfg = PrivilegedStateCfg()
 
 PolicyCfg是配置类名，policy是组字段名，返回的则是实际张量。类定义行的维度注释指单个环境；N行对应并行环境。
 
-五组输出不等于训练代码自动使用五组。独立的pack_tita_observations按policy→scan→privileged_state→dynamics→history拼586列；当前PPO模板仍只读取policy。
+五组输出不等于训练代码自动使用五组。独立的pack_tita_observations按policy→scan→privileged_state→dynamics→history拼586列；当前PPO模板仍只读取policy；自有check通过wrapper读取完整586列，已经接通存储与GAE。
 
 ## 4. SceneEntityCfg怎样找到具体数据
 

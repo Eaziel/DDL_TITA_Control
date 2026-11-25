@@ -1,12 +1,12 @@
 # env_wrapper.py：把环境交互数据交给训练循环
 
-内容纯 AI 生成，由人类要求生成，未经人类修改。整理：2026-10-26。
+内容纯 AI 生成，由人类要求生成，未经人类修改。整理与当前调用核对：2026-11-04。
 
 被解释文件：`Tita_Lab/src/Tita_Lab/learning/np3o/env_wrapper.py`。完整路径：`/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/learning/np3o/env_wrapper.py`。
 
 ## 先明确目标与结果
 
-环境已经知道怎样推进机器人，并返回观测、奖励、结束标志与附加数据。训练循环需要按自己的格式接收它们。本文件建立一个包装对象，保存现有环境的引用，将 **Lab 的五项 step 返回整理成旧 TITA 训练循环使用的六项**。
+环境已经知道怎样推进机器人，并返回观测、奖励、结束标志与附加数据。训练循环需要按自己的格式接收它们。本文件建立一个位于环境与训练程序之间的包装对象，保存现有环境的引用，将 **Lab 的五项 step 返回整理成旧 TITA 训练循环使用的六项**。它还提供环境数量、动作维数和当前观测等训练程序需要读取的信息。
 
 读完应能顺着这一条调用说明每个变量：
 
@@ -18,9 +18,11 @@
     → 返回六项给 runner
 ```
 
-包装对象的`step()`负责整理环境返回值。完整训练入口、NP3O、存储和runner尚未接通。当前包装器的CPU状态夹具检查范围见[当前结果](../../../../../../docs/audits/2026-10-27_saved_stack_sim62/README.md)，该检查不等于完整物理训练联调。
+包装对象使双方调用方法、返回顺序和张量格式相符。奖励的物理意义由任务设计决定，训练算法按约定使用奖励数值；网络需要哪些观测也要由配置或代码明确指定。当前NP3O包装器传出六项cost，后续算法还需要明确读取、保存和使用它们。存储与GAE已接check并完成用户短检查；完整训练入口、NP3O更新和runner尚未接通。
 
-先读 [官方训练流程](../../../../../../docs/训练流程与Wrapper入门.md) 可了解 runner、算法、环境之间的分工。下文直接解释当前文件。
+先读 [官方训练流程](../../../../../../docs/训练流程与Wrapper入门.md) 第2—8节，可了解wrapper的地位、gym.make的创建过程、三层对象和官方RSL接线。第6节详细解释OnPolicyRunner的构造与learn调用，第8节将收集数据对应到PPO的优势、损失和参数更新。下文沿当前wrapper源码解释对象保存和数据整理；检查脚本已调用此类，正式NP3O训练入口仍未接好。
+
+新增的`infos["terminated"]`保留真实终止标记；`dict(extras)`也保留Lab启用compute_final_obs后提供的最终观测字典。check据此区分纯超时，并取得reset前状态的价值，详细数据流见[check第7节](../../../../scripts/check_np3o_interface.py.md)。
 
 ## 1. 当前源码快照
 
@@ -100,6 +102,8 @@ class TitaNP3OEnvWrapper:
 
         # 仅往副本添加旧训练循环需要的键，不改Lab自己的extras字典。
         infos = dict(extras)
+        infos["terminated"] = terminated
+        
         if not self._env.cfg.is_finite_horizon:
             infos["time_outs"] = truncated
         if bool(dones.any()) and "log" in extras:
@@ -122,18 +126,52 @@ self.env = env
 self._env = cast("TitaVelocityEnv", env.unwrapped)
 ```
 
-未来入口的调用可写成以下教学示意，当前并无已经接通的 NP3O 启动脚本：
+### 2.1 先看创建与包装的顺序
+
+构造函数的参数来自调用方。将接线写成下面的教学示意，先用不同变量名区分对象：
 
 ```python
-raw_env = gym.make("TitaLab-Velocity-Tita", cfg=env_cfg)
-training_env = TitaNP3OEnvWrapper(raw_env)
+import gymnasium as gym
+
+gym_env = gym.make("TitaLab-Velocity-Tita", cfg=env_cfg)
+training_env = TitaNP3OEnvWrapper(gym_env)
 ```
 
-`gym.make` 按任务登记创建环境；它可能在真正的任务外再放 Gymnasium 包装层。`self.env` 保留传进来的完整对象，reset/step/close 经它转交；`env.unwrapped` 沿包装关系取得最内层任务。本项目最内层是继承 Lab 环境的 `TitaVelocityEnv`。
+`gym`是Gymnasium的别名，与旧NVIDIA Isaac Gym不是同一个库。`make`就是“创建”：查找已登记的任务名，找到`TitaVelocityEnv`类并调用它，传入配置；环境类及Lab父类据此创建机器人任务。Gymnasium再按设置加上自己的包装层，将结果交给`gym_env`。当前任务使用默认的`OrderEnforcing`包装层；具体登记与创建过程见[训练流程第3—4节](../../../../../../docs/训练流程与Wrapper入门.md)。
 
-`cast("TitaVelocityEnv", ...)` 告诉类型检查器怎样理解返回对象；它不创建环境、不做运行时类型验证，也不改变数值。两条属性指向同一套仿真对象的不同访问入口，不产生第二套机器人。
+第二句将make的返回对象传入我们这个类。由此得到三个对象：
+
+```mermaid
+flowchart LR
+    C["C：我们写的包装对象<br/>TitaNP3OEnvWrapper"] -->|".env"| B["B：Gymnasium包装对象<br/>gym_env"]
+    B -->|".unwrapped"| A["A：真正的任务对象<br/>TitaVelocityEnv"]
+    C -->|"._env"| A
+```
+
+1. **A**负责任务：物理仿真、机器人、观测、奖励、reset等。
+2. **B**是Gymnasium在A外面加的接口层，当前`gym.make()`返回它。
+3. **C**是当前文件实现的接口层，将数据整理成旧TITA训练程序所需形式，`training_env`指向它。
+
+包装层持有已有对象，三个对象围绕同一套仿真工作，不增加并行机器人数量。
+
+### 2.2 对照构造函数的两次赋值
+
+执行第二句时，`self`是正在创建的C，参数`env`接收B。于是：
+
+| 当前源码 | 保存的对象 | 用途 |
+| --- | --- | --- |
+| `self.env = env` | B | reset/step/close通过传入的完整接口转交 |
+| `self._env = cast("TitaVelocityEnv", env.unwrapped)` | A | 直接读取任务特有的cost_manager、obs_buf等属性 |
+
+`cast("TitaVelocityEnv", ...)`告诉类型检查器怎样理解对象，不创建环境、不做运行时类型验证，也不改变数值。`_env`的下划线表示作者将其作为内部属性；取得A的操作是`.unwrapped`。
+
+之前出现的`raw_env`、`native_env`和检查脚本里的`nativa_env`，都是用于接收make结果B的普通变量名。它们没有定义不同类型的环境。本页统一使用`gym_env`指B、`training_env`指C。
+
+当检查函数写`run_check(env, ...)`时，它的参数env接收的是C，与这里构造函数中接收B的参数env不是同一个局部变量。检查函数里的`env.env`指B，`env.env.unwrapped`及`lab_env`指A。因此要结合当前函数的参数来源理解名字。
 
 构造函数只保存引用与维度，没有 reset 或推进物理。
+
+### 2.3 保存训练侧需要读取的信息
 
 | 属性 | 值或 shape | 用途 |
 | --- | --- | --- |
@@ -328,7 +366,8 @@ Gymnasium 提供环境接口、注册与包装机制，不负责本项目的物�
 ## 8. 当前证据与尚未接通的部分
 
 - 当前源码：已保存，实际类名为 TitaNP3OEnvWrapper，实际 cost 数量属性为 num_cost。
-- [新venv当前实际wrapper检查](../../../../../../docs/audits/2026-10-27_saved_stack_sim62/README.md)：586拼接、cost/done/timeout、日志副本及属性转发CPU通过；环境状态是夹具，真实脚本运行尚未做。
+- [新venv实际wrapper检查](../../../../../../docs/audits/2026-10-27_saved_stack_sim62/README.md)：586拼接、cost/done/timeout、日志副本及属性转发CPU通过；使用环境状态夹具，不能代替真实物理联调。
+- 用户已写入并报告运行actor检查脚本。当前脚本确有`run_check(TitaNP3OEnvWrapper(nativa_env), ...)`接线；助手未独立运行，也未取得该次完整输出，不据此声明全部检查或训练通过。
 - [早期 CPU 替身检查](../../../../../../docs/audits/2026-10-25_np3o_env_interface/README.md)：验证当时的数据整理候选，不能代替当前完整仿真接口检查。
 - 未完成：训练入口、完整价值网络/分布、轨迹存储、NP3O、runner 联调；旧 runner 的 cfg 路径与超时 cost 补偿仍需逐段核对。
 
@@ -347,3 +386,11 @@ Gymnasium 提供环境接口、注册与包装机制，不负责本项目的物�
 **Q：gymnasium 这玩意还得研究研究。gym 的 env 和你说的“_env 直接指向真正的 TitaVelocityEnv”，为啥要这么说？**
 
 **A：** gym.Env 描述通用接口；TitaVelocityEnv 是项目里实际实现这套机器人任务的类。gym.make 返回的外层可能还有框架包装对象；unwrapped 才取到最内层任务，便于访问 cost_manager 等项目特有属性。
+
+**Q：我记得之前还有代码写了raw env,还有_env和env一块出现的，这里的native env,好多env,到底有啥区别！**
+
+**A：** 第2节统一用gym_env指B、training_env指C。构造函数里的self.env保存B，self._env保存A；检查函数的参数env指C。同名局部变量可以属于不同函数，判断对象时要找它由哪句赋值或哪次调用传入。
+
+**Q：make到底有何含义？**
+
+**A：** make是“创建”。gym.make按登记的任务名创建环境实例，并应用Gymnasium设置的包装层，见第2.1节。它返回可交互的对象，训练程序还要另外调用算法收集数据、更新网络。

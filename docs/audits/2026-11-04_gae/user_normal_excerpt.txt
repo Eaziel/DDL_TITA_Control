@@ -1,0 +1,6 @@
+[CHECK] obs=(4, 586) actions=(4, 8) costs=(4, 6)[POLICY] mean=(4, 8) std=(8,) log_prob=(4,) entropy=11.3515[VALUE] reward=(4, 1) cost=(4, 6)
+[ROLLOUT] filled=24/24 obs=(24, 4, 586) actions=(24, 4, 8) costs=(24, 4, 6)
+[GAE] reward_returns=(24, 4, 1) cost_returns=(24, 4, 6) reward_advantages=(24, 4, 1) cost_advantages=(24, 4, 6)
+[CHECK] {'steps': 24, 'requested': 24, 'resets': 1, 'timeouts': 0}
+[INFO]: SimulationContext cleared
+[11.193s] Simulation App Shutting Down

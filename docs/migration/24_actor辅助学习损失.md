@@ -2,7 +2,7 @@
 
 更新：2026-10-26。内容纯AI生成，由人类要求生成，未经人类修改。
 
-状态：动作网络和辅助计算体已保存，方法名为`auxilary_loss`。本章代码与当前源码一致，数学与梯度检查见[实际结果](../audits/2026-10-27_saved_stack_sim62/actor/result.json)。本章用于理解现有计算。
+状态：动作网络和辅助计算体已保存。2026-11-01将本章方法引用与当前actor.py的`auxiliary_loss`对齐；本轮不重跑既有数学与梯度检查，之前证据见[实际结果](../audits/2026-10-27_saved_stack_sim62/actor/result.json)。本章用于理解计算，当前迁移目标见[27动作分布](27_动作分布迁移.md)。
 
 基础说明：[actor.py逐项解释](../../code_explaination/Tita_Lab/src/Tita_Lab/learning/np3o/actor.py.md)。它按Python语法、网络对象、数学计算、张量数据流逐项讲解当前actor及本章辅助代码。
 
@@ -62,7 +62,7 @@ TitaHistoryActor.__init__中的两个辅助成员：
 辅助方法与forward同级，当前代码如下：
 
 ```python
-    def auxilary_loss(
+    def auxiliary_loss(
         self,
         obs: torch.Tensor,
         obs_hist: torch.Tensor,
@@ -96,7 +96,7 @@ TitaHistoryActor.__init__中的两个辅助成员：
         return diagonal_loss + off_diag_weight * redundancy_loss + 0.01 * prediction_loss
 ```
 
-这是现有类新增成员和方法，后续actor-critic对象会直接调用auxilary_loss；本步不增加MDP导出或env_cfg配置。
+这是现有类新增成员和方法，后续actor-critic对象会直接调用auxiliary_loss；本步不增加MDP导出或env_cfg配置。
 
 ## 4. 数据怎样进入这项损失
 
@@ -106,7 +106,7 @@ TitaHistoryActor.__init__中的两个辅助成员：
 current = packed_obs[:, :33]
 history = packed_obs[:, -330:].reshape(packed_obs.shape[0], 10, 33)
 targets = packed_obs[:, 220:230]
-loss = actor.auxilary_loss(current, history, targets)
+loss = actor.auxiliary_loss(current, history, targets)
 ```
 
 loss是零维标量张量，保留求梯度所需的计算关系；返回loss本身不会修改网络参数。后续训练循环会把它加入总损失并执行反向传播。
@@ -116,7 +116,7 @@ loss是零维标量张量，保留求梯度所需的计算关系；返回loss本
 | 方法 | 输入历史怎样交给mlp_encoder |
 | --- | --- |
 | 动作forward | 从过去十帧丢最老一帧，补当前，形成最近九帧+当前 |
-| auxilary_loss | 原样使用过去十帧，不补当前 |
+| auxiliary_loss | 原样使用过去十帧，不补当前 |
 
 本次两处CPU窗口检查均通过。不要为了让两种调用看起来一致而随意合并。
 
@@ -164,7 +164,7 @@ $$
 
 ## 6. 当前证据与早期候选
 
-[实际源码检查](../audits/2026-10-26_saved_actor/README.md)直接读取用户已保存的计算体：动作batch1/4/64与旧分支差0；辅助batch4/32值差约3.81e-6/0；所检参数和输入梯度差0，BN缓冲一致，两种历史窗口正确。当前方法名为auxilary_loss。
+[实际源码检查](../audits/2026-10-26_saved_actor/README.md)记录当时计算体的数值：动作batch1/4/64与旧分支差0；辅助batch4/32值差约3.81e-6/0；所检参数和输入梯度差0，BN缓冲一致，两种历史窗口正确。当前方法名为auxiliary_loss；本轮只核对命名与调用。
 
 [早期候选检查](../audits/2026-10-26_actor_auxiliary/README.md)保留当时方案的结果，不再用于声称当前实现尚未写入。float32归约存在微小舍入差，按记录中的rtol/atol核对。
 

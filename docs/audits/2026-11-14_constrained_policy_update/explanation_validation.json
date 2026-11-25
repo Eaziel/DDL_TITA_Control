@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-14",
+  "check_explanation_sections": 19,
+  "python_blocks_parsed": 34,
+  "source_excerpt": "exact current-file match",
+  "local_links_checked": 387,
+  "documents_checked": 14,
+  "math_examples": "scalar chain rule; two-layer chain rule; three-step GAE and lambda mixture; Gaussian log-density gradients; four clipping cases; initial entropy",
+  "user_artifacts": {
+    "metrics_rows": 9,
+    "prediction_rows": 96,
+    "reward_mse_recomputed_from_saved_csv": true
+  },
+  "assistant_executed": {
+    "torch": false,
+    "simulation": false,
+    "optimization": false,
+    "git": false
+  },
+  "additional_current_status_documents_checked": 2,
+  "additional_local_links_checked": 20
+}

@@ -670,7 +670,7 @@ class CostsCfg:
 
 @configclass
 class VelocityEnvCfg(ManagerBasedRLEnvCfg):
-    """Configuration for the cart-pole environment."""
+    """Configuration for the Tita environment."""
 
     # Scene settings
     scene: VelocitySceneCfg = VelocitySceneCfg(num_envs=4096, env_spacing=4.0)
@@ -698,8 +698,8 @@ class VelocityEnvCfg(ManagerBasedRLEnvCfg):
                 origin_type="asset",  # 相机位置以机器人实际位置为参考。
                 origin_env_index=0,  # 跟随第0个环境。
                 origin_track_path="robot",  # 对应Scene中的robot，即scene["robot"]。
-                eye=(1.5, 1.5, 1.0),  # 相机相对机器人的位置偏移，单位m。
-                lookat=(0.0, 0.0, 0.0),  # 注视机器人自身所在位置。
+                eye=(-2.5, 0.0, 1.0),  # 相机相对机器人的位置偏移，单位m。
+                lookat=(0.0, 0.0, -0.1),  # 注视机器人自身所在位置。
             )
         ]
         # simulation settings

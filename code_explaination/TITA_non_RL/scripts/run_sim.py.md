@@ -12,9 +12,17 @@
 
 ## 当前环境和运行入口
 
-当前脚本使用IsaacLab-main与Sim6.2的兼容AppLauncher入口。它仍能调用现有物理接口；改用launch_simulation属于可选维护，不在本文自动替换代码。
+当前代码已使用add_launcher_args与launch_simulation，主循环查询sim.is_running，使用IsaacLab-main/Sim6.2。11月8日仅对齐说明与实际文件，未重跑脚本。
 
-当前USD路径是`TITA_non_RL/assets/tita.usd`，按终端工作目录解析。保留源码时，由用户从项目根目录启动：
+```python
+usd_path=str(Path(__file__).resolve().parents[1] / "assets" / "tita.usd")
+
+with launch_simulation(sim_cfg, args_cli):
+    sim = sim_utils.SimulationContext(sim_cfg)
+    ...
+```
+
+USD路径从脚本所在位置计算，指向TITA_non_RL/assets/tita.usd，不依赖终端当前目录。下面从项目根目录启动只是便于找到脚本：
 
 ```bash
 source "$HOME/my_venvs/lab3_sim62/.venv/bin/activate"
@@ -22,7 +30,7 @@ cd /mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HW
 python TITA_non_RL/scripts/run_sim.py --num_envs 1 --device cuda:0 --viz kit
 ```
 
-若希望从任意目录启动，__file__路径改法见[代码检查清单](../../../docs/当前代码检查与修改清单.md)。本轮没有运行该脚本。
+下文保留用户要求归档的材质计算解释原文。当前RL的随机化由events.py实现，独立脚本的结果不能当作RL随机化或训练验证。
 
 ## 摩擦与恢复系数随机化
 

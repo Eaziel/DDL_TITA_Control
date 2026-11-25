@@ -1,0 +1,14 @@
+[CHECK] obs=(4, 586) actions=(4, 8) costs=(4, 6)[POLICY] mean=(4, 8) std=(8,) log_prob=(4,) entropy=11.3515[VALUE] reward=(4, 1) cost=(4, 6)
+[ROLLOUT] filled=24/24 obs=(24, 4, 586) actions=(24, 4, 8) costs=(24, 4, 6)
+[GAE] reward_returns=(24, 4, 1) cost_returns=(24, 4, 6) reward_advantages=(24, 4, 1) cost_advantages=(24, 4, 6)
+[MINIBATCH] obs=(24, 586) actions=(24, 8) reward_returns=(24, 1) cost_returns=(24, 6)
+[MINIBATCH] batches=8 epochs=2 per_epoch=4
+[VALUE_UPDATE] updates=8 reward_loss=0.210205 cost_loss=0.808655 max_parameter_change=2.414e-03
+[PLOT] /mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/logs/interface_checks/20261125_190556_991296
+[COST_STATS] initial_cost=[2.073186159133911, 0.645598292350769, 0.5900201201438904, 0.5990902185440063, 0.5951976180076599, 0.5429039001464844]
+[COST_STATS] mean=[1.2580037117004395, -0.16995015740394592, -0.15181484818458557, -0.16193272173404694, -0.15458710491657257, -0.1468130201101303] std=[1.959403157234192, 0.20141707360744476, 0.18503369390964508, 0.18305206298828125, 0.18514405190944672, 0.1710342913866043]
+[CONSTRAINED_POLICY_UPDATE] updates=8 loss=0.034586 reward_loss=-0.035403 cost_loss=0.069989 first_ratio_mean=1.000000 first_cost_grad_norm=2.595e-01 max_parameter_change=2.395e-03
+[COST_VIOLATION] update_mean=[0.6998900175094604, -0.6980500221252441, -0.6753813028335571, -0.7390029430389404, -0.6897200345993042, -0.7135502696037292]
+[CHECK] {'steps': 24, 'requested': 24, 'resets': 1, 'timeouts': 0}
+[INFO]: SimulationContext cleared
+[12.906s] Simulation App Shutting Down

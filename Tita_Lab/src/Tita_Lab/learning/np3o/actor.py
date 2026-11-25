@@ -94,7 +94,7 @@ class TitaHistoryActor(nn.Module):
         actor_input = torch.cat((features, obs), dim=-1) ## (N,59)。
         return self.actor(actor_input) # (N,8)，动作分布的均值。
 
-    def auxilary_loss(
+    def auxiliary_loss(
             self,
             obs: torch.Tensor,
             obs_hist: torch.Tensor,

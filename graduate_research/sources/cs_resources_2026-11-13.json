@@ -1,0 +1,132 @@
+{
+  "date": "2026-11-13",
+  "tool": "GitHub connector public resource fetch",
+  "note": "No local clone, package install, weights download, training or timing. Branch URLs are not pinned experiment versions.",
+  "resources": [
+    {
+      "url": "https://github.com/qiuzh20/gated_attention/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/qiuzh20/gated_attention/blob/main/modeling_qwen3.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/NVlabs/GatedDeltaNet/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/NVlabs/GatedDeltaNet/blob/main/lit_gpt/gated_delta_rule_ops/fla_version/chunk_fla.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/NVlabs/GatedDeltaNet-2/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/state-spaces/mamba/blob/main/mamba_ssm/modules/ssd_minimal.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/test-time-training/ttt-lm-pytorch/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/google-research/vmoe/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/google-research/vmoe/tree/main/vmoe/projects/soft_moe",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/google-research/vmoe/blob/main/vmoe/projects/soft_moe/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/google-research/vmoe/blob/main/vmoe/projects/soft_moe/router.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/facebookresearch/ijepa/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/facebookresearch/ijepa/blob/main/src/train.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/facebookresearch/dinov3/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/google-research/big_vision/blob/main/big_vision/trainers/proj/image_text/siglip.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/google-research/big_vision/blob/main/big_vision/configs/proj/image_text/README_siglip2.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/apple-aiml-research/ml-fastvlm/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/Gsunshine/meanflow/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/Gsunshine/py-meanflow/blob/main/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/Gsunshine/py-meanflow/tree/main/meanflow",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/Gsunshine/py-meanflow/tree/main/meanflow/training",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/Gsunshine/py-meanflow/tree/main/meanflow/models",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/Gsunshine/py-meanflow/blob/main/meanflow/models/meanflow.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/MoonshotAI/Moonlight/blob/master/README.md",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    },
+    {
+      "url": "https://github.com/MoonshotAI/Moonlight/blob/master/examples/toy_train.py",
+      "status": "retrieved",
+      "inspection": "static_read_only"
+    }
+  ]
+}

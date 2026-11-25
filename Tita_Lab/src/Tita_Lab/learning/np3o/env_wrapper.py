@@ -73,6 +73,8 @@ class TitaNP3OEnvWrapper:
 
         # 仅往副本添加旧训练循环需要的键，不改Lab自己的extras字典。
         infos = dict(extras)
+        infos["terminated"] = terminated
+        
         if not self._env.cfg.is_finite_horizon:
             infos["time_outs"] = truncated
         if bool(dones.any()) and "log" in extras:

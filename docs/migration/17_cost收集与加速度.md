@@ -275,7 +275,7 @@ class TitaVelocityEnv(ManagerBasedRLEnv):
 
 当前六项仅依赖关节位置、关节速度、驱动力矩和轮接触力。interval推扰只写机身速度，command更新也不改变这四类输入，因此没有结束的环境可以在super().step后采集。未来若事件会改关节或接触数据，须重新核对采集位置。现有旧Gym与Lab推扰时序差异仍留在00缺口清单，本次不宣称全流程逐步等价。
 
-训练端未来读取`extras["costs"]`，算法参数读取`env.unwrapped.cost_manager.k_values/d_values`。本次不改变Lab的五元step返回结构，不把cost塞进观测或奖励。NP3O消费仍待接入。
+当前wrapper已读取`extras["costs"]`，同时提供cost_k_values/cost_d_values_tensor；check已保存六列cost并计算各自GAE。Lab本身仍返回五项，wrapper再组织为训练侧六项。完整NP3O约束损失消费尚未接入。
 
 ## 6. 完成标准
 

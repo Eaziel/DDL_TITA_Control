@@ -1,13 +1,16 @@
-# costs.py：计算每台机器人的约束数值
+# costs.py：六类约束代价怎样从关节与接触数据算出
 
-**阅读目标：** 读懂六项原始cost函数的取数、阈值和跨步状态；它们输出每环境一个数，dt与列拼接交给收集器。
+内容纯AI生成，由人类要求生成，未经人类修改。源码及学习用途核对：2026-11-14。
 
-源码目录：Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/。
-源码文件：`/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/costs.py`。
+被解释文件：[mdp/costs.py](/mnt/D/BaiduSyncdisk/1ACrutial_Files/Ubuntu_2404_projects/isaaclab_ws/Tita_HWBR/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/costs.py)。
 
-整理：2026-10-26。五个无状态函数与加速度类均已写入，收集器/环境接线已完成；四处笔误已修，用户已有4环境200步真实cost接口日志。此处解释原始计算，终止步数值与训练效果仍未单独验证。
+本文件为每台机器人计算六类原始cost。读完应能区分“是否越限”的0/1判断与“超出多少”的连续量，知道各个张量沿哪个维度归约，并明确这些函数不会直接替机器人限矩、reset或更新策略。
 
-## 1. 当前五个函数
+这些物理量怎样经过storage、GAE再影响策略，见[一批经历怎样完成策略更新](../../../../../../../docs/一批经历怎样完成策略更新.md)。本页先把每个原始项f_i的来源、单位和判据解释清楚。
+
+本文核对当前源码与本地 IsaacLab-main / Sim 6.2 调用关系；未代运行仿真或训练。
+
+## 1. 当前完整源码
 
 ```python
 # Copyright (c) 2022-2026, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
@@ -17,14 +20,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 import torch
 
+from isaaclab.managers import ManagerTermBase
+
 if TYPE_CHECKING:
     from isaaclab.assets import Articulation
     from isaaclab.envs import ManagerBasedRLEnv
-    from isaaclab.managers import SceneEntityCfg
+    from isaaclab.managers import ManagerTermBaseCfg, SceneEntityCfg
     from isaaclab.sensors import ContactSensor
 
 
@@ -115,65 +121,176 @@ def wheel_stumble_cost(
     # 旧规则：水平力超过竖直力的5倍，记一次侧向碰撞判断。
     stumble = horizontal_force > horizontal_ratio * vertical_force
     return torch.any(stumble, dim=1).float()
-```
 
-位置、速度、力矩的(N,J)逐关节比较，再any(dim=1)得到每台机器人一个0/1。位置用soft_joint_pos_limits，力矩读已限幅的applied_effort。
 
-接触两函数读取(N,W,3)的当前世界系法向接触力。vector_norm(..., dim=-1)把三个分量合成每轮力大小；另一函数比较水平分量大小与abs(Fz)的五倍，再对轮体any。它们没有历史，也不读取经过OR的轮接触标记。
-
-这五项均返回(N,)浮点张量，暂不乘时间或算法k。当前64环境旧公式对照通过；法向力与旧合接触力的物理输入差异仍保留。
-
-## 2. 加速度类（已见写入）
-
-顶部导入按[17](../../../../../../../docs/migration/17_cost收集与加速度.md)第2节增加，然后追加：
-
-```python
 class JointAccelerationCost(ManagerTermBase):
     """Measure joint acceleration above the legacy TITA threshold."""
 
     def __init__(self, cfg: ManagerTermBaseCfg, env: ManagerBasedRLEnv) -> None:
         super().__init__(cfg, env)
         self._asset: Articulation = env.scene[cfg.params["asset_cfg"].name]
+
         # 上一次策略步结束时的关节速度，(N, J)，单位rad/s。
         self._previous_joint_vel = self._asset.data.joint_vel.torch.clone()
 
     def __call__(self, env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg) -> torch.Tensor:
         joint_vel = self._asset.data.joint_vel.torch
         joint_ids = asset_cfg.joint_ids
+
         # 每0.01 s差分一次，得到(N, J_selected)的rad/s²。
         acceleration = (joint_vel[:, joint_ids] - self._previous_joint_vel[:, joint_ids]) / env.step_dt
         acceleration_limit = self._asset.data.joint_vel_limits.torch[:, joint_ids] / (2.0 * env.step_dt)
+
         excess = (acceleration.abs() - acceleration_limit).clamp_min(0.0)
         self._previous_joint_vel.copy_(joint_vel)
+
         # 每台机器人一个值，(N,)；此处尚未乘dt。
         return excess.mean(dim=1)
 
     def reset(self, env_ids: Sequence[int] | torch.Tensor | None = None) -> None:
         """Use reset joint velocities as the next acceleration reference."""
+
         selection = slice(None) if env_ids is None else env_ids
-        # 必须在机器人reset之后调用；只更新被重置机器人的行。
+
+        # 在机器人reset之后调用，只更新被重置机器人的速度参考。
         self._previous_joint_vel[selection, :] = self._asset.data.joint_vel.torch[selection, :]
 ```
 
-_previous_joint_vel持有上一策略步的速度；__call__做速度差分、减阈值、夹零、求均值，再保存本次速度。每个实例有自己的数据，与奖励实例相互独立。
+## 2. cost在强化学习里表示什么
 
-reset只更新选中机器人的速度参考。环境先让机器人重置，TitaCostManager.reset再调用这个reset，因此下一步不会把回合边界当成突然加速。
+常见MDP用状态、动作、转移、奖励和折扣描述任务。若还要单独记录不希望发生的现象，可以定义额外的代价 $c_i(s,a)$，并对未来累计代价提出要求；这类扩展常称约束MDP。
 
-## 3. 谁调用与怎样输出
+例如用 $J_R$ 表示期望累计奖励，用 $J_{C_i}$ 表示第i类期望累计代价，抽象目标可写作：
 
-CostsCfg选择函数；TitaCostManager解析对象并逐步调用，将每个(N,)写入(N,6)的一列，只在这里乘一次0.01 s。环境负责在自动reset前保存这一步结果，最终经extras["costs"]交给未来训练端。该接线在用户本轮磁盘文件中尚未完整保存，待保存后核对，见17。
+$$
+\max_\pi J_R(\pi),\qquad
+J_{C_i}(\pi)=\mathbb E_\pi\left[\sum_t\gamma^t c_{i,t}\right]\le b_i.
+$$
 
-## 补充问答
+$\pi$是策略，$\mathbb E$表示按策略与环境随机性求平均，$\gamma$是折扣，$b_i$是抽象的允许上限。当前check把配置中的d_i按这个累计cost上限解释，k_i另作策略惩罚权重；两者都不同于本文件里的关节／接触物理阈值。第3节以下的函数先判断本步发生什么，尚不计算累计量或策略损失。
 
-**Q：** cost在我学的RL理论里没有提到。cost是mdp中的吗？讲一下什么是cost？
+本文件只计算原始项 $f_i$。[cost_manager.py](../cost_manager.py.md)再乘一次策略dt得到六列本步cost，wrapper交给[storage](../../../learning/np3o/rollout_storage.py.md)。storage结合cost critic的旧预测，逐列计算cost回报目标与优势；[check第17节](../../../../../scripts/check_np3o_interface.py.md)已用优势、k/d和累计cost估计构造策略惩罚并执行单批更新。这里算出非零cost不会立即阻止动作；它通过这条学习路径影响之后的动作分布。单批更新也不能证明学到的策略已满足真实约束。
 
-**A：** 普通MDP常用reward表示目标，也可以改用cost表示要最小化的量，最大化reward与最小化其相反数是等价表述。本项目在reward之外另设六个cost，对应带约束MDP（CMDP）：提高奖励，同时要求各项期望累计cost不超过各自上限。cost可以是0/1，也可以是连续值。
+## 3. 六列分别是什么，按哪个顺序返回
 
-```text
-目标：最大化 E[Σ γ^t r_t]
-约束：每项 E[Σ γ^t c_i,t] ≤ d_i
-```
+| cost列 | 配置名 | 本文件实现 | 原始输出 |
+| --- | --- | --- | --- |
+| 0 | acc_smoothness | JointAccelerationCost | 超阈值加速度的关节均值 |
+| 1 | dof_vel_limits | joint_velocity_limit_cost | 任一关节速度超阈值则1，否则0 |
+| 2 | feet_contact_forces | wheel_contact_force_cost | 任一轮法向接触合力的大小超阈值则1，否则0 |
+| 3 | pos_limit | joint_position_limit_cost | 任一关节位置越软限位则1，否则0 |
+| 4 | stumble | wheel_stumble_cost | 任一轮水平/竖直力比较满足条件则1，否则0 |
+| 5 | torque_limit | joint_effort_limit_cost | 任一关节已施加力矩超阈值则1，否则0 |
 
-这里c_i,t为第i类当步cost，d_i是该类期望折扣累计cost的上限。约束通常针对期望累计量，不能把训练目标当作每一步都不越界的硬保证。理论定义见[CPO论文第4节](https://proceedings.mlr.press/v70/achiam17a/achiam17a.pdf)。
+函数在源码中的排列不决定cost列序，配置对象的条目顺序与管理器的收集顺序才决定。全部函数输出 `(N,)`，N为并行环境数；manager横向保存成 `(N,6)`。
 
-TITA的reward已有跟踪/姿态等合成分数，另外六列cost交给NP3O的cost价值估计及约束损失。mdp/costs.py负责由环境数据算出这些数，训练代码负责怎样使用它们；函数返回1本身不会阻止物理运动。
+以下用指示函数 $\mathbf1\{条件\}$ 表示条件为真取1，否则取0；“任一”即沿同一机器人的关节/轮子维度做OR，不把不同环境合到一起。
+
+## 4. 位置软限位：当前角度与两端阈值比较
+
+`joint_pos` 为 `(N,J)`，`limits` 为 `(N,J,2)`。最后两列依次是软下限与软上限：
+
+$$
+f_{pos,n}=\mathbf1\{\exists j:q_{n,j}<l^{soft}_{n,j}
+\ \text{或}\ q_{n,j}>u^{soft}_{n,j}\}.
+$$
+
+`limits[...,0]`中的省略号代表前面所有轴，即取所有环境、所有选中关节的下限，得到 `(N,J)`。`|` 对两份布尔张量逐元素OR，`torch.any(...,dim=1)`再沿关节轴判断任一越界，最后 `.float()`变成0/1浮点。
+
+软限位由Lab根据机器人关节原始限位与 `ArticulationCfg.soft_joint_pos_limit_factor` 提供。设原始中点 $m=(l+u)/2$、半宽 $h=(u-l)/2$、系数为 $\alpha$，软区间为 $[m-\alpha h,m+\alpha h]$。系数1沿用原区间，系数小于1可提前警告。它是数据接口里的阈值，不表示本函数会施加新的物理约束。
+
+代码用严格 `<`/`>`，在端点上不算越界。例如区间 `[−1,1]`、角度1.05返回越限，角度1.0不会。
+
+## 5. 力矩与速度：先取绝对值，再判断是否超过阈值
+
+力矩项：
+
+$$
+f_{\tau,n}=\mathbf1\{\exists j:|\tau^{applied}_{n,j}|>
+\rho_\tau\tau^{limit}_{n,j}\}.
+$$
+
+`torch.abs`去掉正负方向；−70N·m与+70N·m都可能过载。当前 `soft_ratio=1.0`，腿阈值60N·m、轮阈值15N·m。读取的是 `applied_effort`，即执行器限幅后的驱动力矩；没有读取限幅前的 `computed_effort`。
+
+因此当前执行器若严格把输出裁到同一上限，严格大于上限的判断通常不会触发。比如计算想要80、输出被裁成60，比较 `60>60` 为False。本项沿用此处已有Gym口径，不能把0自动解释成“策略从未请求过过大力矩”。这也是理解变量选择比只看cost名称重要的原因。
+
+速度项同样计算：
+
+$$
+f_{\dot q,n}=\mathbf1\{\exists j:|\dot q_{n,j}|>
+\rho_v\dot q^{limit}_{n,j}\}.
+$$
+
+当前腿速度上限25rad/s、轮20rad/s，比例1。速度项读实际状态；力矩项读执行器输出。两个函数都只给数值判断，不在函数内把关节速度或力矩写回物理引擎。
+
+## 6. 轮接触力：两个轮中任一个超过500N
+
+传感器 `net_normal_forces_w.torch` 提供聚合法向力，选轮体后形状 `(N,2,3)`。norm沿xyz得到 `(N,2)`，any沿轮子维得到 `(N,)`：
+
+$$
+f_{force,n}=\mathbf1\{\exists j\in\{L,R\}:
+\sqrt{(F^w_{x,n,j})^2+(F^w_{y,n,j})^2+(F^w_{z,n,j})^2}>500\}.
+$$
+
+它检测的是当前法向合力大小。即使传感器支持总接触力字段，此函数也没有自动把摩擦力加进去。当前力来自哪些碰撞对方不在本函数细分，完整物理口径见 [terminations.py](terminations.py.md)。
+
+`threshold=500.0` 是函数默认参数，当前cfg未覆盖它。两轮 `[400,600]`N时输出1；`[400,500]`N时输出0，因为使用严格大于。
+
+## 7. stumble比较水平分量与竖直分量
+
+代码没有做除法，直接比较：
+
+$$
+F_{h,n,j}=\sqrt{(F^w_{x,n,j})^2+(F^w_{y,n,j})^2},\qquad
+F_{v,n,j}=|F^w_{z,n,j}|,
+$$
+
+$$
+f_{stumble,n}=\mathbf1\{\exists j:F_{h,n,j}>5F_{v,n,j}\}.
+$$
+
+`forces_w[...,:2]`取Fx/Fy，`forces_w[...,2]`取Fz。前者norm消去长度2的分量轴，后者abs直接得到竖直分量大小。
+
+例如某轮Fx/Fy为30/40N、Fz为5N，水平长度50，比较50>25为True。若全部力为零，0>0为False；若Fz为零、水平力非零，可以触发，代码无需处理除零。
+
+“水平”和“竖直”按世界坐标轴区分；法向方向则按接触面区分。坡面法向力也可以有水平分量，所以本项不是直接测轮子摩擦，也不是直接证明发生绊倒。它是沿用旧任务的力分量判据，具体地形上的触发要结合接触数据解释。
+
+## 8. 加速度cost测的是超出阈值多少
+
+`JointAccelerationCost`保存全部关节的上次速度，调用时选出任务8列：
+
+$$
+a_{t,n,j}=\frac{\dot q_{t,n,j}-\dot q_{t-1,n,j}}{\Delta t},\qquad
+A^{limit}_{n,j}=\frac{\dot q^{limit}_{n,j}}{2\Delta t}.
+$$
+
+当前dt0.01s，腿阈值1250rad/s²、轮1000rad/s²。原始cost为：
+
+$$
+f_{acc,n}=\frac1J\sum_{j=1}^J
+\max\bigl(|a_{t,n,j}|-A^{limit}_{n,j},0\bigr).
+$$
+
+`.abs()`逐元素取绝对值；`.clamp_min(0.0)`将负超出量清零；`.mean(dim=1)`沿关节取平均，分母是选中关节总数J，不是只除以超限关节数。
+
+例如8关节中只有一个轮关节加速度1200rad/s²，其余未超限，超出量200，原始cost为200/8=25；manager乘dt后本步cost为0.25。此处原始量带rad/s²单位，其他五项为0/1，后续算法需要尊重这套既定尺度。
+
+它与奖励中的 `JointAccelerationPenalty` 不同：奖励对全部加速度平方求和，即使很小也有扣分；本项只计算超过阈值的部分，再作均值。两者保存独立历史，不应让一个实例被反复调用后意外推进两次参考。
+
+## 9. 有记忆的项由谁更新与reset
+
+构造时 `.clone()`复制当前关节速度；`__call__`先差分，再 `copy_`保存这次速度。外部管理器保存类实例，所以每步不会丢掉这份记忆。
+
+自定义cost管理器使用 `common_step_counter`防止同一策略步重复计算：reset前先取失败瞬间的cost，step结尾再取时复用缓存。否则同一步再次调用加速度类，第二次差分会因参考已经更新而变成零。
+
+机器人reset完成后，cost管理器显式调用该类 `reset(env_ids)`，把被重置行的参考速度改为新回合初始速度。其他行不变。它不会清模型权重，也不是Python根据方法名自动调用。
+
+原始项不乘dt、不乘k/d、不相互合并；读完本文件后，再沿 [cost管理器说明](../cost_manager.py.md) 看这六类结果怎样进入 `(N,6)`、回合统计和wrapper。
+
+## 源码与API依据
+
+- [本项目cost管理器](../cost_manager.py.md)
+- [本项目执行器限幅](../actuators.py.md)
+- [Lab PhysX关节软限位初始化](/home/eaziel/IsaacLab-main/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation.py)
+- [PyTorch any](https://docs.pytorch.org/docs/2.11/generated/torch.any.html)
+- [PyTorch mean](https://docs.pytorch.org/docs/2.11/generated/torch.mean.html)

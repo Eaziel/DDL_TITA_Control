@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-13",
+  "scope": "Patch-file and shell-command explanation appended as section 16",
+  "gnu_patch_version": "2.7.6",
+  "references_read": [
+    "patch --help",
+    "/usr/share/man/man1/patch.1.gz",
+    "existing local plotting patch"
+  ],
+  "gnu_web_manual": "fetch timed out; did not rely on unread page text",
+  "current_run_metadata_call": "present in saved user source; plotting run not verified",
+  "source_snapshot": "exact match",
+  "source_sha256": "a6f893a73312812fbcd5ec2d42470dd29afcf4de3a5967a8fcdf776a4dac4c45",
+  "checks": "Markdown fences, local links, section order and Python example parse passed",
+  "assistant_actions": "documentation writes and read-only inspection only; no patch apply, source edits, Git, Torch or Sim"
+}

@@ -155,7 +155,7 @@ size=(8,8)表示每块8×8米，num_rows=10、num_cols=20让生成器建立200�
 
 当前TerrainGeneratorCfg.curriculum默认False，日志也打印Generating terrains randomly；每块按权重选类型并抽难度，不是当前已有地形课程。max_init_terrain_level=5控制出生时可选择的地形行索引0至5，不能据此认定启用了课程。physics_material决定接触材质，visual_material决定外观；形状来自生成器和sub_terrains。
 
-地形在环境创建阶段生成，此后zero_agent或random_agent提供动作，两项配置分别决定地面和控制输入。旧TITA utils/terrain.py第118—121行当前实际只调用正/负金字塔台阶，其他分支已注释，所以本项目通用ROUGH与旧任务并未对齐；后续应建立项目自己的地形配置，不能将引用通用预设视为地形迁移完成。
+地形在环境创建阶段生成，此后zero_agent或random_agent提供动作，两项配置分别决定地面和控制输入。旧TITA实际调用正/负金字塔台阶。当前项目已在terrain_cfg.py保存GYM与LAB两套配置，Scene选择GYM_TITA_ROUGH_TERRAINS_CFG，并接地形课程，见20章；通用LAB预设仅保留为对照，不再作为待提取地形。
 
 ### 2.2 已采用的TITA正/负台阶配置
 
@@ -429,7 +429,7 @@ forces_w形状为(N,B,3)：环境数、传感器身体数、世界系xyz力分�
 
 **A：** 接触力和速度接口后缀的_w都表示world，说明向量按世界坐标轴给出分量。net_normal_forces_w的最后3列是世界系Fx/Fy/Fz；normal说明接触面的法向分量，_w说明用哪套坐标轴表达，二者分别说明力的种类和坐标系。
 
-世界坐标轴不跟着机器人转；机身坐标轴跟着机器人转。接触力先按世界系表达，仍然可以通过坐标旋转转换到机身系表达。速度接口root_vel_w使用相同命名约定；其中角速度分量曾简写为wx/wy/wz，那个w是在代写角速度符号ω，不是world后缀。详细例子见[events.py问答](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md#补充问答)。
+世界坐标轴不跟着机器人转；机身坐标轴跟着机器人转。接触力先按世界系表达，仍然可以通过坐标旋转转换到机身系表达。速度接口root_vel_w使用相同命名约定；其中角速度分量曾简写为wx/wy/wz，那个w是在代写角速度符号ω，不是world后缀。详细例子见[events.py问答](../../code_explaination/Tita_Lab/src/Tita_Lab/tasks/velocity/mdp/events.py.md)。
 
 **Q：** 还有，我想问，我的地形怎么是这样？哪些代码让我的地形变成了，凹凸不平+凹离散金字塔+凸离散金字塔+凸平原这样的？？我看到这个地形，第一反应是不安，因为又是一个我不知道代码的东西！！！！
 

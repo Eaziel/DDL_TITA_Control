@@ -1,0 +1,142 @@
+{
+  "run_directory": "Tita_Lab/logs/interface_checks/20261113_212733_632325",
+  "analyzed_on": "2026-11-14",
+  "num_metric_rows": 9,
+  "num_prediction_rows": 96,
+  "metrics": {
+    "reward_mse": {
+      "before": 0.31560131907463074,
+      "after": 0.12384754419326782,
+      "relative_reduction_percent": 60.7582298589882,
+      "increases_at_updates": []
+    },
+    "cost_mse": {
+      "before": 0.9528806805610657,
+      "after": 0.631116509437561,
+      "relative_reduction_percent": 33.7675196577652,
+      "increases_at_updates": []
+    },
+    "cost_0_mse": {
+      "before": 5.421834468841553,
+      "after": 3.591616153717041,
+      "relative_reduction_percent": 33.75644029050489,
+      "increases_at_updates": []
+    },
+    "cost_1_mse": {
+      "before": 0.06945188343524933,
+      "after": 0.03914279490709305,
+      "relative_reduction_percent": 43.64041265549514,
+      "increases_at_updates": [
+        7,
+        8
+      ]
+    },
+    "cost_2_mse": {
+      "before": 0.05728521943092346,
+      "after": 0.033700551837682724,
+      "relative_reduction_percent": 41.17059832803811,
+      "increases_at_updates": [
+        7,
+        8
+      ]
+    },
+    "cost_3_mse": {
+      "before": 0.059730254113674164,
+      "after": 0.03143460303544998,
+      "relative_reduction_percent": 47.372393602032915,
+      "increases_at_updates": []
+    },
+    "cost_4_mse": {
+      "before": 0.05817549675703049,
+      "after": 0.057706646621227264,
+      "relative_reduction_percent": 0.8059237341133014,
+      "increases_at_updates": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "cost_5_mse": {
+      "before": 0.050806790590286255,
+      "after": 0.03309812396764755,
+      "relative_reduction_percent": 34.85492080270156,
+      "increases_at_updates": []
+    }
+  },
+  "acc_smoothness_share_of_total_squared_cost_error": {
+    "before": 0.9483234279635239,
+    "after": 0.9484821141432376
+  },
+  "scatter": {
+    "target_min": -2.0,
+    "target_max": -0.058943696320056915,
+    "before_mse": 0.31560130788477764,
+    "after_mse": 0.12384755005549583,
+    "by_environment": {
+      "0": {
+        "samples": 24,
+        "target_min": -0.08496890962123871,
+        "target_max": -0.07669813930988312,
+        "before_mse": 0.0010249056466270778,
+        "after_mse": 0.033430972530654725
+      },
+      "1": {
+        "samples": 24,
+        "target_min": -0.12776972353458405,
+        "target_max": -0.09356202930212021,
+        "before_mse": 0.0005105368304712324,
+        "after_mse": 0.03234763301558626
+      },
+      "2": {
+        "samples": 24,
+        "target_min": -0.06810346245765686,
+        "target_max": -0.058943696320056915,
+        "before_mse": 0.0010135776130491172,
+        "after_mse": 0.03906895623646746
+      },
+      "3": {
+        "samples": 24,
+        "target_min": -2.0,
+        "target_max": -0.5369201898574829,
+        "before_mse": 1.259856211448963,
+        "after_mse": 0.3905426384392749
+      }
+    }
+  },
+  "finite": true,
+  "step_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "cost_names": [
+    "acc_smoothness",
+    "dof_vel_limits",
+    "feet_contact_forces",
+    "pos_limit",
+    "stumble",
+    "torque_limit"
+  ]
+}
